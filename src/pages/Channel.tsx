@@ -1,7 +1,7 @@
 import {ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState} from 'react'
 import {Post} from '../components'
 import {Post as PostModel, createPost, listenForNewPosts, listPostsForChannel} from '../models/posts'
-import { useCurrentUser, useFirebaseApp } from '../hooks'
+import { useAuth, useFirebaseApp } from '../hooks'
 import { useParams } from 'react-router-dom'
 import { uniqBy } from '../utils'
 import { Timestamp } from 'firebase/firestore'
@@ -15,7 +15,7 @@ interface NewPostFormProps {
 
 function NewPostForm({channelId}: NewPostFormProps) {
 	const app = useFirebaseApp()
-	const user = useCurrentUser()
+	const auth = useAuth()
 	const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
 	const [body, setBody] = useState<string>('')
 	const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -26,7 +26,7 @@ function NewPostForm({channelId}: NewPostFormProps) {
 		await createPost(app, {
 			body,
 			channelId,
-			userId: user.uid,
+			userId: auth.uid,
 		})
 		if (!textAreaRef.current) return
 		textAreaRef.current.style.height = '0'
@@ -44,7 +44,14 @@ function NewPostForm({channelId}: NewPostFormProps) {
 
 	return (
 		<form onSubmit={handleSubmit} className='new-post-form'>
-			<textarea disabled={isLoading} ref={textAreaRef} rows={1} value={body} onChange={handleChange} />
+			<textarea
+				disabled={isLoading}
+				ref={textAreaRef}
+				rows={1}
+				onChange={handleChange}
+				placeholder='Say something...'
+				value={body}
+			/>
 			<button type='submit' disabled={isLoading}>
 				<CreateIcon />
 			</button>
@@ -54,14 +61,15 @@ function NewPostForm({channelId}: NewPostFormProps) {
 
 export default function Channel() {
 	const app = useFirebaseApp()
-	const {channelId} = useParams()
+	const {id} = useParams()
 	const channelRef = useRef<HTMLDivElement | null>(null)
 	const [posts, setPosts] = useState<PostModel[]>([])
 	const [scrollBottom, setScrollBottom] = useState<number>(0)
+	const channelId = id || 'welcome'
 
 	const loadMorePosts = useCallback(async (cursor: Timestamp = Timestamp.now()) => {
 		if (!channelRef.current) return
-		const newPosts = await listPostsForChannel(app, channelId || 'home', cursor)
+		const newPosts = await listPostsForChannel(app, channelId, cursor)
 		if (newPosts.length > 0) {
 			setPosts(
 				(previousPosts) => uniqBy(
@@ -88,7 +96,7 @@ export default function Channel() {
 	}, [channelId])
 
 	useEffect(
-		() => listenForNewPosts(app, channelId || 'home', (newPost) => {
+		() => listenForNewPosts(app, channelId, (newPost) => {
 			setPosts(
 				(previousPosts) => uniqBy(
 					[...previousPosts, newPost],
@@ -109,7 +117,7 @@ export default function Channel() {
 			<div className='posts' onScroll={handleScroll} ref={channelRef}>
 				{posts.map((post) => <Post key={post.id} post={post} />)}
 			</div>
-			<NewPostForm channelId={channelId || ''} />
+			<NewPostForm channelId={channelId} />
 		</div>
 	)
 }

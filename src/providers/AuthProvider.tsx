@@ -3,30 +3,32 @@ import {ReactNode, createContext, useEffect, useState} from 'react'
 import {useFirebaseApp} from '../hooks'
 import {SignIn} from '../pages'
 
-interface UserProviderProps {
+interface AuthProviderProps {
 	children: ReactNode;
 }
 
-export const AuthContext = createContext<User | null>(null)
+type Auth = User
 
-export default function AuthProvider({children}: UserProviderProps) {
+export const AuthContext = createContext<Auth | null>(null)
+
+export default function AuthProvider({children}: AuthProviderProps) {
 	const app = useFirebaseApp()
 	const [loading, setLoading] = useState<boolean>(true)
-	const [user, setUser] = useState<User | null>(null)
+	const [auth, setAuth] = useState<User | null>(null)
 
 	useEffect(() => {
 		const auth = getAuth(app)
 		onAuthStateChanged(auth, (newUser) => {
-			setUser(newUser)
+			setAuth(newUser)
 			setLoading(false)
 		})
 	}, [app])
 
 	if (loading) return <progress />
 
-	if (user === null) return <SignIn />
+	if (auth === null) return <SignIn />
 
 	return (
-		<AuthContext.Provider value={user}>{children}</AuthContext.Provider>
+		<AuthContext.Provider value={auth}>{children}</AuthContext.Provider>
 	)
 }

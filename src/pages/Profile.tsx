@@ -1,24 +1,23 @@
+import { getAuth, signOut } from 'firebase/auth'
 import { FormEvent, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useCurrentUser, useFirebaseApp } from '../hooks'
-import { Profile as UserProfile, fetchProfile, updateProfile } from '../models/profile'
+import { useAuth, useFirebaseApp, useGetUser } from '../hooks'
+import { User, updateUser } from '../models/users'
 
 interface ProfileFormProps {
 	onClose: () => void;
-	profile: UserProfile | null;
-	userId: string;
+	user: User;
 }
 
-function ProfileForm({onClose, profile, userId}: ProfileFormProps) {
+function ProfileForm({onClose, user}: ProfileFormProps) {
 	const app = useFirebaseApp()
 	// const [avatarUrl, setAvatarUrl] = useState<string>(user.avatarUrl || '')
-	const [username, setUsername] = useState<string>(profile?.username || '')
+	const [username, setUsername] = useState<string>(user?.username || '')
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 
 	async function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 		setIsLoading(true)
-		await updateProfile(app, userId, {
+		await updateUser(app, user.id, {
 			username,
 		})
 		setIsLoading(false)
@@ -48,7 +47,6 @@ function ProfileForm({onClose, profile, userId}: ProfileFormProps) {
 				onChange={(e) => setUsername(e.target.value)}
 			/>
 			<button
-				type='reset'
 				onClick={() => onClose}
 			>Cancel</button>
 			<button type='submit'>Save</button>
@@ -57,61 +55,60 @@ function ProfileForm({onClose, profile, userId}: ProfileFormProps) {
 }
 
 interface ProfileInfoProps {
-	editable: boolean;
 	onEdit: () => void;
-	profile: UserProfile;
+	user: User;
 }
 
-function ProfileInfo({editable, onEdit, profile}: ProfileInfoProps) {
+function ProfileInfo({onEdit, user}: ProfileInfoProps) {
+	const app = useFirebaseApp()
+
+	function handleSignOut() {
+		const auth = getAuth(app)
+		signOut(auth)
+	}
+
 	return (
 		<div>
 			{/* <img src={user.avatarUrl} alt='Profile Picture' /> */}
-			<p>{profile.username}</p>
-			{editable && <button onClick={() => onEdit()}>Edit</button>}
+			<p>{user.username}</p>
+			<button onClick={() => onEdit()}>Edit</button>
+			<button onClick={() => handleSignOut()}>Sign out</button>
 		</div>
 	)
 }
 
 export default function Profile() {
-	const app = useFirebaseApp()
-	const {userId} = useParams()
-	const currentUser = useCurrentUser()
+	const auth = useAuth()
+	const getUser = useGetUser()
 	const [isEditing, setIsEditing] = useState<boolean>(false)
-	const [isLoading, setIsLoading] = useState<boolean>(true)
-	const [profile, setProfile] = useState<UserProfile | null>(null)
-
-	const id = userId || currentUser.uid
+	const [user, setUser] = useState<User | null>(null)
 
 	useEffect(() => {
-		async function loadProfile() {
-			setIsLoading(true)
-			setProfile(
-				await fetchProfile(app, id),
+		async function loadUser() {
+			setUser(
+				await getUser(auth.uid),
 			)
-			setIsLoading(false)
 		}
 
-		loadProfile()
-	}, [currentUser, userId])
+		loadUser()
+	}, [auth])
 
-	if (isLoading) return (
+	if (!user) return (
 		<progress />
 	)
 
 	return (
 		<div className='profile'>
 			<h2>Edit Profile</h2>
-			{isEditing || !profile ?
+			{isEditing ?
 				<ProfileForm
 					onClose={() => setIsEditing(false)}
-					profile={profile}
-					userId={id}
+					user={user}
 				/>
 				:
 				<ProfileInfo
-					editable={id === currentUser.uid}
 					onEdit={() => setIsEditing(true)}
-					profile={profile}
+					user={user}
 				/>
 			}
 		</div>

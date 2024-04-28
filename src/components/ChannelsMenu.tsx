@@ -30,6 +30,7 @@ function OpenChannelForm() {
 			<textarea
 				onBlur={handleBlur}
 				onChange={handleChange}
+				placeholder='#open new channel'
 				rows={1}
 				value={newChannel}
 			/>

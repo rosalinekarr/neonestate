@@ -1,30 +1,28 @@
 import { useEffect, useState } from 'react'
-import { fetchProfile } from '../models/profile'
-import { useFirebaseApp } from '../hooks'
+import { useGetUser } from '../hooks'
+import type {User} from '../models/users'
 
 interface UserProps {
 	id: string;
 }
 
 export default function User({id}: UserProps) {
-	const app = useFirebaseApp()
-	const [username, setUsername] = useState<string>('')
-	const [isLoading, setIsLoading] = useState<boolean>(true)
+	const getUser = useGetUser()
+	const [user, setUser] = useState<User | null>(null)
 
 	useEffect(() => {
 		async function loadUser() {
-			const profileData = await fetchProfile(app, id)
-			if (!profileData) throw new Error(`User not found: ${id}`)
-			setUsername(profileData.username)
-			setIsLoading(false)
+			const user = await getUser(id)
+			if (!user) throw new Error(`User not found: ${id}`)
+			setUser(user)
 		}
 
 		loadUser()
 	}, [])
 
-	if (isLoading) return <progress />
+	if (!user) return <progress />
 
 	return (
-		<p className='post-author'>{username}</p>
+		<p className='post-author'>{user.username}</p>
 	)
 }

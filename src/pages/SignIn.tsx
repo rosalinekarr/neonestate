@@ -1,5 +1,6 @@
 import {ConfirmationResult, RecaptchaVerifier, getAuth, signInWithPhoneNumber} from 'firebase/auth'
 import { ChangeEvent, FormEvent, Ref, useRef, useState } from 'react'
+import {CheckIcon} from '../components/icons'
 import { useFirebaseApp } from '../hooks'
 import { formatPhoneNumber, isPhoneNumberValid } from '../models/phone'
 
@@ -46,7 +47,9 @@ function PhoneNumberForm({onSubmit, submitRef}: PhoneNumberFormProps) {
 			{!isValid &&
 				<p className='error-text'>Please use a valid mobile phone number</p>
 			}
-			<button type='submit' ref={submitRef} id='sign-in'>Submit</button>
+			<button type='submit' ref={submitRef} id='sign-in'>
+				<CheckIcon />
+			</button>
 		</form>
 	)
 }
@@ -92,7 +95,9 @@ function ConfirmationCodeForm({onSubmit}: ConfirmationCodeFormProps) {
 			{!isValid &&
 				<p className='error-text'>Incorrect confirmation code</p>
 			}
-			<button type='submit'>Submit</button>
+			<button type='submit'>
+				<CheckIcon />
+			</button>
 		</form>
 	)
 }
@@ -134,18 +139,20 @@ export default function SignIn() {
 	)
 
 	return (
-		<div className='sign-in'>
-			<h2>Sign in</h2>
-			{confirmation !== null ?
-				<ConfirmationCodeForm
-					onSubmit={verifyConfirmationCode}
-				/>
+		<div className='wrapper centered'>
+			<div className='sign-in'>
+				<h2>Sign in</h2>
+				{confirmation !== null ?
+					<ConfirmationCodeForm
+						onSubmit={verifyConfirmationCode}
+					/>
 			 :
-				<PhoneNumberForm
-					onSubmit={sendConfirmationCode}
-					submitRef={recaptchaRef}
-				/>
-			}
+					<PhoneNumberForm
+						onSubmit={sendConfirmationCode}
+						submitRef={recaptchaRef}
+					/>
+				}
+			</div>
 		</div>
 	)
 }

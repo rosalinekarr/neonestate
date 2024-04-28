@@ -1,7 +1,9 @@
+import useAuth from './useAuth'
 import useFirebaseApp from './useFirebaseApp'
-import useCurrentUser from './useCurrentUser'
+import useGetUser from './useGetUser'
 
 export {
+	useAuth,
 	useFirebaseApp,
-	useCurrentUser,
+	useGetUser,
 }

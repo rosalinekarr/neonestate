@@ -1,54 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Flow+Rounded&family=M+PLUS+Rounded+1c&display=swap');
 
-@keyframes header-footer-rotate-hue {
+@keyframes background-color-rotate-hue {
   0%, 100% {
-    background-color: rgba(255, 0, 0, 0.4);
+    background-color: rgba(255, 0, 0, 1.0);
   }
 
   16.666% {
-    background-color: rgba(255, 255, 0, 0.4);
+    background-color: rgba(255, 255, 0, 1.0);
   }
 
   33.333% {
-    background-color: rgba(0, 255, 0, 0.4);
+    background-color: rgba(0, 255, 0, 1.0);
   }
 
   50% {
-    background-color: rgba(0, 255, 255, 0.4);
+    background-color: rgba(0, 255, 255, 1.0);
   }
 
   66.666% {
-    background-color: rgba(0, 0, 255, 0.4);
+    background-color: rgba(0, 0, 255, 1.0);
   }
 
   83.333% {
-    background-color: rgba(255, 0, 255, 0.4);
-  }
-}
-
-@keyframes light-background-rotate-hue {
-  0%, 100% {
-    background-color: rgba(255, 0, 0, 0.3);
-  }
-
-  16.666% {
-    background-color: rgba(255, 255, 0, 0.3);
-  }
-
-  33.333% {
-    background-color: rgba(0, 255, 0, 0.3);
-  }
-
-  50% {
-    background-color: rgba(0, 255, 255, 0.3);
-  }
-
-  66.666% {
-    background-color: rgba(0, 0, 255, 0.3);
-  }
-
-  83.333% {
-    background-color: rgba(255, 0, 255, 0.3);
+    background-color: rgba(255, 0, 255, 1.0);
   }
 }
 
@@ -66,21 +40,53 @@
   5%, 40% {
     text-shadow: 0 0 1px rgba(255, 255, 255, 0.5),
                  0 0 2px rgba(255, 255, 255, 0.5),
-                 0 0 4px rgba(255, 255, 255, 1.0),
+                 0 0 5px rgba(255, 255, 255, 1.0),
                  0 0 10px rgba(255, 255, 255, 0.75),
                  0 0 20px rgba(255, 255, 255, 0.75),
-                 0 0 70px rgba(255, 255, 255, 1.0),
-                 0 0 80px rgba(255, 255, 255, 1.0);
+                 0 0 80px rgba(255, 255, 255, 1.0),
+                 0 0 100px rgba(255, 255, 255, 1.0);
   }
 
   30% {
     text-shadow: 0 0 1px rgba(255, 255, 255, 0.5),
                  0 0 2px rgba(255, 255, 255, 1.0),
-                 0 0 4px rgba(255, 255, 255, 1.0),
+                 0 0 5px rgba(255, 255, 255, 1.0),
                  0 0 10px rgba(255, 255, 255, 1.0),
-                 0 0 20px rgba(255, 255, 255, 1.0),
-                 0 0 70px rgba(255, 255, 255, 1.0),
-                 0 0 80px rgba(255, 255, 255, 1.0);
+                 0 0 50px rgba(255, 255, 255, 1.0),
+                 0 0 100px rgba(255, 255, 255, 1.0),
+                 0 0 120px rgba(255, 255, 255, 1.0);
+  }
+}
+
+@keyframes safari-flicker {
+  0%, 10%, 25%, 35%, 45%, 100% {
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.25))
+            drop-shadow(0 0 2px rgba(255, 255, 255, 0.25))
+            drop-shadow(0 0 4px rgba(255, 255, 255, 0.25))
+            drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 20px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 30px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 40px rgba(255, 255, 255, 0.75));
+  }
+
+  5%, 40% {
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.25))
+            drop-shadow(0 0 2px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 5px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 20px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 30px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 40px rgba(255, 255, 255, 0.75));
+  }
+
+  30% {
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.25))
+            drop-shadow(0 0 2px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 5px rgba(255, 255, 255, 0.75))
+            drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 20px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 30px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 80px rgba(255, 255, 255, 1.0));
   }
 }
 
@@ -92,7 +98,10 @@ html, body, #root {
 }
 
 #root {
-  background-color: white;
+  animation-duration: 360s;
+  animation-iteration-count: infinite;
+  animation-name: background-color-rotate-hue;
+  animation-timing-function: linear;
   font-family: "M PLUS Rounded 1c", sans-serif;
 }
 
@@ -102,13 +111,14 @@ html, body, #root {
   height: 100vh;
 }
 
+.wrapper.centered {
+  align-items: center;
+  justify-content: center;
+}
+
 header {
   align-items: center;
-  animation-duration: 360s;
-  animation-iteration-count: infinite;
-  animation-name: header-footer-rotate-hue;
-  animation-timing-function: linear;
-  background-color: rgba(255, 0, 0, 0.5);
+  background-color: rgba(255, 255, 255, 0.4);
   display: flex;
   justify-content: space-between;
 }
@@ -126,11 +136,11 @@ header button {
 }
 
 header button:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.8);
 }
 
 header button:active {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 1.0);
 }
 
 header button svg {
@@ -145,10 +155,7 @@ h1 {
 }
 
 .channels {
-  animation-duration: 360s;
-  animation-iteration-count: infinite;
-  animation-name: light-background-rotate-hue;
-  animation-timing-function: linear;
+  background-color: rgba(255, 255, 255, 0.6);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -169,23 +176,23 @@ h1 {
 }
 
 .channels a:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .channels a.active {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .channels a:hover.active {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .channels a:active {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .channels a:active.active {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(255, 255, 255, 1.0);
 }
 
 .channels form {
@@ -200,12 +207,17 @@ h1 {
 .channels textarea {
   background-color: transparent;
   border: none;
+  color: black;
   flex: 1;
   font-family: "M PLUS Rounded 1c", sans-serif;
   font-size: 1rem;
   outline: none;
   padding: 0;
   resize: none;
+}
+
+.channels form textarea::placeholder {
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .channels button {
@@ -221,22 +233,131 @@ h1 {
 }
 
 .channels button:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .channels button:active {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .channels button svg {
   width: 1rem;
 }
 
+.posts {
+  background-color: white;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 100%;
+  overflow-y: scroll;
+}
+
 main {
-  align-items: center;
   display: flex;
   flex: 1;
   overflow: hidden;
+  justify-content: center;
+}
+
+progress {
+  align-self: center;
+}
+
+.about, .privacy-policy, .profile {
+  background-color: white;
+  box-sizing: border-box;
+  flex: 1;
+  min-height: 100%;
+  padding: 1rem 2rem;
+}
+
+.profile form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.profile label {
+  width: 100%;
+  padding-bottom: 1rem;
+}
+
+.profile button {
+  background-color: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 0.5rem;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  margin-right: 0.5rem;
+  padding: 0.5rem 1rem;
+  outline: none;
+}
+
+.profile button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.profile button:active {
+  background-color: rgba(0, 0, 0, 0.0);
+}
+
+.profile button svg {
+  width: 1rem;
+}
+
+.sign-in {
+  background-color: white;
+  max-width: 40rem;
+  padding: 1rem 2rem 5rem 2rem;
+}
+
+.sign-in form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.sign-in label {
+  width: 100%;
+  padding-bottom: 1rem;
+}
+
+.sign-in input {
+  background-color: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 0.5rem;
+  color: black;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  outline: none;
+  padding: 0.5rem 1rem;
+}
+
+.sign-in input:focus {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.sign-in input::placeholder {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.sign-in button {
+  background-color: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 0.5rem;
+  display: flex;
+  margin-left: 0.5rem;
+  padding: 0.5rem;
+}
+
+.sign-in button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.sign-in button:active {
+  background-color: rgba(0, 0, 0, 0.0);
+}
+
+.sign-in svg {
+  width: 1rem;
 }
 
 .channel {
@@ -246,15 +367,6 @@ main {
   justify-content: flex-end;
   min-height: 100%;
   width: 100%;
-}
-
-.profile, .sign-in {
-  max-width: 40rem;
-  min-height: 100%;
-}
-
-.posts {
-  overflow-y: scroll;
 }
 
 .post {
@@ -280,52 +392,52 @@ main {
 }
 
 .new-post-form {
-  animation-duration: 360s;
-  animation-iteration-count: infinite;
-  animation-name: light-background-rotate-hue;
-  animation-timing-function: linear;
+  background-color: rgba(255, 255, 255, 0.6);
   display: flex;
-  padding: 1rem;
-  justify-content: space-between;
-  align-items: flex-start;
+  padding: 0.5rem;
 }
 
 .new-post-form textarea {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.6);
   border: none;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   box-sizing: border-box;
-  font-family: "M PLUS Rounded 1c", sans-serif;
+  color: white;
   flex: 1;
-  margin: -0.5rem 0.5rem -0.5rem -0.5rem;
-  padding: 0.5rem 1rem;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  margin-right: 0.5rem;
   max-height: 10rem;
+  padding: 0.375rem 1rem;
   resize: none;
   outline: none;
 }
 
+.new-post-form textarea::placeholder {
+  color: rgba(0, 0, 0, 0.6);
+}
+
 .new-post-form textarea:focus {
-  background: rgba(255, 255, 255, 1.0);
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .new-post-form button {
-  background-color: transparent;
+  align-content: center;
+  background-color: rgba(255, 255, 255, 0.8);
   border: none;
   border-radius: 0.5rem;
   display: flex;
   font-family: "M PLUS Rounded 1c", sans-serif;
-  align-content: center;
-  margin: -0.75rem -0.75rem -0.75rem 0;
-  padding: 0.75rem;
+  height: 2rem;
+  padding: 0.5rem;
   outline: none;
 }
 
 .new-post-form button:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .new-post-form button:active {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 1.0);
 }
 
 .new-post-form button svg {
@@ -334,22 +446,31 @@ main {
 }
 
 footer {
-  animation-duration: 360s;
-  animation-iteration-count: infinite;
-  animation-name: header-footer-rotate-hue;
-  animation-timing-function: linear;
+  background-color: rgba(255, 255, 255, 0.4);
   display: flex;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   justify-content: center;
-  padding: 0.5rem 0;
+  padding: 0.25rem 0;
 }
 
 footer a {
-  border-right: 1px solid black;
-  color: black;
-  margin-right: 1rem;
-  padding-right: 1rem;
+  border-right: 1px solid rgba(0, 0, 0, 0.6);
+  color: rgba(0, 0, 0, 0.6);
+  margin-right: 0.5rem;
+  padding-right: 0.5rem;
   text-decoration: none;
+}
+
+footer a:hover {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+footer a:active {
+  color: rgba(0, 0, 0, 1.0);
+}
+
+footer a:visited {
+  color: rgba(0, 0, 0, 0.6);
 }
 
 footer a:last-child {
@@ -363,16 +484,73 @@ footer a:last-child {
     background-color: black;
   }
 
+  .sign-in input {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+
+  .sign-in input:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .sign-in input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .sign-in svg {
+    fill: white;
+  }
+
+  .sign-in button {
+    background-color: rgba(255, 255, 255, 0.2);
+    height: 2rem;
+    margin-left: 0.5rem;
+  }
+
+  .sign-in button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .sign-in button:active {
+    background-color: rgba(255, 255, 255, 0.0);
+  }
+  
+  .about, .privacy-policy, .profile, .sign-in {
+    background-color: black;
+    color: white;
+  }
+
+  .profile button {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+
+  .profile button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .profile button:active {
+    background-color: rgba(255, 255, 255, 0.0);
+  }
+
+  .profile button svg {
+    fill: white;
+  }
+
+  header {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
   header button svg {
     fill: white;
   }
 
   header button:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.8);
   }
   
   header button:active {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 1.0);
   }
 
   h1 {
@@ -383,9 +561,35 @@ footer a:last-child {
     color: white;
   }
 
+  @supports (-webkit-hyphens: none) {
+    h1 {
+      animation-name: safari-flicker;
+    }
+  }
+
+  footer {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
   footer a {
-    border-color: white;
-    color: white;
+    border-color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  footer a:active {
+    color: rgba(255, 255, 255, 1.0);
+  }
+
+  footer a:hover {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  footer a:visited {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .channels {
+    background-color: rgba(0, 0, 0, 0.6);
   }
   
   .channels a {
@@ -393,35 +597,39 @@ footer a:last-child {
   }
   
   .channels a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.6);
   }
   
   .channels a.active {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.6);
   }
   
   .channels a:hover.active {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.8);
   }
   
   .channels a:active {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.8);
   }
   
   .channels a:active.active {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 0, 0, 1.0);
   }
 
   .channels form textarea {
     color: white;
   }
 
+  .channels form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
   .channels button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.8);
   }
   
   .channels button:active {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 1.0);
   }
 
   .channels button svg {
@@ -429,6 +637,7 @@ footer a:last-child {
   }
 
   .posts {
+    background-color: black;
     color: white;
   }
 
@@ -436,9 +645,17 @@ footer a:last-child {
     color: rgba(255, 255, 255, 0.5);
   }
 
+  .new-post-form {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
   .new-post-form textarea {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.8);
     color: white;
+  }
+
+  .new-post-form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6);
   }
 
   .new-post-form textarea:focus {
@@ -450,11 +667,15 @@ footer a:last-child {
     fill: white;
   }
   
+  .new-post-form button {
+    background: rgba(0, 0, 0, 0.6);
+  }
+  
   .new-post-form button:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.8);
   }
   
   .new-post-form button:active {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 1.0);
   }
 }

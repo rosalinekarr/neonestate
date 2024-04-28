@@ -3,7 +3,7 @@ import {ChannelsMenu} from '../components'
 import { MenuIcon, ProfileIcon, ThemeIcon } from './icons'
 import { useState } from 'react'
 
-const FOOTER_LINKS: {label: string, path: string}[] = [{label: 'About', path: '/about'}, {label: 'License', path: '/license'}, {label: 'Privacy policy', path: '/privacy-policy'}]
+const FOOTER_LINKS: {label: string, path: string}[] = [{label: 'About', path: '/about'}, {label: 'Privacy policy', path: '/privacy-policy'}]
 
 export default function Layout() {
 	const [showChannels, setShowChannels] = useState<boolean>(false)
