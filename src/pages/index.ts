@@ -1,7 +1,9 @@
-import Home from './Home'
+import Channel from './Channel'
+import Profile from './Profile'
 import SignIn from './SignIn'
 
 export {
-	Home,
+	Channel,
+	Profile,
 	SignIn,
 }

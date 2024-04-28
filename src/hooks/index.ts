@@ -1,7 +1,7 @@
 import useFirebaseApp from './useFirebaseApp'
-import useUser from './useUser'
+import useCurrentUser from './useCurrentUser'
 
 export {
 	useFirebaseApp,
-	useUser,
+	useCurrentUser,
 }

@@ -1,19 +1,7 @@
 import {ConfirmationResult, RecaptchaVerifier, getAuth, signInWithPhoneNumber} from 'firebase/auth'
-import {phone} from 'phone'
 import { ChangeEvent, FormEvent, Ref, useRef, useState } from 'react'
 import { useFirebaseApp } from '../hooks'
-
-function formatPhoneNumber(rawNumber: string): string | null {
-	if (import.meta.env.DEV && rawNumber.match(/(5.*){10}/)) return '+15555555555'
-	const {phoneNumber} = phone(rawNumber)
-	return phoneNumber
-}
-
-function validatePhoneNumber(rawNumber: string): boolean {
-	if (import.meta.env.DEV && rawNumber.match(/(5.*){10}/)) return true
-	const {isValid} = phone(rawNumber)
-	return isValid
-}
+import { formatPhoneNumber, isPhoneNumberValid } from '../models/phone'
 
 interface PhoneNumberFormProps {
 	onSubmit: (phoneNumber: string) => Promise<void>;
@@ -38,7 +26,7 @@ function PhoneNumberForm({onSubmit, submitRef}: PhoneNumberFormProps) {
 
 	function handleChange(e: ChangeEvent<HTMLInputElement>) {
 		setIsValid((prevIsValid) =>
-			prevIsValid || validatePhoneNumber(rawPhoneNumber),
+			prevIsValid || isPhoneNumberValid(rawPhoneNumber),
 		)
 		setRawPhoneNumber(e.target.value)
 	}
@@ -141,22 +129,23 @@ export default function SignIn() {
 		setIsLoading(false)
 	}
 
-	if (isLoading)
-		return (
-			<progress />
-		)
-
-	if (confirmation !== null)
-		return (
-			<ConfirmationCodeForm
-				onSubmit={verifyConfirmationCode}
-			/>
-		)
+	if (isLoading) return (
+		<progress />
+	)
 
 	return (
-		<PhoneNumberForm
-			onSubmit={sendConfirmationCode}
-			submitRef={recaptchaRef}
-		/>
+		<div className='sign-in'>
+			<h2>Sign in</h2>
+			{confirmation !== null ?
+				<ConfirmationCodeForm
+					onSubmit={verifyConfirmationCode}
+				/>
+			 :
+				<PhoneNumberForm
+					onSubmit={sendConfirmationCode}
+					submitRef={recaptchaRef}
+				/>
+			}
+		</div>
 	)
 }

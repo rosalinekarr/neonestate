@@ -1,4 +1,4 @@
+import AuthProvider from './AuthProvider'
 import FirebaseProvider from './FirebaseProvider'
-import UserProvider from './UserProvider'
 
-export {FirebaseProvider, UserProvider}
+export {AuthProvider, FirebaseProvider}
