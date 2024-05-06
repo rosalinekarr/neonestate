@@ -1,0 +1,140 @@
+.channel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 100%;
+  overflow-y: scroll;
+}
+
+.channel-header {
+  background: linear-gradient(0deg, rgb(255 255 255 / 60%), transparent);
+  color: black;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 20rem;
+  padding: 0 1rem;
+}
+
+.channel-header h2 {
+  font-size: 3rem;
+  margin: 0;
+}
+
+.channel-created-at {
+  color: rgb(0 0 0 / 60%);
+  margin-top: 0;
+}
+
+.posts {
+  background-color: rgb(255 255 255 / 60%);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.new-post-form {
+  background-color: rgb(255 255 255 / 60%);
+  display: flex;
+  padding: 0.5rem;
+}
+
+.new-post-form textarea {
+  background: rgb(255 255 255 / 60%);
+  border: none;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  color: black;
+  flex: 1;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  margin-right: 0.5rem;
+  max-height: 10rem;
+  padding: 0.375rem 1rem;
+  resize: none;
+  outline: none;
+}
+
+.new-post-form textarea::placeholder {
+  color: rgb(0 0 0 / 60%);
+}
+
+.new-post-form textarea:focus {
+  background: rgb(255 255 255 / 80%);
+}
+
+.new-post-form button {
+  align-content: center;
+  background-color: rgb(255 255 255 / 80%);
+  border: none;
+  border-radius: 0.5rem;
+  display: flex;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  height: 2rem;
+  padding: 0.5rem;
+  outline: none;
+}
+
+.new-post-form button:hover {
+  background-color: rgb(255 255 255 / 80%);
+}
+
+.new-post-form button:active {
+  background-color: rgb(255 255 255 / 100%);
+}
+
+.new-post-form button svg {
+  fill: black;
+  width: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .posts {
+    background-color: rgb(0 0 0 / 60%);
+    color: white;
+  }
+
+  .channel-header {
+    background: linear-gradient(0deg, rgb(0 0 0 / 60%), transparent);
+    color: white;
+  }
+
+  .channel-created-at {
+    color: rgb(255 255 255 / 60%)
+  }
+
+  .new-post-form {
+    background-color: rgb(0 0 0 / 60%);
+  }
+
+  .new-post-form textarea {
+    background: rgb(0 0 0 / 80%);
+    color: white;
+  }
+
+  .new-post-form textarea::placeholder {
+    color: rgb(255 255 255 / 60%);
+  }
+
+  .new-post-form textarea:focus {
+    background: rgb(0 0 0 / 100%);
+    color: white;
+  }
+
+  .new-post-form button svg {
+    fill: white;
+  }
+  
+  .new-post-form button {
+    background: rgb(0 0 0 / 60%);
+  }
+  
+  .new-post-form button:hover {
+    background: rgb(0 0 0 / 80%);
+  }
+  
+  .new-post-form button:active {
+    background: rgb(0 0 0 / 100%);
+  }
+}

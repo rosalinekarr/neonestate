@@ -1,37 +1,46 @@
-import {ReactNode, createContext, useState} from 'react'
-import {useFirebaseApp} from '../hooks'
+import {ReactNode, createContext, useEffect, useState} from 'react'
+import {useAuth, useFirebaseApp} from '../hooks'
 import { User, fetchUser } from '../models/users'
+import {Profile} from '../pages'
+import { Loading } from '../components'
 
 interface UserProviderProps {
 	children: ReactNode;
 }
 
 interface UserContext {
-	getUser: (id: string) => Promise<User>
+	getUser: (id: string) => Promise<User | null>
 }
 
 export const UsersContext = createContext<UserContext | null>(null)
 
 export default function UsersProvider({children}: UserProviderProps) {
 	const app = useFirebaseApp()
-	const [users, setUsers] = useState<Record<string, User>>({})
+	const auth = useAuth()
+	const [users, setUsers] = useState<Record<string, User> | null>(null)
 
-	async function getUser(id: string): Promise<User> {
-		if (users[id]) return users[id]
+	async function getUser(id: string): Promise<User | null> {
+		if (users && users[id]) return users[id]
 
 		const user = await fetchUser(app, id)
-		if (!user) throw new Error('User not found')
-		setUsers((prevUsers) => ({
-			...prevUsers,
-			[id]: user,
-		}))
+		if (user)
+			setUsers((prevUsers) => ({
+				...prevUsers,
+				[id]: user,
+			}))
 
 		return user
 	}
 
+	useEffect(() => {
+		getUser(auth.uid)
+	}, [])
+
+	if (!users) return <Loading />
+
 	return (
 		<UsersContext.Provider value={{
 			getUser,
-		}}>{children}</UsersContext.Provider>
+		}}>{users[auth.uid] ? children : <Profile />}</UsersContext.Provider>
 	)
 }

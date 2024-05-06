@@ -1,0 +1,20 @@
+.sign-in {
+    align-self: center;
+    background-color: white;
+    color: black;
+    max-width: 40rem;
+    padding: 1rem 2rem 5rem;
+}
+  
+.sign-in form {
+    align-items: flex-end;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+@media (prefers-color-scheme: dark) {
+  .sign-in {
+    background-color: black;
+    color: white;
+  }
+}

@@ -2,14 +2,18 @@ import { getAuth, signOut } from 'firebase/auth'
 import { FormEvent, useEffect, useState } from 'react'
 import { useAuth, useFirebaseApp, useGetUser } from '../hooks'
 import { User, updateUser } from '../models/users'
+import { CheckIcon, CloseIcon } from '../components/icons'
+import styles from './Profile.module.css'
+import { Button, IconButton, InputField, Loading } from '../components'
 
 interface ProfileFormProps {
 	onClose: () => void;
-	user: User;
+	user: User | null;
 }
 
 function ProfileForm({onClose, user}: ProfileFormProps) {
 	const app = useFirebaseApp()
+	const auth = useAuth()
 	// const [avatarUrl, setAvatarUrl] = useState<string>(user.avatarUrl || '')
 	const [username, setUsername] = useState<string>(user?.username || '')
 	const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -17,7 +21,7 @@ function ProfileForm({onClose, user}: ProfileFormProps) {
 	async function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 		setIsLoading(true)
-		await updateUser(app, user.id, {
+		await updateUser(app, auth.uid, {
 			username,
 		})
 		setIsLoading(false)
@@ -25,7 +29,7 @@ function ProfileForm({onClose, user}: ProfileFormProps) {
 		onClose()
 	}
 
-	if (isLoading) return <progress />
+	if (isLoading) return <Loading />
 
 	return (
 		<form onSubmit={handleSubmit}>
@@ -37,26 +41,21 @@ function ProfileForm({onClose, user}: ProfileFormProps) {
 				value={avatarUrl}
 				onChange={(e) => setAvatarUrl(e.target.value)}
 			/> */}
-			<label htmlFor='name'>Name</label>
-			<input
-				type='text'
-				id='name'
-				name='name'
-				placeholder='Johnny Neonmonic'
+			<InputField
+				name='username'
+				onChange={(newUsername) => setUsername(newUsername)}
+				placeholder='Johnny Mnemonic'
 				value={username}
-				onChange={(e) => setUsername(e.target.value)}
 			/>
-			<button
-				onClick={() => onClose}
-			>Cancel</button>
-			<button type='submit'>Save</button>
+			<IconButton icon={CheckIcon} type='submit' />
+			{user && <IconButton icon={CloseIcon} onClick={() => onClose} />}
 		</form>
 	)
 }
 
 interface ProfileInfoProps {
 	onEdit: () => void;
-	user: User;
+	user: User | null;
 }
 
 function ProfileInfo({onEdit, user}: ProfileInfoProps) {
@@ -67,12 +66,14 @@ function ProfileInfo({onEdit, user}: ProfileInfoProps) {
 		signOut(auth)
 	}
 
+	if (!user) return <Loading />
+
 	return (
 		<div>
 			{/* <img src={user.avatarUrl} alt='Profile Picture' /> */}
-			<p>{user.username}</p>
-			<button onClick={() => onEdit()}>Edit</button>
-			<button onClick={() => handleSignOut()}>Sign out</button>
+			<p>{user?.username || ''}</p>
+			<Button onClick={() => onEdit()}>Edit</Button>
+			<Button onClick={() => handleSignOut()}>Sign out</Button>
 		</div>
 	)
 }
@@ -85,20 +86,19 @@ export default function Profile() {
 
 	useEffect(() => {
 		async function loadUser() {
-			setUser(
-				await getUser(auth.uid),
-			)
+			const user = await getUser(auth.uid)
+			if (user) {
+				setUser(user)
+			} else {
+				setIsEditing(true)
+			}
 		}
 
 		loadUser()
 	}, [auth])
 
-	if (!user) return (
-		<progress />
-	)
-
 	return (
-		<div className='profile'>
+		<div className={styles.profile}>
 			<h2>Edit Profile</h2>
 			{isEditing ?
 				<ProfileForm

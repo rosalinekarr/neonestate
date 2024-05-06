@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import {User} from '../components'
 import { Post as PostModel } from '../models/posts'
 import {formatAgo, msUntilNextAgoFormatChange} from '../utils'
+import styles from './Post.module.css'
 
 interface TimestampProps {
 	ts: Date;
@@ -27,7 +28,7 @@ function Timestamp({ts}: TimestampProps) {
 	}, [])
 
 	return (
-		<p className='post-timestamp' title={ts.toISOString()}>
+		<p className={styles.postCreatedBy} title={ts.toISOString()}>
 			{agoStr}
 		</p>
 	)
@@ -41,12 +42,12 @@ export default function Post({post}: PostProps) {
 	const timestamp = post.createdAt.toDate()
 
 	return (
-		<article className='post'>
-			<div className='post-metadata'>
+		<article className={styles.post}>
+			<div className={styles.postMetadata}>
         		<User id={post.userId} />
 				<Timestamp ts={timestamp} />
 			</div>
-        	<p className='post-body'>{post.body}</p>
+        	<p className={styles.postBody}>{post.body}</p>
 		</article>
 	)
 }

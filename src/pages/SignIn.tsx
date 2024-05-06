@@ -1,8 +1,10 @@
 import {ConfirmationResult, RecaptchaVerifier, getAuth, signInWithPhoneNumber} from 'firebase/auth'
-import { ChangeEvent, FormEvent, Ref, useRef, useState } from 'react'
+import { FormEvent, Ref, useRef, useState } from 'react'
 import {CheckIcon} from '../components/icons'
 import { useFirebaseApp } from '../hooks'
 import { formatPhoneNumber, isPhoneNumberValid } from '../models/phone'
+import styles from './SignIn.module.css'
+import { IconButton, InputField, Loading } from '../components'
 
 interface PhoneNumberFormProps {
 	onSubmit: (phoneNumber: string) => Promise<void>;
@@ -25,31 +27,27 @@ function PhoneNumberForm({onSubmit, submitRef}: PhoneNumberFormProps) {
 		}
 	}
 
-	function handleChange(e: ChangeEvent<HTMLInputElement>) {
+	function handleChange(newPhoneNumber: string) {
 		setIsValid((prevIsValid) =>
-			prevIsValid || isPhoneNumberValid(rawPhoneNumber),
+			prevIsValid || isPhoneNumberValid(newPhoneNumber),
 		)
-		setRawPhoneNumber(e.target.value)
+		setRawPhoneNumber(newPhoneNumber)
 	}
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<label htmlFor='phone-number'>Mobile Phone Number</label>
-			<input
+			<InputField
 				type='tel'
-				id='phone-number'
-				name='phone-number'
-				value={rawPhoneNumber}
-				onChange={handleChange}
 				className={isValid ? undefined : 'error'}
+				name='phone-number'
 				placeholder='(555) 555-5555'
+				onChange={handleChange}
+				value={rawPhoneNumber}
 			/>
 			{!isValid &&
 				<p className='error-text'>Please use a valid mobile phone number</p>
 			}
-			<button type='submit' ref={submitRef} id='sign-in'>
-				<CheckIcon />
-			</button>
+			<IconButton type='submit' ref={submitRef} icon={CheckIcon} id='sign-in' />
 		</form>
 	)
 }
@@ -73,31 +71,26 @@ function ConfirmationCodeForm({onSubmit}: ConfirmationCodeFormProps) {
 		})
 	}
 
-	function handleChange(e: ChangeEvent<HTMLInputElement>) {
+	function handleChange(newCode: string) {
 		setIsValid((prevIsValid) =>
-			prevIsValid || confirmationCode.length === 6,
+			prevIsValid || newCode.length === 6,
 		)
-		setConfirmationCode(e.target.value)
+		setConfirmationCode(newCode)
 	}
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<label htmlFor='confirmation-code'>Confirmation Code</label>
-			<input
-				type='text'
-				id='confirmation-code'
-				name='confirmation-code'
-				value={confirmationCode}
-				onChange={handleChange}
+			<InputField
 				className={isValid ? undefined : 'error'}
+				name='confirmation-code'
 				placeholder='123456'
+				onChange={handleChange}
+				value={confirmationCode}
 			/>
 			{!isValid &&
 				<p className='error-text'>Incorrect confirmation code</p>
 			}
-			<button type='submit'>
-				<CheckIcon />
-			</button>
+			<IconButton type='submit' icon={CheckIcon} />
 		</form>
 	)
 }
@@ -134,25 +127,21 @@ export default function SignIn() {
 		setIsLoading(false)
 	}
 
-	if (isLoading) return (
-		<progress />
-	)
+	if (isLoading) return <Loading/>
 
 	return (
-		<div className='wrapper centered'>
-			<div className='sign-in'>
-				<h2>Sign in</h2>
-				{confirmation !== null ?
-					<ConfirmationCodeForm
-						onSubmit={verifyConfirmationCode}
-					/>
+		<div className={styles.signIn}>
+			<h2>Sign in</h2>
+			{confirmation !== null ?
+				<ConfirmationCodeForm
+					onSubmit={verifyConfirmationCode}
+				/>
 			 :
-					<PhoneNumberForm
-						onSubmit={sendConfirmationCode}
-						submitRef={recaptchaRef}
-					/>
-				}
-			</div>
+				<PhoneNumberForm
+					onSubmit={sendConfirmationCode}
+					submitRef={recaptchaRef}
+				/>
+			}
 		</div>
 	)
 }

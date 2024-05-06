@@ -2,6 +2,7 @@ import {User, getAuth, onAuthStateChanged} from 'firebase/auth'
 import {ReactNode, createContext, useEffect, useState} from 'react'
 import {useFirebaseApp} from '../hooks'
 import {SignIn} from '../pages'
+import { Loading } from '../components'
 
 interface AuthProviderProps {
 	children: ReactNode;
@@ -24,7 +25,7 @@ export default function AuthProvider({children}: AuthProviderProps) {
 		})
 	}, [app])
 
-	if (loading) return <progress />
+	if (loading) return <Loading />
 
 	if (auth === null) return <SignIn />
 

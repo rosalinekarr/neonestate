@@ -1,0 +1,48 @@
+.icon-button {
+    background-color: rgb(0 0 0 / 20%);
+    border: none;
+    border-radius: 0.5rem;
+    color: black;
+    font-family: "M PLUS Rounded 1c", sans-serif;
+    height: 2rem;
+    margin-right: 0.5rem;
+    padding: 0.5rem;
+    outline: none;
+}
+  
+.icon-button:hover {
+    background-color: rgb(0 0 0 / 10%);
+}
+  
+.icon-button:active {
+    background-color: rgb(0 0 0 / 0%);
+}
+  
+.icon-button svg {
+    width: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    .icon-button {
+        background-color: black;
+        color: white;
+    }
+      
+    .icon-buttonfile button {
+        background-color: rgb(255 255 255 / 20%);
+        color: white;
+    }
+    
+    .icon-button button:hover {
+        background-color: rgb(255 255 255 / 10%);
+    }
+    
+    .icon-button button:active {
+        background-color: rgb(255 255 255 / 0%);
+    }
+    
+    .icon-button svg {
+        fill: white;
+        width: 1rem;
+    }
+  }

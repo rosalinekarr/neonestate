@@ -1,0 +1,36 @@
+@keyframes dilate {
+    0% {
+        clip-path: circle(0%);
+        opacity: 1.0;
+    }
+
+    100% {
+        clip-path: circle(100%);
+        opacity: 0.0;
+    }
+}
+
+.loading {
+    align-self: center;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-name: dilate;
+    animation-timing-function: linear;
+    appearance: none;
+    background: transparent;
+    border-color: rgb(255 255 255 / 50%);
+    border-width: 2.5rem;
+    border-style: solid;
+    border-radius: 2.5rem;
+    display: block;
+    height: 5rem;
+    margin: 1rem;
+    padding: 0;
+    width: 5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    .loading {
+        border-color: rgb(0 0 0 / 50%);
+    }
+}

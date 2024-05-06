@@ -12,7 +12,7 @@ const app = initializeApp({
 	authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
 	measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 	projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-})
+}, 'neon-estate')
 
 initializeAppCheck(app, {
 	provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_KEY),

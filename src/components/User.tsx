@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useGetUser } from '../hooks'
 import type {User} from '../models/users'
+import styles from './User.module.css'
+import Loading from './Loading'
 
 interface UserProps {
 	id: string;
@@ -20,9 +22,9 @@ export default function User({id}: UserProps) {
 		loadUser()
 	}, [])
 
-	if (!user) return <progress />
+	if (!user) return <Loading />
 
 	return (
-		<p className='post-author'>{user.username}</p>
+		<p className={styles.user}>{user.username}</p>
 	)
 }

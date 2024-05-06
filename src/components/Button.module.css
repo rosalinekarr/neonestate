@@ -1,0 +1,48 @@
+.button {
+    background-color: rgb(0 0 0 / 20%);
+    border: none;
+    border-radius: 0.5rem;
+    color: black;
+    font-family: "M PLUS Rounded 1c", sans-serif;
+    height: 2rem;
+    margin-right: 0.5rem;
+    padding: 0.375rem 1rem;
+    outline: none;
+}
+  
+.button:hover {
+    background-color: rgb(0 0 0 / 10%);
+}
+  
+.button:active {
+    background-color: rgb(0 0 0 / 0%);
+}
+  
+.button svg {
+    width: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    .button {
+        background-color: black;
+        color: white;
+    }
+      
+    .buttonfile button {
+        background-color: rgb(255 255 255 / 20%);
+        color: white;
+    }
+    
+    .button button:hover {
+        background-color: rgb(255 255 255 / 10%);
+    }
+    
+    .button button:active {
+        background-color: rgb(255 255 255 / 0%);
+    }
+    
+    .button svg {
+        fill: white;
+        width: 1rem;
+    }
+  }

@@ -1,0 +1,138 @@
+  .menu {
+    background-color: rgb(255 255 255 / 40%);
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    min-width: 15rem;
+    overflow-y: scroll;
+    resize: horizontal;
+  }
+
+  .menu.open {
+    display: flex;
+  }
+  
+  .menu a {
+    color: black;
+    display: none;
+    font-size: 1rem;
+    line-height: 1rem;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+  }
+  
+  .menu.open a {
+    display: block;
+  }
+  
+  .menu a:hover {
+    background-color: rgb(255 255 255 / 40%);
+  }
+  
+  .menu a.active {
+    background-color: rgb(255 255 255 / 40%);
+  }
+  
+  .menu a:hover.active {
+    background-color: rgb(255 255 255 / 60%);
+  }
+  
+  .menu a:active {
+    background-color: rgb(255 255 255 / 80%);
+  }
+  
+  .menu form {
+    display: none;
+    padding: 0.5rem 1rem;
+  }
+  
+  .menu.open form {
+    display: flex;
+  }
+  
+  .menu input {
+    background-color: transparent;
+    border: none;
+    color: black;
+    flex: 1;
+    font-family: "M PLUS Rounded 1c", sans-serif;
+    font-size: 1rem;
+    outline: none;
+    padding: 0;
+    resize: none;
+  }
+  
+  .menu input::placeholder {
+    color: rgb(0 0 0 / 60%);
+  }
+  
+  .menu button {
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    border-radius: 0.5rem;
+    display: flex;
+    height: 2rem;
+    margin: -0.25rem -0.25rem -0.25rem 0;
+    outline: none;
+    padding: 0.5rem;
+  }
+  
+  .menu button:hover {
+    background-color: rgb(255 255 255 / 40%);
+  }
+  
+  .menu button:active {
+    background-color: rgb(255 255 255 / 60%);
+  }
+  
+  .menu button svg {
+    width: 1rem;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .menu {
+      background-color: rgb(0 0 0 / 40%);
+    }
+    
+    .menu a {
+      color: white;
+    }
+    
+    .menu a:hover {
+      background-color: rgb(0 0 0 / 40%);
+    }
+    
+    .menu a.active {
+      background-color: rgb(0 0 0 / 40%);
+    }
+    
+    .menu a:hover.active {
+      background-color: rgb(0 0 0 / 60%);
+    }
+    
+    .menu a:active {
+      background-color: rgb(0 0 0 / 60%);
+    }
+  
+    .menu form input {
+      color: white;
+    }
+  
+    .menu form input::placeholder {
+      color: rgb(255 255 255 / 60%);
+    }
+  
+    .menu button:hover {
+      background-color: rgb(0 0 0 / 40%);
+    }
+    
+    .menu button:active {
+      background-color: rgb(0 0 0 / 60%);
+    }
+  
+    .menu button svg {
+      fill: white;
+    }
+  }
+  
