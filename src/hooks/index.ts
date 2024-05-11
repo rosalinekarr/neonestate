@@ -1,9 +1,17 @@
 import useAuth from './useAuth'
+import useCurrentUser from './useCurrentUser'
 import useFirebaseApp from './useFirebaseApp'
-import useGetUser from './useGetUser'
+import useFetchUser from './useFetchUser'
+import useOpenRoom from './useOpenRoom'
+import usePostsForRoom from './usePostsForRoom'
+import useRooms from './useRooms'
 
 export {
 	useAuth,
+	useCurrentUser,
 	useFirebaseApp,
-	useGetUser,
+	useFetchUser,
+	useOpenRoom,
+	usePostsForRoom,
+	useRooms,
 }

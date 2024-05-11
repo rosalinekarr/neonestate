@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useGetUser } from '../hooks'
+import { useFetchUser } from '../hooks'
 import type {User} from '../models/users'
 import styles from './User.module.css'
 import Loading from './Loading'
@@ -9,12 +9,12 @@ interface UserProps {
 }
 
 export default function User({id}: UserProps) {
-	const getUser = useGetUser()
+	const fetchUser = useFetchUser()
 	const [user, setUser] = useState<User | null>(null)
 
 	useEffect(() => {
 		async function loadUser() {
-			const user = await getUser(id)
+			const user = await fetchUser(id)
 			if (!user) throw new Error(`User not found: ${id}`)
 			setUser(user)
 		}

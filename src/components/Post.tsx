@@ -39,13 +39,11 @@ interface PostProps {
 }
 
 export default function Post({post}: PostProps) {
-	const timestamp = post.createdAt.toDate()
-
 	return (
 		<article className={styles.post}>
 			<div className={styles.postMetadata}>
-        		<User id={post.userId} />
-				<Timestamp ts={timestamp} />
+        		<User id={post.authorId} />
+				<Timestamp ts={new Date(post.createdAt)} />
 			</div>
         	<p className={styles.postBody}>{post.body}</p>
 		</article>

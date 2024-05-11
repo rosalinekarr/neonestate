@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {Navigate, RouterProvider, createBrowserRouter} from 'react-router-dom'
 import {Layout} from './components'
-import {About, Channel, PrivacyPolicy, Profile} from './pages'
+import {About, Room, PrivacyPolicy, Profile} from './pages'
 import {FirebaseProvider} from './providers'
 import './index.css'
 
@@ -18,7 +18,7 @@ if (rootElem)
 						element: <Layout />,
 						children: [
 							{
-								element: <Navigate to="/channel/welcome" replace={true} />,
+								element: <Navigate to="/rooms/welcome" replace={true} />,
 								index: true,
 							},
 							{
@@ -26,8 +26,8 @@ if (rootElem)
 								path: '/about',
 							},
 							{
-								element: <Channel />,
-								path: '/channel/:name',
+								element: <Room />,
+								path: '/rooms/:name',
 							},
 							{
 								element: <PrivacyPolicy />,

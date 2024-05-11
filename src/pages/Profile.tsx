@@ -1,7 +1,7 @@
 import { getAuth, signOut } from 'firebase/auth'
-import { FormEvent, useEffect, useState } from 'react'
-import { useAuth, useFirebaseApp, useGetUser } from '../hooks'
-import { User, updateUser } from '../models/users'
+import { FormEvent, useState } from 'react'
+import { useAuth, useCurrentUser, useFirebaseApp } from '../hooks'
+import { User, createUser, updateUser } from '../models/users'
 import { CheckIcon, CloseIcon } from '../components/icons'
 import styles from './Profile.module.css'
 import { Button, IconButton, InputField, Loading } from '../components'
@@ -12,7 +12,6 @@ interface ProfileFormProps {
 }
 
 function ProfileForm({onClose, user}: ProfileFormProps) {
-	const app = useFirebaseApp()
 	const auth = useAuth()
 	// const [avatarUrl, setAvatarUrl] = useState<string>(user.avatarUrl || '')
 	const [username, setUsername] = useState<string>(user?.username || '')
@@ -21,9 +20,15 @@ function ProfileForm({onClose, user}: ProfileFormProps) {
 	async function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 		setIsLoading(true)
-		await updateUser(app, auth.uid, {
-			username,
-		})
+		if (user) {
+			await updateUser(auth, user.id, {
+				username,
+			})
+		} else {
+			await createUser(auth, {
+				username,
+			})
+		}
 		setIsLoading(false)
 
 		onClose()
@@ -79,23 +84,8 @@ function ProfileInfo({onEdit, user}: ProfileInfoProps) {
 }
 
 export default function Profile() {
-	const auth = useAuth()
-	const getUser = useGetUser()
+	const currentUser = useCurrentUser()
 	const [isEditing, setIsEditing] = useState<boolean>(false)
-	const [user, setUser] = useState<User | null>(null)
-
-	useEffect(() => {
-		async function loadUser() {
-			const user = await getUser(auth.uid)
-			if (user) {
-				setUser(user)
-			} else {
-				setIsEditing(true)
-			}
-		}
-
-		loadUser()
-	}, [auth])
 
 	return (
 		<div className={styles.profile}>
@@ -103,12 +93,12 @@ export default function Profile() {
 			{isEditing ?
 				<ProfileForm
 					onClose={() => setIsEditing(false)}
-					user={user}
+					user={currentUser}
 				/>
 				:
 				<ProfileInfo
 					onEdit={() => setIsEditing(true)}
-					user={user}
+					user={currentUser}
 				/>
 			}
 		</div>

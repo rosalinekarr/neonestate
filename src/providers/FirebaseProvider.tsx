@@ -1,6 +1,7 @@
 import { ReactNode, createContext } from 'react'
 import { initializeApp } from 'firebase/app'
 import {ReCaptchaV3Provider, initializeAppCheck} from 'firebase/app-check'
+import { connectAuthEmulator, getAuth } from 'firebase/auth'
 
 interface FirebaseProviderProps {
 	children: ReactNode;
@@ -13,6 +14,11 @@ const app = initializeApp({
 	measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 	projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
 }, 'neon-estate')
+
+if (import.meta.env.DEV) {
+	const auth = getAuth(app)
+	connectAuthEmulator(auth, '127.0.0.1:9099')
+}
 
 initializeAppCheck(app, {
 	provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_KEY),

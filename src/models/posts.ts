@@ -4,31 +4,25 @@ import {
 	QuerySnapshot,
 	Timestamp,
 	collection,
-	doc,
-	getDocs,
 	getFirestore,
-	limit,
 	onSnapshot,
-	orderBy,
 	query,
-	serverTimestamp,
-	setDoc,
 	where,
 } from 'firebase/firestore'
 
 export interface Post {
 	id: string;
 	body: string;
-	channelId: string;
-	createdAt: Timestamp;
-	userId: string;
+	roomId: string;
+	createdAt: number;
+	authorId: string;
 }
 
-export function listenForNewPosts(app: FirebaseApp, channelId: string, callback: (post: Post) => void) {
+export function listenForPostsInRoom(app: FirebaseApp, roomId: string, callback: (post: Post) => void) {
 	const db = getFirestore(app)
 	const q = query(
 		collection(db, 'posts'),
-		where('channelId', '==', channelId),
+		where('roomId', '==', roomId),
 		where('createdAt', '>', Timestamp.now()),
 	)
 	return onSnapshot(q, (querySnapshot: QuerySnapshot): void => {
@@ -41,28 +35,50 @@ export function listenForNewPosts(app: FirebaseApp, channelId: string, callback:
 	})
 }
 
-export async function listPostsForChannel(app: FirebaseApp, channelId: string, ts: Timestamp): Promise<Post[]> {
+export function listenForPostsByAuthor(app: FirebaseApp, authorId: string, callback: (post: Post) => void) {
 	const db = getFirestore(app)
-	const posts = await getDocs(
-		query(
-			collection(db, 'posts'),
-			where('channelId', '==', channelId),
-			where('createdAt', '<', ts),
-			orderBy('createdAt', 'desc'),
-			limit(3),
-		),
+	const q = query(
+		collection(db, 'posts'),
+		where('authorId', '==', authorId),
+		where('createdAt', '>', Timestamp.now()),
 	)
-	return posts.docs.reverse().map((doc) => ({
-		id: doc.id,
-		...doc.data(),
-	}) as Post)
+	return onSnapshot(q, (querySnapshot: QuerySnapshot): void => {
+		querySnapshot.forEach((doc: DocumentSnapshot) => {
+			callback({
+				id: doc.id,
+				...doc.data(),
+			} as Post)
+		})
+	})
 }
 
-export async function createPost(app: FirebaseApp, post: Omit<Post, 'id' | 'createdAt'>): Promise<void> {
-	const db = getFirestore(app)
-	const id = crypto.randomUUID()
-	await setDoc(doc(db, 'posts', id), {
-		createdAt: serverTimestamp(),
-		...post,
+export interface GetPostsOpts {
+	authorId?: string;
+	createdBefore?: number;
+	roomId?: string;
+}
+
+export async function getPosts(auth: string, {authorId, createdBefore, roomId}: GetPostsOpts): Promise<Post[]> {
+	const url = new URL('/api/posts')
+	if (authorId) url.searchParams.set('authorId', encodeURI(authorId))
+	if (createdBefore) url.searchParams.set('createdBefore', new Date(createdBefore).toISOString())
+	if (roomId) url.searchParams.set('roomId', encodeURI(roomId))
+	const response = await fetch(url, {
+		headers: new Headers({
+			Authorization: `Bearer ${auth}`,
+		}),
 	})
+	return response.json() as Promise<Post[]>
+}
+
+export async function createPost(auth: string, post: Omit<Post, 'id' | 'createdAt'>): Promise<Post> {
+	const response = await fetch('/api/posts', {
+		body: JSON.stringify(post),
+		headers: new Headers({
+			Authorization: `Bearer ${auth}`,
+			'Content-Type': 'application/json',
+		}),
+		method: 'POST',
+	})
+	return response.json() as Promise<Post>
 }

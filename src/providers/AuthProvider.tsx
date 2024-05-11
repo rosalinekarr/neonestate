@@ -1,4 +1,4 @@
-import {User, getAuth, onAuthStateChanged} from 'firebase/auth'
+import {getAuth, onAuthStateChanged} from 'firebase/auth'
 import {ReactNode, createContext, useEffect, useState} from 'react'
 import {useFirebaseApp} from '../hooks'
 import {SignIn} from '../pages'
@@ -8,28 +8,29 @@ interface AuthProviderProps {
 	children: ReactNode;
 }
 
-type Auth = User
-
-export const AuthContext = createContext<Auth | null>(null)
+export const AuthContext = createContext<string | null>(null)
 
 export default function AuthProvider({children}: AuthProviderProps) {
 	const app = useFirebaseApp()
 	const [loading, setLoading] = useState<boolean>(true)
-	const [auth, setAuth] = useState<User | null>(null)
+	const [authToken, setAuthToken] = useState<string | null>(null)
 
 	useEffect(() => {
 		const auth = getAuth(app)
-		onAuthStateChanged(auth, (newUser) => {
-			setAuth(newUser)
+		onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				const token = await user.getIdToken()
+				setAuthToken(token)
+			}
 			setLoading(false)
 		})
 	}, [app])
 
 	if (loading) return <Loading />
 
-	if (auth === null) return <SignIn />
+	if (authToken === null) return <SignIn />
 
 	return (
-		<AuthContext.Provider value={auth}>{children}</AuthContext.Provider>
+		<AuthContext.Provider value={authToken}>{children}</AuthContext.Provider>
 	)
 }

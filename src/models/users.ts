@@ -1,22 +1,48 @@
-import { FirebaseApp } from 'firebase/app'
-import { doc, getDoc, getFirestore, setDoc } from 'firebase/firestore'
-
 export interface User {
 	id: string;
 	username: string;
+	createdAt: number;
 }
 
-export async function fetchUser(app: FirebaseApp, id: string): Promise<User | null> {
-	const db = getFirestore(app)
-	const snapshot = await getDoc(doc(db, 'users', id))
-	if (snapshot.exists()) return {
-		id: id,
-		username: snapshot.get('username'),
-	}
-	return null
+export async function getProfile(auth: string): Promise<User | null> {
+	const response = await fetch('/api/profile', {
+		headers: new Headers({
+			Authorization: `Bearer ${auth}`,
+		}),
+	})
+	if (response.status === 404) return null
+	return response.json() as Promise<User>
 }
 
-export async function updateUser(app: FirebaseApp, id: string, user: Omit<User, 'id'>) {
-	const db = getFirestore(app)
-	await setDoc(doc(db, 'users', id), user)
+export async function getUser(auth: string, id: string): Promise<User | null> {
+	const response = await fetch(`/api/users/${encodeURIComponent(id)}`, {
+		headers: new Headers({
+			Authorization: `Bearer ${auth}`,
+		}),
+	})
+	return response.json() as Promise<User>
+}
+
+export async function createUser(auth: string, user: Omit<User, 'id' | 'createdAt'>): Promise<User> {
+	const response = await fetch('/api/users', {
+		body: JSON.stringify(user),
+		headers: new Headers({
+			Authorization: `Bearer ${auth}`,
+			'Content-Type': 'application/json',
+		}),
+		method: 'POST',
+	})
+	return response.json() as Promise<User>
+}
+
+export async function updateUser(auth: string, id: string, user: Partial<Omit<User, 'id' | 'createdAt'>>): Promise<User> {
+	const response = await fetch(`/api/users/${encodeURIComponent(id)}`, {
+		body: JSON.stringify(user),
+		headers: new Headers({
+			Authorization: `Bearer ${auth}`,
+			'Content-Type': 'application/json',
+		}),
+		method: 'PUT',
+	})
+	return response.json() as Promise<User>
 }

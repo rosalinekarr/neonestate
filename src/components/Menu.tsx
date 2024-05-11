@@ -1,42 +1,31 @@
-import { ChangeEvent, FocusEvent, FormEvent, useEffect, useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { useFirebaseApp } from '../hooks'
-import { Channel, listChannels, listenForChannels, createChannel } from '../models/channel'
+import { useOpenRoom, useRooms } from '../hooks'
+import { Room } from '../models/rooms'
 import CreateIcon from './icons/create'
-import { uniqBy } from '../utils'
 import styles from './Menu.module.css'
 
 function OpenChannelForm() {
-	const app = useFirebaseApp()
-	const [newChannel, setNewChannel] = useState<string>('')
-
-	function handleBlur(_e: FocusEvent<HTMLInputElement>) {
-		setNewChannel((prevVal) => prevVal === '#' ? '' : prevVal)
-	}
+	const openRoom = useOpenRoom()
+	const [name, setName] = useState<string>('')
 
 	function handleChange(e: ChangeEvent<HTMLInputElement>) {
-		setNewChannel(
-			`#${e.target.value.replace(' ', '_').replace(/^\#/, '')}`,
-		)
+		setName(e.target.value.replaceAll(/[^\w-_]]/g, '_'))
 	}
 
 	function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
-		createChannel(app, {
-			name: newChannel.replace(/^\#/, ''),
-			description: '',
-		})
-		setNewChannel('')
+		openRoom(name)
+		setName('')
 	}
 
 	return (
 		<form onSubmit={handleSubmit}>
 			<input
 				type='text'
-				onBlur={handleBlur}
 				onChange={handleChange}
-				placeholder='#open new channel'
-				value={newChannel}
+				placeholder='open new channel'
+				value={name}
 			/>
 			<button type='submit'>
 				<CreateIcon />
@@ -45,41 +34,17 @@ function OpenChannelForm() {
 	)
 }
 
-interface ChannelsMenuProps {
+interface MenuProps {
 	open: boolean;
 }
 
-export default function ChannelsMenu({open}: ChannelsMenuProps) {
-	const app = useFirebaseApp()
-	const [channels, setChannels] = useState<Channel[]>([])
-
-	useEffect(() => {
-		async function loadChannels() {
-			const newChannels = await listChannels(app)
-			setChannels(newChannels)
-		}
-
-		loadChannels()
-	}, [])
-
-	useEffect(() => {
-		const unsubscribe = listenForChannels(app, (channel: Channel) => {
-			setChannels(
-				(prevChannels: Channel[]): Channel[] =>
-					uniqBy<Channel, string>(
-						[...prevChannels, channel],
-						(x) => x.id,
-					)
-						.sort((channelA: Channel, channelB: Channel) => channelA.name.localeCompare(channelB.name)),
-			)
-		})
-		return () => unsubscribe()
-	}, [])
+export default function Menu({open}: MenuProps) {
+	const rooms = useRooms()
 
 	return (
 		<nav className={[styles.menu, ...open ? [styles.open] : []].join(' ')}>
-			{channels.map((channel: Channel) =>
-				<NavLink key={channel.id} to={`/channel/${channel.name}`}>{`#${channel.name}`}</NavLink>,
+			{rooms.map((room: Room) =>
+				<NavLink key={room.id} to={`/rooms/${room.name}`}>{room.name}</NavLink>,
 			)}
 			<OpenChannelForm />
 		</nav>

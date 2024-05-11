@@ -1,32 +1,36 @@
 module.exports = {
   root: true,
-  env: {
-    es6: true,
-    node: true,
-  },
-  extends: [
-    "eslint:recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:import/typescript",
-    "google",
-    "plugin:@typescript-eslint/recommended",
-  ],
-  parser: "@typescript-eslint/parser",
+  env: { browser: true, es2020: true },
+  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: ["tsconfig.json", "tsconfig.dev.json"],
-    sourceType: "module",
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    project: ['./tsconfig.json', './tsconfig.node.json'],
+    tsconfigRootDir: __dirname,
   },
-  ignorePatterns: [
-    "/lib/**/*", // Ignore built files.
-  ],
-  plugins: [
-    "@typescript-eslint",
-    "import",
-  ],
+  plugins: ['@stylistic'],
   rules: {
-    "quotes": ["error", "double"],
-    "import/no-unresolved": 0,
-    "indent": ["error", 2],
+    '@stylistic/array-bracket-newline': 'error',
+    '@stylistic/array-element-newline': ['error', {'multiline': true}],
+    '@stylistic/arrow-spacing': 'error',
+    '@stylistic/brace-style': 'error',
+    '@stylistic/comma-dangle': ['error', 'always-multiline'],
+    '@stylistic/comma-spacing': 'error',
+    '@stylistic/comma-style': 'error',
+    '@stylistic/computed-property-spacing': 'error',
+    '@stylistic/indent': ['error', 'tab'],
+    '@stylistic/key-spacing': 'error',
+    '@stylistic/keyword-spacing': 'error',
+    '@stylistic/new-parens': ['error', 'never'],
+    '@stylistic/no-extra-parens': 'error',
+    '@stylistic/no-multi-spaces': 'error',
+    '@stylistic/no-trailing-spaces': 'error',
+    '@stylistic/quotes': ['error', 'single'],
+    '@stylistic/quote-props': ['error', 'as-needed'],
+    '@stylistic/semi': ['error', 'never'],
+    '@stylistic/spaced-comment': 'error',
+    '@stylistic/type-generic-spacing': ['error'],
+    '@stylistic/type-named-tuple-spacing': ['error']
   },
-};
+}
