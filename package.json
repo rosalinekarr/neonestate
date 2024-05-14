@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "emulator": "tsc && vite build --mode \"development\" && firebase emulators:start",
     "lint": "npm run lint:css && npm run lint:ts",
     "lint:css": "stylelint \"src/**/*.css\"",
     "lint:ts": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",

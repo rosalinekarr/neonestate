@@ -1,4 +1,4 @@
-export default function uniqBy<T, U>(data: T[], callback: (datum: T) => U) {
+export default function sortBy<T, U>(data: T[], callback: (datum: T) => U) {
 	return data.sort((a, b) => {
 		const aSort = callback(a)
 		const bSort = callback(b)

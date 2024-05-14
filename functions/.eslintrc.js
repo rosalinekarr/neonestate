@@ -1,12 +1,12 @@
 module.exports = {
   root: true,
-  env: { browser: true, es2020: true },
+  env: { es2020: true },
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
+    project: ['./tsconfig.json', './tsconfig.dev.json'],
     tsconfigRootDir: __dirname,
   },
   plugins: ['@stylistic'],

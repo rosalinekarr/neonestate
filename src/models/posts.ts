@@ -10,6 +10,8 @@ import {
 	where,
 } from 'firebase/firestore'
 
+const MS_PER_S = 1000
+
 export interface Post {
 	id: string;
 	body: string;
@@ -59,10 +61,10 @@ export interface GetPostsOpts {
 }
 
 export async function getPosts(auth: string, {authorId, createdBefore, roomId}: GetPostsOpts): Promise<Post[]> {
-	const url = new URL('/api/posts')
-	if (authorId) url.searchParams.set('authorId', encodeURI(authorId))
-	if (createdBefore) url.searchParams.set('createdBefore', new Date(createdBefore).toISOString())
-	if (roomId) url.searchParams.set('roomId', encodeURI(roomId))
+	const url = new URL('/api/posts', import.meta.env.VITE_API_BASE_URL)
+	if (authorId) url.searchParams.set('authorId', encodeURIComponent(authorId))
+	if (createdBefore) url.searchParams.set('createdBefore', (createdBefore / MS_PER_S).toFixed())
+	if (roomId) url.searchParams.set('roomId', encodeURIComponent(roomId))
 	const response = await fetch(url, {
 		headers: new Headers({
 			Authorization: `Bearer ${auth}`,
@@ -72,7 +74,8 @@ export async function getPosts(auth: string, {authorId, createdBefore, roomId}: 
 }
 
 export async function createPost(auth: string, post: Omit<Post, 'id' | 'createdAt'>): Promise<Post> {
-	const response = await fetch('/api/posts', {
+	const url = new URL('/api/posts', import.meta.env.VITE_API_BASE_URL)
+	const response = await fetch(url, {
 		body: JSON.stringify(post),
 		headers: new Headers({
 			Authorization: `Bearer ${auth}`,

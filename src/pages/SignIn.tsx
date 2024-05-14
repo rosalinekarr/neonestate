@@ -1,5 +1,5 @@
 import {ConfirmationResult, RecaptchaVerifier, getAuth, signInWithPhoneNumber} from 'firebase/auth'
-import { FormEvent, Ref, useRef, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import {CheckIcon} from '../components/icons'
 import { useFirebaseApp } from '../hooks'
 import { formatPhoneNumber, isPhoneNumberValid } from '../models/phone'
@@ -8,10 +8,9 @@ import { IconButton, InputField, Loading } from '../components'
 
 interface PhoneNumberFormProps {
 	onSubmit: (phoneNumber: string) => Promise<void>;
-	submitRef: Ref<HTMLButtonElement>;
 }
 
-function PhoneNumberForm({onSubmit, submitRef}: PhoneNumberFormProps) {
+function PhoneNumberForm({onSubmit}: PhoneNumberFormProps) {
 	const [rawPhoneNumber, setRawPhoneNumber] = useState<string>('')
 	const [isValid, setIsValid] = useState<boolean>(true)
 
@@ -47,7 +46,7 @@ function PhoneNumberForm({onSubmit, submitRef}: PhoneNumberFormProps) {
 			{!isValid &&
 				<p className='error-text'>Please use a valid mobile phone number</p>
 			}
-			<IconButton type='submit' ref={submitRef} icon={CheckIcon} id='sign-in' />
+			<IconButton type='submit' icon={CheckIcon} id='sign-in' />
 		</form>
 	)
 }
@@ -98,7 +97,6 @@ function ConfirmationCodeForm({onSubmit}: ConfirmationCodeFormProps) {
 export default function SignIn() {
 	const app = useFirebaseApp()
 	const auth = getAuth(app)
-	const recaptchaRef = useRef<HTMLButtonElement | null>(null)
 	const [confirmation, setConfirmation] = useState<ConfirmationResult | null>(null)
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -139,7 +137,6 @@ export default function SignIn() {
 			 :
 				<PhoneNumberForm
 					onSubmit={sendConfirmationCode}
-					submitRef={recaptchaRef}
 				/>
 			}
 		</div>

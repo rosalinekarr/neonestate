@@ -43,7 +43,7 @@ export default function Post({post}: PostProps) {
 		<article className={styles.post}>
 			<div className={styles.postMetadata}>
         		<User id={post.authorId} />
-				<Timestamp ts={new Date(post.createdAt)} />
+				<Timestamp ts={new Date(post.createdAt * 1000)} />
 			</div>
         	<p className={styles.postBody}>{post.body}</p>
 		</article>

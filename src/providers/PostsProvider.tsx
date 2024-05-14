@@ -1,6 +1,8 @@
 import {ReactNode, createContext, useState} from 'react'
 import { Post, getPosts } from '../models/posts'
 import { useAuth } from '../hooks'
+import uniqBy from '../utils/uniqBy';
+import sortBy from '../utils/sortBy';
 
 interface PostsProviderProps {
 	children: ReactNode;
@@ -29,7 +31,13 @@ export default function PostsProvider({children}: PostsProviderProps) {
 
 		setPostsByRoom((prevVal) => ({
 			...prevVal,
-			[roomId]: [...fetchedPosts, ...prevVal[roomId] || []],
+			[roomId]: sortBy(
+				uniqBy(
+					[...fetchedPosts, ...prevVal[roomId] || []],
+					(p: Post) => p.id
+				),
+				(p: Post) => p.createdAt
+			),
 		}))
 		setIsLoading(false)
 	}

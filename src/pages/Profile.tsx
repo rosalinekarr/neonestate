@@ -7,11 +7,12 @@ import styles from './Profile.module.css'
 import { Button, IconButton, InputField, Loading } from '../components'
 
 interface ProfileFormProps {
-	onClose: () => void;
-	user: User | null;
+	onClose?: () => void;
+	onSubmit?: () => void;
+	user?: User | null;
 }
 
-function ProfileForm({onClose, user}: ProfileFormProps) {
+export function ProfileForm({onClose, onSubmit, user}: ProfileFormProps) {
 	const auth = useAuth()
 	// const [avatarUrl, setAvatarUrl] = useState<string>(user.avatarUrl || '')
 	const [username, setUsername] = useState<string>(user?.username || '')
@@ -31,7 +32,7 @@ function ProfileForm({onClose, user}: ProfileFormProps) {
 		}
 		setIsLoading(false)
 
-		onClose()
+		onSubmit && onSubmit()
 	}
 
 	if (isLoading) return <Loading />
@@ -53,7 +54,7 @@ function ProfileForm({onClose, user}: ProfileFormProps) {
 				value={username}
 			/>
 			<IconButton icon={CheckIcon} type='submit' />
-			{user && <IconButton icon={CloseIcon} onClick={() => onClose} />}
+			{onClose && <IconButton icon={CloseIcon} onClick={() => onClose()} />}
 		</form>
 	)
 }
@@ -93,6 +94,7 @@ export default function Profile() {
 			{isEditing ?
 				<ProfileForm
 					onClose={() => setIsEditing(false)}
+					onSubmit={() => setIsEditing(false)}
 					user={currentUser}
 				/>
 				:

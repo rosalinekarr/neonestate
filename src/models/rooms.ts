@@ -6,7 +6,8 @@ export interface Room {
 }
 
 export async function getRoom(auth: string, id: string): Promise<Room | null> {
-	const response = await fetch(`/api/rooms/${encodeURIComponent(id)}`, {
+	const url = new URL(`/api/rooms/${encodeURIComponent(id)}`, import.meta.env.VITE_API_BASE_URL)
+	const response = await fetch(url, {
 		headers: new Headers({
 			Authorization: `Bearer ${auth}`,
 		}),
@@ -16,7 +17,9 @@ export async function getRoom(auth: string, id: string): Promise<Room | null> {
 }
 
 export async function searchRooms(auth: string, query: string): Promise<Room[]> {
-	const response = await fetch(`/api/rooms?name=${encodeURIComponent(query)}`, {
+	const url = new URL('/api/rooms', import.meta.env.VITE_API_BASE_URL)
+	if (query) url.searchParams.set('name', encodeURIComponent(query))
+	const response = await fetch(url, {
 		headers: new Headers({
 			Authorization: `Bearer ${auth}`,
 		}),
@@ -25,7 +28,8 @@ export async function searchRooms(auth: string, query: string): Promise<Room[]> 
 }
 
 export async function createRoom(auth: string, room: Omit<Room, 'id' | 'createdAt'>): Promise<Room> {
-	const response = await fetch('/api/rooms', {
+	const url = new URL('/api/rooms', import.meta.env.VITE_API_BASE_URL)
+	const response = await fetch(url, {
 		body: JSON.stringify(room),
 		headers: new Headers({
 			Authorization: `Bearer ${auth}`,

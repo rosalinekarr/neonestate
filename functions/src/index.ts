@@ -5,7 +5,9 @@ import { CollectionReference, DocumentData, Query, Timestamp, getFirestore } fro
 import * as logger from 'firebase-functions/logger'
 import {onRequest} from 'firebase-functions/v2/https'
 
-admin.initializeApp()
+admin.initializeApp({
+	projectId: 'neon-estate',
+})
 
 const app = express()
 
@@ -24,12 +26,12 @@ app.get('/api/posts', async (request, response) => {
 
 	const db = getFirestore()
 	let query: CollectionReference<DocumentData> | Query<DocumentData> = db.collection('posts')
-	if (roomId) query = query.where('roomId', '==', roomId)
 	if (createdBefore) query = query.where('createdAt', '<', new Timestamp(createdBefore, 0))
+	if (roomId) query = query.where('roomId', '==', roomId)
 	query = query.orderBy('createdAt', 'asc').limit(25)
 	const querySnapshot = await query.get()
 
-	logger.info('Rooms queried', {name})
+	logger.info('Rooms queried', {createdBefore, roomId})
 	response.json(querySnapshot.docs.map((doc) => {
 		const {authorId, body, createdAt} = doc.data()
 		return {
@@ -191,8 +193,8 @@ app.get('/api/profile', async (request, response) => {
 	const docSnapshot = await db.doc(`users/${uid}`).get()
 
 	if (!docSnapshot.exists) {
-		logger.info('User profile does not exist yet')
-		response.status(200).json({error: 'User not found'})
+		logger.info('User profile does not exist yet', {uid})
+		response.status(404).json({error: 'User not found'})
 		return
 	}
 
@@ -206,6 +208,7 @@ app.get('/api/profile', async (request, response) => {
 })
 
 app.post('/api/users', async (request, response) => {
+	const uid = response.locals.uid
 	const username = request.body?.username
 
 	if (typeof username !== 'string' || !username.match(/^[\p{L}\p{N}\p{P}\p{S}]+$/u)) {
@@ -223,11 +226,11 @@ app.post('/api/users', async (request, response) => {
 		return
 	}
 
-	const docRef = await db.collection('users').add({
+	await db.doc(`users/${uid}`).set({
 		createdAt: Timestamp.now(),
 		username,
 	})
-	const doc = await docRef.get()
+	const doc = await db.doc(`users/${uid}`).get()
 
 	logger.info('New user registered', {username})
 	const data = doc.data()

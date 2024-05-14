@@ -5,7 +5,8 @@ export interface User {
 }
 
 export async function getProfile(auth: string): Promise<User | null> {
-	const response = await fetch('/api/profile', {
+	const url = new URL('/api/profile', import.meta.env.VITE_API_BASE_URL)
+	const response = await fetch(url, {
 		headers: new Headers({
 			Authorization: `Bearer ${auth}`,
 		}),
@@ -15,7 +16,8 @@ export async function getProfile(auth: string): Promise<User | null> {
 }
 
 export async function getUser(auth: string, id: string): Promise<User | null> {
-	const response = await fetch(`/api/users/${encodeURIComponent(id)}`, {
+	const url = new URL(`/api/users/${encodeURIComponent(id)}`, import.meta.env.VITE_API_BASE_URL)
+	const response = await fetch(url, {
 		headers: new Headers({
 			Authorization: `Bearer ${auth}`,
 		}),
@@ -24,7 +26,8 @@ export async function getUser(auth: string, id: string): Promise<User | null> {
 }
 
 export async function createUser(auth: string, user: Omit<User, 'id' | 'createdAt'>): Promise<User> {
-	const response = await fetch('/api/users', {
+	const url = new URL('/api/users', import.meta.env.VITE_API_BASE_URL)
+	const response = await fetch(url, {
 		body: JSON.stringify(user),
 		headers: new Headers({
 			Authorization: `Bearer ${auth}`,
@@ -36,7 +39,8 @@ export async function createUser(auth: string, user: Omit<User, 'id' | 'createdA
 }
 
 export async function updateUser(auth: string, id: string, user: Partial<Omit<User, 'id' | 'createdAt'>>): Promise<User> {
-	const response = await fetch(`/api/users/${encodeURIComponent(id)}`, {
+	const url = new URL(`/api/users/${encodeURIComponent(id)}`, import.meta.env.VITE_API_BASE_URL)
+	const response = await fetch(url, {
 		body: JSON.stringify(user),
 		headers: new Headers({
 			Authorization: `Bearer ${auth}`,

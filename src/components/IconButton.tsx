@@ -6,6 +6,7 @@ interface IconButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLBut
 }
 
 export default function IconButton({icon: Icon, ...props}: IconButtonProps) {
+	delete props.ref
 	return (
 		<button className={styles.iconButton} {...props}>
 			<Icon />

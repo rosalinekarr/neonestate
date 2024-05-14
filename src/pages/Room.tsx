@@ -86,7 +86,7 @@ function Posts({room}: PostsProps) {
 		<div className={styles.room} ref={roomRef} onScroll={handleScroll}>
 			<div className={styles.roomHeader} ref={roomHeaderRef}>
 				<h2>{room.name}</h2>
-				<p className={styles.roomCreatedAt}>{`Created ${formatAgo(new Date(room.createdAt))}`}</p>
+				<p className={styles.roomCreatedAt}>{`Created ${formatAgo(new Date(room.createdAt * 1000))}`}</p>
 				{room.description && <p>{room.description}</p>}
 			</div>
 			<div className={styles.posts}>
