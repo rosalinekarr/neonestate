@@ -1,6 +1,5 @@
 import { FirebaseApp } from 'firebase/app'
 import {
-	DocumentSnapshot,
 	QuerySnapshot,
 	Timestamp,
 	collection,
@@ -20,40 +19,6 @@ export interface Post {
 	authorId: string;
 }
 
-export function listenForPostsInRoom(app: FirebaseApp, roomId: string, callback: (post: Post) => void) {
-	const db = getFirestore(app)
-	const q = query(
-		collection(db, 'posts'),
-		where('roomId', '==', roomId),
-		where('createdAt', '>', Timestamp.now()),
-	)
-	return onSnapshot(q, (querySnapshot: QuerySnapshot): void => {
-		querySnapshot.forEach((doc: DocumentSnapshot) => {
-			callback({
-				id: doc.id,
-				...doc.data(),
-			} as Post)
-		})
-	})
-}
-
-export function listenForPostsByAuthor(app: FirebaseApp, authorId: string, callback: (post: Post) => void) {
-	const db = getFirestore(app)
-	const q = query(
-		collection(db, 'posts'),
-		where('authorId', '==', authorId),
-		where('createdAt', '>', Timestamp.now()),
-	)
-	return onSnapshot(q, (querySnapshot: QuerySnapshot): void => {
-		querySnapshot.forEach((doc: DocumentSnapshot) => {
-			callback({
-				id: doc.id,
-				...doc.data(),
-			} as Post)
-		})
-	})
-}
-
 export interface GetPostsOpts {
 	authorId?: string;
 	createdBefore?: number;
@@ -71,6 +36,25 @@ export async function getPosts(auth: string, {authorId, createdBefore, roomId}: 
 		}),
 	})
 	return response.json() as Promise<Post[]>
+}
+
+export interface ListenPostsOpts {
+	createdAfter?: number;
+	roomIds?: string[];
+}
+
+export function listenForNewPosts(app: FirebaseApp, roomIds: string[], callback: (p: Post) => void): () => void {
+	const db = getFirestore(app)
+	const postsQuery = query(
+		collection(db, 'posts'),
+		where('createdAt', '>', Timestamp.now()),
+		where('roomId', 'in', roomIds),
+	)
+	return onSnapshot(postsQuery, (qSnapshot: QuerySnapshot) => {
+		qSnapshot.docs.forEach((doc) => {
+			callback(doc.data() as Post)
+		})
+	})
 }
 
 export async function createPost(auth: string, post: Omit<Post, 'id' | 'createdAt'>): Promise<Post> {

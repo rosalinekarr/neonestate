@@ -190,6 +190,11 @@ app.get('/api/users', async (request, response) => {
 app.get('/api/profile', async (request, response) => {
 	const db = getFirestore()
 	const uid = response.locals.uid
+
+	response.set({
+		'Cache-Control': 'no-cache',
+	})
+
 	const docSnapshot = await db.doc(`users/${uid}`).get()
 
 	if (!docSnapshot.exists) {

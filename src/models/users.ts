@@ -1,3 +1,6 @@
+import { FirebaseApp } from 'firebase/app'
+import { QuerySnapshot, collection, getFirestore, onSnapshot, query, where } from 'firebase/firestore'
+
 export interface User {
 	id: string;
 	username: string;
@@ -23,6 +26,17 @@ export async function getUser(auth: string, id: string): Promise<User | null> {
 		}),
 	})
 	return response.json() as Promise<User>
+}
+
+export function listenForUserChanges(app: FirebaseApp, ids: string[], callback: (u: User) => void): () => void {
+	if (ids.length === 0) return () => {}
+	const db = getFirestore(app)
+	const usersQuery = query(collection(db, 'users'), where('id', 'in', ids))
+	return onSnapshot(usersQuery, (qSnapshot: QuerySnapshot) => {
+		qSnapshot.docs.forEach((doc) => {
+			callback(doc.data() as User)
+		})
+	})
 }
 
 export async function createUser(auth: string, user: Omit<User, 'id' | 'createdAt'>): Promise<User> {

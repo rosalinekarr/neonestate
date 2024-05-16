@@ -1,8 +1,8 @@
 import {ReactNode, createContext, useEffect, useState} from 'react'
-import {useAuth} from '../hooks'
-import { User, getProfile, getUser, updateUser } from '../models/users'
+import {useAuth, useFirebaseApp} from '../hooks'
+import { User, getProfile, getUser, listenForUserChanges, updateUser } from '../models/users'
 import {CreateAccount, Profile} from '../pages'
-import { Loading } from '../components';
+import { Loading } from '../components'
 
 interface UserProviderProps {
 	children: ReactNode;
@@ -17,6 +17,7 @@ interface UserContext {
 export const UsersContext = createContext<UserContext | null>(null)
 
 export default function UsersProvider({children}: UserProviderProps) {
+	const app = useFirebaseApp()
 	const auth = useAuth()
 	const [users, setUsers] = useState<Record<string, User>>({})
 	const [currentUser, setCurrentUser] = useState<User | null>(null)
@@ -57,6 +58,17 @@ export default function UsersProvider({children}: UserProviderProps) {
 
 		return user
 	}
+
+	useEffect(() => {
+		const unsubscribe = listenForUserChanges(app, Object.keys(users), (user: User) => {
+			setUsers((prevUsers) => ({
+				...prevUsers,
+				[user.id]: user,
+			}))
+		})
+
+		return () => unsubscribe()
+	}, [users])
 
 	useEffect(() => {
 		loadCurrentUser()
