@@ -70,17 +70,27 @@ app.post('/api/posts', async (request, response) => {
 
 app.get('/api/rooms', async (request, response) => {
 	const name = request.query.name
+	const sort = request.query.sort
 
-	if (typeof name !== 'string' || !name.match(/^[\p{L}\p{N}\p{P}\p{S}]+$/u)) {
+	if (name && (typeof name !== 'string' || !name.match(/^[\p{L}\p{N}\p{P}\p{S}]+$/u))) {
+		logger.warn('Invalid query', {query: request.query})
+		response.status(422).json({error: 'Invalid query'})
+		return
+	}
+
+	if (sort && sort !== 'member_count_desc') {
 		logger.warn('Invalid query', {query: request.query})
 		response.status(422).json({error: 'Invalid query'})
 		return
 	}
 
 	const db = getFirestore()
-	const querySnapshot = await db.collection('rooms').where('name', '==', name).get()
+	let query: Query<DocumentData> = db.collection('rooms')
+	if (name) query = query.where('name', '==', name)
+	if (sort === 'member_count_desc') query = query.orderBy('memberCount', 'desc')
+	const querySnapshot = await query.get()
 
-	logger.info('Rooms queried', {name})
+	logger.info('Rooms queried', {name, sort})
 	response.json(querySnapshot.docs.map((doc) => {
 		const {createdAt, name} = doc.data()
 		return {
@@ -131,6 +141,7 @@ app.post('/api/rooms', async (request, response) => {
 
 	const docRef = await db.collection('rooms').add({
 		createdAt: Timestamp.now(),
+		memberCount: 1,
 		name: roomName,
 	})
 	const doc = await docRef.get()

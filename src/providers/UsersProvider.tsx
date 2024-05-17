@@ -79,8 +79,6 @@ export default function UsersProvider({children}: UserProviderProps) {
 
 	if (isLoading) return <Loading />
 
-	console.log('currentUser', currentUser)
-
 	if (!currentUser) return <CreateAccount onSubmit={createProfile} />
 
 	return (

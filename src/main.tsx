@@ -1,10 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import {Navigate, RouterProvider, createBrowserRouter} from 'react-router-dom'
+import {RouterProvider, createBrowserRouter} from 'react-router-dom'
 import {Layout} from './components'
 import {About, Room, PrivacyPolicy, Profile} from './pages'
 import {FirebaseProvider} from './providers'
 import './index.css'
+import Welcome from './pages/Welcome'
 
 const rootElem = document.getElementById('root')
 
@@ -18,7 +19,7 @@ if (rootElem)
 						element: <Layout />,
 						children: [
 							{
-								element: <Navigate to="/rooms/welcome" replace={true} />,
+								element: <Welcome />,
 								index: true,
 							},
 							{

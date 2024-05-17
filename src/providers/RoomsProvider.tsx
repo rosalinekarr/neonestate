@@ -1,5 +1,5 @@
 import {ReactNode, createContext, useState} from 'react'
-import { Room, createRoom, searchRooms } from '../models/rooms'
+import { Room, createRoom, getRooms } from '../models/rooms'
 import { useAuth } from '../hooks'
 
 interface RoomsProviderProps {
@@ -7,8 +7,11 @@ interface RoomsProviderProps {
 }
 
 interface RoomsContext {
-	openRoom: (name: string) => Promise<Room | null>
+	fetchPopularRooms: () => Promise<void>
+	fetchRoom: (name: string) => Promise<void>
+	roomsByName: Record<string, Room>
 	rooms: Room[]
+	startRoom: (room: Omit<Room, 'id' | 'createdAt' | 'memberCount'>) => Promise<void>
 }
 
 export const RoomsContext = createContext<RoomsContext | null>(null)
@@ -18,34 +21,53 @@ export default function RoomsProvider({children}: RoomsProviderProps) {
 	const [rooms, setRooms] = useState<Record<string, Room>>({})
 	const [idsByName, setIdsByName] = useState<Record<string, string>>({})
 
-	async function openRoom(name: string): Promise<Room | null> {
-		if (idsByName[name] && rooms[idsByName[name]]) return rooms[idsByName[name]]
+	async function fetchPopularRooms() {
+		const newRooms = await getRooms(auth, {sort: 'member_count_desc'})
+		setRooms((prevRooms): Record<string, Room> => ({
+			...prevRooms,
+			...Object.fromEntries(newRooms.map((room) => [room.id, room])),
+		}))
+	}
 
-		let room = (await searchRooms(auth, name)).find((r) => r.name === name) || null
+	async function fetchRoom(name: string): Promise<void> {
+		let room = (await getRooms(auth, {name})).find((r) => r.name === name)
 
-		if (!room) {
-			room = await createRoom(auth, {
-				name,
-				description: '',
-			})
+		if (room) {
+			setRooms((prevRooms) => ({
+				...prevRooms,
+				[room.id]: room,
+			}))
+			setIdsByName((prevIdsByName) => ({
+				...prevIdsByName,
+				[room.name]: room.id,
+			}))
 		}
+	}
+
+	async function startRoom(roomData: Omit<Room, 'id' | 'createdAt' | 'memberCount'>): Promise<void> {
+		const newRoom: Room = await createRoom(auth, roomData)
 
 		setRooms((prevRooms) => ({
 			...prevRooms,
-			[room.id]: room,
+			[newRoom.id]: newRoom,
 		}))
 		setIdsByName((prevIdsByName) => ({
 			...prevIdsByName,
-			[room.name]: room.id,
+			[newRoom.name]: newRoom.id,
 		}))
-
-		return room
 	}
 
 	return (
 		<RoomsContext.Provider value={{
-			openRoom,
+			fetchPopularRooms,
+			fetchRoom,
+			roomsByName: Object.fromEntries(
+				Object.entries(idsByName).map(
+					([name, id]: [string, string]) => [name, rooms[id]],
+				),
+			),
 			rooms: Object.values(rooms),
+			startRoom,
 		}}>{children}</RoomsContext.Provider>
 	)
 }

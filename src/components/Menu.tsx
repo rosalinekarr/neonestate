@@ -1,21 +1,21 @@
 import { ChangeEvent, FormEvent, useState } from 'react'
-import { NavLink } from 'react-router-dom'
-import { useOpenRoom, useRooms } from '../hooks'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useRooms } from '../hooks'
 import { Room } from '../models/rooms'
 import CreateIcon from './icons/create'
 import styles from './Menu.module.css'
 
 function OpenChannelForm() {
-	const openRoom = useOpenRoom()
 	const [name, setName] = useState<string>('')
+	const navigate = useNavigate()
 
 	function handleChange(e: ChangeEvent<HTMLInputElement>) {
-		setName(e.target.value.replaceAll(/[^\w-_]]/g, '_'))
+		setName(e.target.value.replaceAll(/[^\w-_]/g, '_'))
 	}
 
 	function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
-		openRoom(name)
+		navigate(`/rooms/${name}`)
 		setName('')
 	}
 

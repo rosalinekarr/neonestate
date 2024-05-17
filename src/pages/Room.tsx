@@ -1,14 +1,45 @@
 import {ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState} from 'react'
-import {Loading, Post} from '../components'
+import {Button, InputField, Loading, Post} from '../components'
 import {Room as RoomModel} from '../models/rooms'
 import {createPost} from '../models/posts'
-import { useAuth, useOpenRoom, usePostsForRoom } from '../hooks'
-import { useParams } from 'react-router-dom'
+import { useAuth, useFetchRoom, usePostsForRoom, useRoom, useStartRoom } from '../hooks'
+import { Navigate, useParams } from 'react-router-dom'
 import { formatAgo } from '../utils'
 import { CreateIcon } from '../components/icons'
 import styles from './Room.module.css'
 
 const SCROLL_TOP_THRESHOLD = 10
+
+interface NewRoomFormProps {
+	name: string;
+}
+
+function NewRoomForm({name}: NewRoomFormProps) {
+	const startRoom = useStartRoom()
+	const [description, setDescription] = useState<string>('')
+
+	async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+		e.preventDefault()
+		startRoom({
+			name,
+			description,
+		})
+	}
+
+	return (
+		<div className={styles.room}>
+			<form onSubmit={handleSubmit}>
+				<InputField
+					name='description'
+					onChange={(newDescription) => setDescription(newDescription)}
+					placeholder={`A community all about ${name}. Blah blah blah. More information about our community for ${name}.`}
+					value={description}
+				/>
+				<Button type='submit'>Create Room</Button>
+			</form>
+		</div>
+	)
+}
 
 interface NewPostFormProps {
 	room: RoomModel;
@@ -96,23 +127,28 @@ function Posts({room}: PostsProps) {
 }
 
 export default function Room() {
-	const openRoom = useOpenRoom()
+	const fetchRoom = useFetchRoom()
 	const {name} = useParams()
-	const [room, setRoom] = useState<RoomModel | null>(null)
+	const room = useRoom(name || '')
+	const [isLoading, setIsLoading] = useState<boolean>(true)
 
 	useEffect(() => {
 		async function loadRoom(name: string) {
-			const loadedRoom = await openRoom(name)
-			if (loadedRoom) setRoom(loadedRoom)
+			await fetchRoom(name)
+			setIsLoading(false)
 		}
 		if (name) loadRoom(name)
 	}, [name])
 
-	if (!room) return (
+	if (!name) return <Navigate to='/' />
+
+	if (isLoading) return (
 		<div className={styles.room}>
 			<Loading />
 		</div>
 	)
+
+	if (!room) return <NewRoomForm name={name} />
 
 	return <Posts room={room} />
 }
