@@ -1,5 +1,7 @@
 import { FirebaseApp } from 'firebase/app'
 import { QuerySnapshot, collection, getFirestore, onSnapshot, query, where } from 'firebase/firestore'
+import { buildRequest } from '../utils'
+import { Auth } from '../hooks/useAuth'
 
 export interface User {
 	id: string;
@@ -7,24 +9,11 @@ export interface User {
 	createdAt: number;
 }
 
-export async function getProfile(auth: string): Promise<User | null> {
-	const url = new URL('/api/profile', import.meta.env.VITE_API_BASE_URL)
-	const response = await fetch(url, {
-		headers: new Headers({
-			Authorization: `Bearer ${auth}`,
-		}),
-	})
+export async function getUser(auth: Auth, id: string): Promise<User | null> {
+	const response = await fetch(
+		await buildRequest(auth, 'GET', `/api/users/${encodeURIComponent(id)}`),
+	)
 	if (response.status === 404) return null
-	return response.json() as Promise<User>
-}
-
-export async function getUser(auth: string, id: string): Promise<User | null> {
-	const url = new URL(`/api/users/${encodeURIComponent(id)}`, import.meta.env.VITE_API_BASE_URL)
-	const response = await fetch(url, {
-		headers: new Headers({
-			Authorization: `Bearer ${auth}`,
-		}),
-	})
 	return response.json() as Promise<User>
 }
 
@@ -33,34 +22,35 @@ export function listenForUserChanges(app: FirebaseApp, ids: string[], callback: 
 	const db = getFirestore(app)
 	const usersQuery = query(collection(db, 'users'), where('id', 'in', ids))
 	return onSnapshot(usersQuery, (qSnapshot: QuerySnapshot) => {
-		qSnapshot.docs.forEach((doc) => {
-			callback(doc.data() as User)
+		qSnapshot.forEach((doc) => {
+			const data = doc.data()
+			callback({
+				id: doc.id,
+				...data,
+				createdAt: data.createdAt.seconds,
+			} as User)
 		})
 	})
 }
 
-export async function createUser(auth: string, user: Omit<User, 'id' | 'createdAt'>): Promise<User> {
-	const url = new URL('/api/users', import.meta.env.VITE_API_BASE_URL)
-	const response = await fetch(url, {
-		body: JSON.stringify(user),
-		headers: new Headers({
-			Authorization: `Bearer ${auth}`,
-			'Content-Type': 'application/json',
-		}),
-		method: 'POST',
-	})
+export async function createUser(auth: Auth, user: Omit<User, 'id' | 'createdAt'>): Promise<User> {
+	const response = await fetch(
+		await buildRequest(auth, 'POST', '/api/users', user),
+	)
+	if (response.status === 422) {
+		const {error: msg} = await response.json()
+		throw new Error(msg)
+	}
 	return response.json() as Promise<User>
 }
 
-export async function updateUser(auth: string, id: string, user: Partial<Omit<User, 'id' | 'createdAt'>>): Promise<User> {
-	const url = new URL(`/api/users/${encodeURIComponent(id)}`, import.meta.env.VITE_API_BASE_URL)
-	const response = await fetch(url, {
-		body: JSON.stringify(user),
-		headers: new Headers({
-			Authorization: `Bearer ${auth}`,
-			'Content-Type': 'application/json',
-		}),
-		method: 'PUT',
-	})
+export async function updateUser(auth: Auth, id: string, user: Partial<Omit<User, 'id' | 'createdAt'>>): Promise<User> {
+	const response = await fetch(
+		await buildRequest(auth, 'POST', `/api/users/${encodeURIComponent(id)}`, user),
+	)
+	if (response.status === 422) {
+		const {error: msg} = await response.json()
+		throw new Error(msg)
+	}
 	return response.json() as Promise<User>
 }

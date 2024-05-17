@@ -28,7 +28,7 @@ app.get('/api/posts', async (request, response) => {
 	let query: CollectionReference<DocumentData> | Query<DocumentData> = db.collection('posts')
 	if (createdBefore) query = query.where('createdAt', '<', new Timestamp(createdBefore, 0))
 	if (roomId) query = query.where('roomId', '==', roomId)
-	query = query.orderBy('createdAt', 'asc').limit(25)
+	query = query.orderBy('createdAt', 'desc').limit(25)
 	const querySnapshot = await query.get()
 
 	logger.info('Rooms queried', {createdBefore, roomId})
@@ -61,7 +61,7 @@ app.post('/api/posts', async (request, response) => {
 	const data = doc.data()
 	response.json({
 		id: doc.id,
-		authorId: data?.authorId,
+		authorId: response.locals.uid,
 		body: data?.body,
 		createdAt: data?.createdAt?.seconds,
 		roomId: data?.roomId,

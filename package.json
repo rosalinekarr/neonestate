@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "deploy": "tsc && vite build --mode \"production\" && firebase deploy",
     "emulator": "tsc && vite build --mode \"development\" && firebase emulators:start",
     "lint": "npm run lint:css && npm run lint:ts",
     "lint:css": "stylelint \"src/**/*.css\"",

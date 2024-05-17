@@ -5,11 +5,12 @@ import {
 	collection,
 	getFirestore,
 	onSnapshot,
+	orderBy,
 	query,
 	where,
 } from 'firebase/firestore'
-
-const MS_PER_S = 1000
+import { buildRequest } from '../utils'
+import { Auth } from '../hooks/useAuth'
 
 export interface Post {
 	id: string;
@@ -25,16 +26,10 @@ export interface GetPostsOpts {
 	roomId?: string;
 }
 
-export async function getPosts(auth: string, {authorId, createdBefore, roomId}: GetPostsOpts): Promise<Post[]> {
-	const url = new URL('/api/posts', import.meta.env.VITE_API_BASE_URL)
-	if (authorId) url.searchParams.set('authorId', encodeURIComponent(authorId))
-	if (createdBefore) url.searchParams.set('createdBefore', (createdBefore / MS_PER_S).toFixed())
-	if (roomId) url.searchParams.set('roomId', encodeURIComponent(roomId))
-	const response = await fetch(url, {
-		headers: new Headers({
-			Authorization: `Bearer ${auth}`,
-		}),
-	})
+export async function getPosts(auth: Auth, queryOpts: GetPostsOpts): Promise<Post[]> {
+	const response = await fetch(
+		await buildRequest(auth, 'GET', '/api/posts', queryOpts),
+	)
 	return response.json() as Promise<Post[]>
 }
 
@@ -49,23 +44,23 @@ export function listenForNewPosts(app: FirebaseApp, roomIds: string[], callback:
 		collection(db, 'posts'),
 		where('createdAt', '>', Timestamp.now()),
 		where('roomId', 'in', roomIds),
+		orderBy('createdAt', 'desc'),
 	)
 	return onSnapshot(postsQuery, (qSnapshot: QuerySnapshot) => {
-		qSnapshot.docs.forEach((doc) => {
-			callback(doc.data() as Post)
+		qSnapshot.forEach((doc) => {
+			const data = doc.data()
+			callback({
+				id: doc.id,
+				...data,
+				createdAt: data.createdAt.seconds,
+			} as Post)
 		})
 	})
 }
 
-export async function createPost(auth: string, post: Omit<Post, 'id' | 'createdAt'>): Promise<Post> {
-	const url = new URL('/api/posts', import.meta.env.VITE_API_BASE_URL)
-	const response = await fetch(url, {
-		body: JSON.stringify(post),
-		headers: new Headers({
-			Authorization: `Bearer ${auth}`,
-			'Content-Type': 'application/json',
-		}),
-		method: 'POST',
-	})
+export async function createPost(auth: Auth, post: Omit<Post, 'id' | 'authorId' | 'createdAt'>): Promise<Post> {
+	const response = await fetch(
+		await buildRequest(auth, 'POST', '/api/posts', post),
+	)
 	return response.json() as Promise<Post>
 }

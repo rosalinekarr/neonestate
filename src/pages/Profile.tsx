@@ -1,38 +1,37 @@
 import { getAuth, signOut } from 'firebase/auth'
 import { FormEvent, useState } from 'react'
-import { useAuth, useCurrentUser, useFirebaseApp } from '../hooks'
-import { User, createUser, updateUser } from '../models/users'
+import { useCurrentUser, useFirebaseApp, useUpdateProfile } from '../hooks'
 import { CheckIcon, CloseIcon } from '../components/icons'
 import styles from './Profile.module.css'
 import { Button, IconButton, InputField, Loading } from '../components'
+import { useNavigate } from 'react-router-dom'
 
 interface ProfileFormProps {
 	onClose?: () => void;
-	onSubmit?: () => void;
-	user?: User | null;
 }
 
-export function ProfileForm({onClose, onSubmit, user}: ProfileFormProps) {
-	const auth = useAuth()
+export function ProfileForm({onClose}: ProfileFormProps) {
+	const user = useCurrentUser()
 	// const [avatarUrl, setAvatarUrl] = useState<string>(user.avatarUrl || '')
 	const [username, setUsername] = useState<string>(user?.username || '')
 	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [error, setError] = useState<string | undefined>(undefined)
+	const updateProfile = useUpdateProfile()
 
 	async function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 		setIsLoading(true)
-		if (user) {
-			await updateUser(auth, user.id, {
+		setError(undefined)
+		try {
+			await updateProfile({
 				username,
 			})
-		} else {
-			await createUser(auth, {
-				username,
-			})
+		} catch (e: any) {
+			setError(e)
 		}
 		setIsLoading(false)
 
-		onSubmit && onSubmit()
+		onClose && onClose()
 	}
 
 	if (isLoading) return <Loading />
@@ -48,6 +47,7 @@ export function ProfileForm({onClose, onSubmit, user}: ProfileFormProps) {
 				onChange={(e) => setAvatarUrl(e.target.value)}
 			/> */}
 			<InputField
+				error={error}
 				name='username'
 				onChange={(newUsername) => setUsername(newUsername)}
 				placeholder='Johnny Mnemonic'
@@ -61,18 +61,22 @@ export function ProfileForm({onClose, onSubmit, user}: ProfileFormProps) {
 
 interface ProfileInfoProps {
 	onEdit: () => void;
-	user: User | null;
 }
 
-function ProfileInfo({onEdit, user}: ProfileInfoProps) {
+function ProfileInfo({onEdit}: ProfileInfoProps) {
+	const user = useCurrentUser()
 	const app = useFirebaseApp()
+	const navigate = useNavigate()
+	const [isSigningOut, setIsSigningOut] = useState<boolean>(false)
 
-	function handleSignOut() {
+	async function handleSignOut() {
+		setIsSigningOut(true)
 		const auth = getAuth(app)
-		signOut(auth)
+		await signOut(auth)
+		navigate('/')
 	}
 
-	if (!user) return <Loading />
+	if (isSigningOut) return <Loading />
 
 	return (
 		<div>
@@ -85,7 +89,6 @@ function ProfileInfo({onEdit, user}: ProfileInfoProps) {
 }
 
 export default function Profile() {
-	const currentUser = useCurrentUser()
 	const [isEditing, setIsEditing] = useState<boolean>(false)
 
 	return (
@@ -94,13 +97,10 @@ export default function Profile() {
 			{isEditing ?
 				<ProfileForm
 					onClose={() => setIsEditing(false)}
-					onSubmit={() => setIsEditing(false)}
-					user={currentUser}
 				/>
 				:
 				<ProfileInfo
 					onEdit={() => setIsEditing(true)}
-					user={currentUser}
 				/>
 			}
 		</div>

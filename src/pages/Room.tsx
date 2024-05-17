@@ -2,7 +2,7 @@ import {ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState} from '
 import {Loading, Post} from '../components'
 import {Room as RoomModel} from '../models/rooms'
 import {createPost} from '../models/posts'
-import { useAuth, useCurrentUser, useOpenRoom, usePostsForRoom } from '../hooks'
+import { useAuth, useOpenRoom, usePostsForRoom } from '../hooks'
 import { useParams } from 'react-router-dom'
 import { formatAgo } from '../utils'
 import { CreateIcon } from '../components/icons'
@@ -16,7 +16,6 @@ interface NewPostFormProps {
 
 function NewPostForm({room}: NewPostFormProps) {
 	const auth = useAuth()
-	const currentUser = useCurrentUser()
 	const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
 	const [body, setBody] = useState<string>('')
 	const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -25,7 +24,6 @@ function NewPostForm({room}: NewPostFormProps) {
 		e.preventDefault()
 		setIsLoading(true)
 		await createPost(auth, {
-			authorId: currentUser.id,
 			body,
 			roomId: room.id,
 		})

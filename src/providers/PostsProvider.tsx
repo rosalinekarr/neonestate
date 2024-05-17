@@ -19,16 +19,17 @@ export const PostsContext = createContext<PostsContext | null>(null)
 export default function PostsProvider({children}: PostsProviderProps) {
 	const app = useFirebaseApp()
 	const auth = useAuth()
+	const [roomIds, setRoomIds] = useState<string[]>([])
 	const [postsByRoom, setPostsByRoom] = useState<Record<string, Post[]>>({})
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const roomIds = Object.keys(postsByRoom)
 
 	async function fetchMorePostsForRoom(roomId: string): Promise<void> {
 		setIsLoading(true)
+		setRoomIds((prevRoomIds) => uniqBy([...prevRoomIds, roomId], (a: string) => a))
 		const endTs = (postsByRoom[roomId] || [])[0]?.createdAt || Date.now()
 		const fetchedPosts = await getPosts(auth, {
 			roomId,
-			createdBefore: endTs,
+			createdBefore: Math.floor(endTs / 1000),
 		})
 
 		setPostsByRoom((prevVal) => ({
@@ -47,17 +48,19 @@ export default function PostsProvider({children}: PostsProviderProps) {
 	useEffect(() => {
 		if (roomIds.length === 0) return
 
-		const unsubscribe = listenForNewPosts(app, roomIds, (post: Post) => {
-			setPostsByRoom((prevVal) => ({
-				...prevVal,
-				[post.roomId]: sortBy(
-					uniqBy(
-						[...prevVal[post.roomId] || [], post],
-						(p: Post) => p.id,
+		const unsubscribe = listenForNewPosts(app, roomIds, (newPost: Post) => {
+			setPostsByRoom((prevVal) => {
+				return {
+					...prevVal,
+					[newPost.roomId]: sortBy(
+						uniqBy(
+							[...prevVal[newPost.roomId] || [], newPost],
+							(p: Post) => p.id,
+						),
+						(p: Post) => p.createdAt,
 					),
-					(p: Post) => p.createdAt,
-				),
-			}))
+				}
+			})
 		})
 
 		return () => unsubscribe()

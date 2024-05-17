@@ -37,15 +37,12 @@ function PhoneNumberForm({onSubmit}: PhoneNumberFormProps) {
 		<form onSubmit={handleSubmit}>
 			<InputField
 				type='tel'
-				className={isValid ? undefined : 'error'}
+				error={isValid ? undefined : 'Please use a valid mobile phone number'}
 				name='phone-number'
 				placeholder='(555) 555-5555'
 				onChange={handleChange}
 				value={rawPhoneNumber}
 			/>
-			{!isValid &&
-				<p className='error-text'>Please use a valid mobile phone number</p>
-			}
 			<IconButton type='submit' icon={CheckIcon} id='sign-in' />
 		</form>
 	)
@@ -80,15 +77,12 @@ function ConfirmationCodeForm({onSubmit}: ConfirmationCodeFormProps) {
 	return (
 		<form onSubmit={handleSubmit}>
 			<InputField
-				className={isValid ? undefined : 'error'}
+				error={isValid ? undefined : 'Incorrect confirmation code'}
 				name='confirmation-code'
 				placeholder='123456'
 				onChange={handleChange}
 				value={confirmationCode}
 			/>
-			{!isValid &&
-				<p className='error-text'>Incorrect confirmation code</p>
-			}
 			<IconButton type='submit' icon={CheckIcon} />
 		</form>
 	)
