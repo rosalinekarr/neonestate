@@ -10,12 +10,13 @@
 }
   
 .post-metadata {
+  align-items: center;
   display: flex;
-  margin: 0;
+  margin: 0.5rem 0;
 }
   
 .post-created-by {
-  margin: 0.5rem 0 0.5rem 0.5rem;
+  margin-left: 0.5rem;
   color: rgb(0 0 0 / 50%);
 }
 

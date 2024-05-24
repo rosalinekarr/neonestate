@@ -1,6 +1,6 @@
 import { getAuth, signOut } from 'firebase/auth'
-import { FormEvent, useState } from 'react'
-import { useCurrentUser, useFirebaseApp, useUpdateProfile } from '../hooks'
+import { ChangeEvent, FormEvent, useState } from 'react'
+import { useCurrentUser, useFirebaseApp, useImage, useUpdateProfile, useUploadAvatar } from '../hooks'
 import { CheckIcon, CloseIcon } from '../components/icons'
 import styles from './Profile.module.css'
 import { Button, IconButton, InputField, Loading } from '../components'
@@ -12,11 +12,18 @@ interface ProfileFormProps {
 
 export function ProfileForm({onClose}: ProfileFormProps) {
 	const user = useCurrentUser()
-	// const [avatarUrl, setAvatarUrl] = useState<string>(user.avatarUrl || '')
 	const [username, setUsername] = useState<string>(user?.username || '')
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [error, setError] = useState<string | undefined>(undefined)
+	const uploadAvatar = useUploadAvatar()
 	const updateProfile = useUpdateProfile()
+
+	async function handleUploadAvatar(e: ChangeEvent<HTMLInputElement>) {
+		if (e.target.files?.length !== 1) return
+		const file = e.target.files[0] || null
+
+		await uploadAvatar(file)
+	}
 
 	async function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
@@ -38,14 +45,14 @@ export function ProfileForm({onClose}: ProfileFormProps) {
 
 	return (
 		<form onSubmit={handleSubmit}>
-			{/* <label htmlFor='avatar'>Avatar</label>
+			<label htmlFor='avatar'>Avatar</label>
 			<input
+				accept='image/jpeg,image/png,image/webp'
 				type='file'
 				id='avatar'
 				name='avatar'
-				value={avatarUrl}
-				onChange={(e) => setAvatarUrl(e.target.value)}
-			/> */}
+				onChange={handleUploadAvatar}
+			/>
 			<InputField
 				error={error}
 				name='username'
@@ -66,6 +73,7 @@ interface ProfileInfoProps {
 export function ProfileInfo({onEdit}: ProfileInfoProps) {
 	const user = useCurrentUser()
 	const app = useFirebaseApp()
+	const avatarUrl = useImage(`avatar/${user.id}`)
 	const navigate = useNavigate()
 	const [isSigningOut, setIsSigningOut] = useState<boolean>(false)
 
@@ -80,7 +88,7 @@ export function ProfileInfo({onEdit}: ProfileInfoProps) {
 
 	return (
 		<div>
-			{/* <img src={user.avatarUrl} alt='Profile Picture' /> */}
+			{avatarUrl && <img src={avatarUrl} className={styles.avatar} />}
 			<p>{user?.username || ''}</p>
 			<Button onClick={() => onEdit()}>Edit</Button>
 			<Button onClick={() => handleSignOut()}>Sign out</Button>

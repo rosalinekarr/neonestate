@@ -24,20 +24,15 @@
 
 @media (prefers-color-scheme: dark) {
     .icon-button {
-        background-color: black;
-        color: white;
-    }
-      
-    .icon-buttonfile button {
         background-color: rgb(255 255 255 / 20%);
         color: white;
     }
     
-    .icon-button button:hover {
+    .icon-button:hover {
         background-color: rgb(255 255 255 / 10%);
     }
     
-    .icon-button button:active {
+    .icon-button:active {
         background-color: rgb(255 255 255 / 0%);
     }
     

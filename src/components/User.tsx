@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useFetchUser } from '../hooks'
+import { useFetchUser, useImage } from '../hooks'
 import type {User} from '../models/users'
 import styles from './User.module.css'
 import Loading from './Loading'
@@ -10,6 +10,7 @@ interface UserProps {
 
 export default function User({id}: UserProps) {
 	const fetchUser = useFetchUser()
+	const avatarUrl = useImage(`avatar/${id}`)
 	const [user, setUser] = useState<User | null>(null)
 
 	useEffect(() => {
@@ -22,9 +23,12 @@ export default function User({id}: UserProps) {
 		loadUser()
 	}, [])
 
-	if (!user) return <Loading />
+	if (!user || !avatarUrl) return <Loading />
 
 	return (
-		<p className={styles.user}>{user.username}</p>
+		<div className={styles.user}>
+			<img src={avatarUrl} alt={`Avatar for ${user.username}`} className={styles.avatar} />
+			<p className={styles.username}>{user.username}</p>
+		</div>
 	)
 }

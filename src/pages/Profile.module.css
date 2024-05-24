@@ -15,6 +15,14 @@
     flex-wrap: wrap;
 }
 
+.avatar {
+  width: 9rem;
+  height: 9rem;
+  border-radius: 3rem;
+  object-fit: cover;
+  overflow: hidden;
+}
+
 @media (prefers-color-scheme: dark) {
   .profile {
     background-color: rgb(0 0 0 / 60%);

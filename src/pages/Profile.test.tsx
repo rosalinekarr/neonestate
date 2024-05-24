@@ -3,18 +3,23 @@ import {screen} from '@testing-library/dom'
 import {describe, expect, it, vi} from 'vitest'
 import {ProfileForm} from './Profile'
 import { UsersContext } from '../providers/UsersProvider'
+import { ImagesContext } from '../providers/ImagesProvider'
 
 describe('ProfileForm', () => {
 	it('allows updating username with a valid new one', async () => {
 		const {promise: updateProfilePromise, resolve} = Promise.withResolvers()
-		const updateProfile = vi.fn(() => updateProfilePromise)
 		const handleClose = vi.fn()
+		const updateProfile = vi.fn(() => updateProfilePromise)
+		const uploadAvatar = vi.fn()
 
 		render(<ProfileForm onClose={handleClose}/>, {
 			wrapper: ({children}) =>
-				<UsersContext.Provider value={{
-					updateProfile,
-				} as unknown as UsersContext}>{children}</UsersContext.Provider>,
+				<ImagesContext.Provider value={{uploadAvatar} as unknown as ImagesContext}>
+					<UsersContext.Provider value={{updateProfile} as unknown as UsersContext}>
+						{children}
+					</UsersContext.Provider>
+				</ImagesContext.Provider>
+			,
 
 		})
 
@@ -39,14 +44,18 @@ describe('ProfileForm', () => {
 
 	it('does not allows updating username with an existing one', async () => {
 		const {promise: updateProfilePromise, reject} = Promise.withResolvers()
-		const updateProfile = vi.fn(() => updateProfilePromise)
 		const handleClose = vi.fn()
+		const updateProfile = vi.fn(() => updateProfilePromise)
+		const uploadAvatar = vi.fn()
 
 		render(<ProfileForm onClose={handleClose}/>, {
 			wrapper: ({children}) =>
-				<UsersContext.Provider value={{
-					updateProfile,
-				} as unknown as UsersContext}>{children}</UsersContext.Provider>,
+				<ImagesContext.Provider value={{uploadAvatar} as unknown as ImagesContext}>
+					<UsersContext.Provider value={{updateProfile} as unknown as UsersContext}>
+						{children}
+					</UsersContext.Provider>
+				</ImagesContext.Provider>
+			,
 
 		})
 
@@ -73,11 +82,17 @@ describe('ProfileForm', () => {
 
 	it('calls onClose when cancelled', async () => {
 		const handleClose = vi.fn()
+		const updateProfile = vi.fn()
+		const uploadAvatar = vi.fn()
 
 		render(<ProfileForm onClose={handleClose}/>, {
 			wrapper: ({children}) =>
-				<UsersContext.Provider value={{updateProfile: vi.fn()} as unknown as UsersContext}>{children}</UsersContext.Provider>,
-
+				<ImagesContext.Provider value={{uploadAvatar} as unknown as ImagesContext}>
+					<UsersContext.Provider value={{updateProfile} as unknown as UsersContext}>
+						{children}
+					</UsersContext.Provider>
+				</ImagesContext.Provider>
+			,
 		})
 
 		fireEvent.click(screen.getByRole('button', {name: 'Close'}))

@@ -27,6 +27,7 @@ export default function FirebaseProvider({children}: FirebaseProviderProps) {
 			authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
 			measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 			projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+			storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
 		}, 'neon-estate')
 
 		if (import.meta.env.MODE === 'development') {
@@ -36,7 +37,7 @@ export default function FirebaseProvider({children}: FirebaseProviderProps) {
 			const storage = getStorage(newApp)
 			connectAuthEmulator(auth, 'http://127.0.0.1:9099')
 			connectFirestoreEmulator(db, 'http://127.0.0.1', 8080)
-			connectStorageEmulator(storage, 'http://127.0.0.1', 9199)
+			connectStorageEmulator(storage, '127.0.0.1', 9199)
 			connectFunctionsEmulator(functions, 'http://127.0.0.1', 5001)
 			window.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.VITE_DEBUG_APP_CHECK_TOKEN
 		}
