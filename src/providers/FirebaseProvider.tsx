@@ -21,6 +21,8 @@ export default function FirebaseProvider({children}: FirebaseProviderProps) {
 	const [app, setApp] = useState<FirebaseApp | undefined>()
 
 	useEffect(() => {
+		if (app) return
+
 		const newApp = initializeApp({
 			apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
 			appId: import.meta.env.VITE_FIREBASE_APP_ID,

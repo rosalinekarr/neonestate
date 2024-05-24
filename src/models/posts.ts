@@ -12,9 +12,25 @@ import {
 import { buildRequest } from '../utils'
 import { Auth } from '../hooks/useAuth'
 
+interface BasePostSection {
+	id: string
+}
+
+export interface PostImageSection extends BasePostSection {
+	type: 'image'
+	path: string
+}
+
+export interface PostTextSection extends BasePostSection {
+	type: 'text'
+	body: string
+}
+
+export type PostSection = PostImageSection | PostTextSection
+
 export interface Post {
 	id: string;
-	body: string;
+	sections: PostSection[];
 	roomId: string;
 	createdAt: number;
 	authorId: string;

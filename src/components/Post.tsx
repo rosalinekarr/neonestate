@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react'
 import {User} from '../components'
-import { Post as PostModel } from '../models/posts'
+import {
+	Post as PostModel,
+	PostSection as PostSectionModel,
+	PostImageSection as PostImageSectionModel,
+	PostTextSection as PostTextSectionModel,
+} from '../models/posts'
 import {formatAgo, msUntilNextAgoFormatChange} from '../utils'
 import styles from './Post.module.css'
+import { useImage } from '../hooks'
 
 interface TimestampProps {
 	ts: Date;
@@ -34,6 +40,33 @@ function Timestamp({ts}: TimestampProps) {
 	)
 }
 
+interface PostTextSectionProps {
+	section: PostTextSectionModel
+}
+
+function PostTextSection({section}: PostTextSectionProps) {
+	return <p className={styles.postBody} dir='auto'>{section.body}</p>
+}
+
+interface PostImageSectionProps {
+	section: PostImageSectionModel
+}
+
+function PostImageSection({section}: PostImageSectionProps) {
+	const imageUrl = useImage(section.path)
+	return <img src={imageUrl} />
+}
+
+interface PostSectionProps {
+	section: PostSectionModel
+}
+
+function PostSection({section}: PostSectionProps) {
+	if (section.type === 'text') return <PostTextSection section={section} />
+	if (section.type === 'image') return <PostImageSection section={section} />
+	return <p>Unsupported post section type.</p>
+}
+
 interface PostProps {
 	post: PostModel;
 }
@@ -45,7 +78,11 @@ export default function Post({post}: PostProps) {
         		<User id={post.authorId} />
 				<Timestamp ts={new Date(post.createdAt * 1000)} />
 			</div>
-        	<p className={styles.postBody}>{post.body}</p>
+			<div className={styles.content}>
+        		{post.sections.map((s) =>
+					<PostSection key={s.id} section={s} />,
+				)}
+			</div>
 		</article>
 	)
 }

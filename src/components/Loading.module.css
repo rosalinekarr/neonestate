@@ -19,14 +19,31 @@
     appearance: none;
     background: transparent;
     border-color: rgb(255 255 255 / 50%);
-    border-width: 2.5rem;
+    border-radius: 1rem;
     border-style: solid;
-    border-radius: 2.5rem;
     display: block;
+    padding: 0;
+}
+
+.loading-small {
+    border-width: 1.5rem;
+    height: 3rem;
+    margin: 0.5rem;
+    width: 3rem;
+}
+
+.loading-medium {
+    border-width: 2.5rem;
     height: 5rem;
     margin: 1rem;
-    padding: 0;
     width: 5rem;
+}
+
+.loading-large {
+    border-width: 3.5rem;
+    height: 7rem;
+    margin: 1.5rem;
+    width: 7rem;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -41,27 +41,34 @@
   padding: 0.5rem;
 }
 
-.new-post-form textarea {
+.new-post-sections {
   background: rgb(255 255 255 / 60%);
-  border: none;
   border-radius: 0.5rem;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-right: 0.5rem;
+  overflow: hidden;
+}
+
+.new-post-text-section {
+  background: none;
+  border: none;
   box-sizing: border-box;
   color: black;
   flex: 1;
   font-family: "M PLUS Rounded 1c", sans-serif;
-  margin-right: 0.5rem;
-  max-height: 10rem;
-  padding: 0.375rem 1rem;
+  padding: 1rem;
   resize: none;
   outline: none;
 }
 
-.new-post-form textarea::placeholder {
+.new-post-text-section::placeholder {
   color: rgb(0 0 0 / 60%);
 }
 
-.new-post-form textarea:focus {
-  background: rgb(255 255 255 / 80%);
+.new-post-text-section:focus {
+  background: rgb(255 255 255 / 60%);
 }
 
 .new-post-form button {
@@ -108,16 +115,21 @@
     background-color: rgb(0 0 0 / 60%);
   }
 
-  .new-post-form textarea {
-    background: rgb(0 0 0 / 80%);
+  .new-post-sections {
+    background: rgb(0 0 0 / 60%);
     color: white;
   }
 
-  .new-post-form textarea::placeholder {
+  .new-post-text-section {
+    background: none;
+    color: white;
+  }
+
+  .new-post-text-section::placeholder {
     color: rgb(255 255 255 / 60%);
   }
 
-  .new-post-form textarea:focus {
+  .new-post-text-section:focus {
     background: rgb(0 0 0 / 100%);
     color: white;
   }

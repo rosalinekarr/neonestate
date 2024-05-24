@@ -33,25 +33,41 @@ app.get('/api/posts', async (request, response) => {
 
 	logger.info('Rooms queried', {createdBefore, roomId})
 	response.json(querySnapshot.docs.map((doc) => {
-		const {authorId, body, createdAt} = doc.data()
+		const {authorId, sections, createdAt} = doc.data()
 		return {
 			id: doc.id,
 			authorId,
-			body,
+			sections,
 			createdAt: createdAt.seconds,
 		}
 	}))
 })
 
+interface PostTextSection {
+	id: string
+	type: string
+	body: string
+}
+
+type PostSection = PostTextSection
 
 app.post('/api/posts', async (request, response) => {
-	const body = request.body?.body
+	const sections = request.body?.sections
 	const roomId = request.body?.roomId
 
 	const db = getFirestore()
 	const docRef = await db.collection('posts').add({
 		authorId: response.locals.uid,
-		body,
+		sections: sections.map((section: PostSection) => {
+			if (section?.type === 'text') {
+				return {
+					id: crypto.randomUUID(),
+					type: 'text',
+					body: section.body,
+				}
+			}
+			throw new Error('Invalid post section')
+		}),
 		createdAt: Timestamp.now(),
 		roomId,
 	})
@@ -62,7 +78,7 @@ app.post('/api/posts', async (request, response) => {
 	response.json({
 		id: doc.id,
 		authorId: response.locals.uid,
-		body: data?.body,
+		sections: data?.sections,
 		createdAt: data?.createdAt?.seconds,
 		roomId: data?.roomId,
 	})

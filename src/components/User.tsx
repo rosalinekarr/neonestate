@@ -23,7 +23,7 @@ export default function User({id}: UserProps) {
 		loadUser()
 	}, [])
 
-	if (!user || !avatarUrl) return <Loading />
+	if (!user || !avatarUrl) return <Loading size="small" />
 
 	return (
 		<div className={styles.user}>

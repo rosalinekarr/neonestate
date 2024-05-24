@@ -8,7 +8,7 @@ interface ImagesProviderProps {
 	children: ReactNode;
 }
 
-interface ImagesContext {
+export interface ImagesContext {
 	fetchImage: (path: string) => Promise<void>
 	images: Record<string, string>
 	uploadAvatar: (file: File) => Promise<void>
