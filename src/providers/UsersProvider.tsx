@@ -9,13 +9,13 @@ interface UserProviderProps {
 	children: ReactNode;
 }
 
-interface UserContext {
+export interface UsersContext {
 	currentUser: User;
 	fetchUser: (id: string) => Promise<User | null>;
 	updateProfile: (user: Omit<User, 'id' | 'createdAt'>) => Promise<void>;
 }
 
-export const UsersContext = createContext<UserContext | null>(null)
+export const UsersContext = createContext<UsersContext | null>(null)
 
 export default function UsersProvider({children}: UserProviderProps) {
 	const app = useFirebaseApp()

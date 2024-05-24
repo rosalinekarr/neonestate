@@ -26,12 +26,12 @@ export function ProfileForm({onClose}: ProfileFormProps) {
 			await updateProfile({
 				username,
 			})
-		} catch (e: any) {
-			setError(e)
-		}
-		setIsLoading(false)
 
-		onClose && onClose()
+			onClose && onClose()
+		} catch (e: any) {
+			setError(e.toString())
+			setIsLoading(false)
+		}
 	}
 
 	if (isLoading) return <Loading />
@@ -53,8 +53,8 @@ export function ProfileForm({onClose}: ProfileFormProps) {
 				placeholder='Johnny Mnemonic'
 				value={username}
 			/>
-			<IconButton icon={CheckIcon} type='submit' />
-			{onClose && <IconButton icon={CloseIcon} onClick={() => onClose()} />}
+			<IconButton icon={CheckIcon} type='submit' aria-label='Submit' />
+			{onClose && <IconButton icon={CloseIcon} onClick={() => onClose()} aria-label='Close' />}
 		</form>
 	)
 }
@@ -63,7 +63,7 @@ interface ProfileInfoProps {
 	onEdit: () => void;
 }
 
-function ProfileInfo({onEdit}: ProfileInfoProps) {
+export function ProfileInfo({onEdit}: ProfileInfoProps) {
 	const user = useCurrentUser()
 	const app = useFirebaseApp()
 	const navigate = useNavigate()
