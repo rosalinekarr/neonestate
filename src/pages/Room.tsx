@@ -1,5 +1,5 @@
 import {ChangeEvent, FormEvent, KeyboardEvent, useCallback, useEffect, useRef, useState} from 'react'
-import {Button, InputField, Loading, Post} from '../components'
+import {Button, Loading, Post, TextField} from '../components'
 import {Room as RoomModel} from '../models/rooms'
 import {PostSection, PostTextSection, createPost} from '../models/posts'
 import { useAuth, useFetchRoom, usePostsForRoom, useRoom, useStartRoom } from '../hooks'
@@ -29,7 +29,7 @@ function NewRoomForm({name}: NewRoomFormProps) {
 	return (
 		<div className={styles.room}>
 			<form onSubmit={handleSubmit}>
-				<InputField
+				<TextField
 					name='description'
 					onChange={(newDescription) => setDescription(newDescription)}
 					placeholder={`A community all about ${name}. Blah blah blah. More information about our community for ${name}.`}

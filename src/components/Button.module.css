@@ -5,6 +5,7 @@
     color: black;
     font-family: "M PLUS Rounded 1c", sans-serif;
     height: 2rem;
+    margin-bottom: 1rem;
     margin-right: 0.5rem;
     padding: 0.375rem 1rem;
     outline: none;
@@ -24,11 +25,6 @@
 
 @media (prefers-color-scheme: dark) {
     .button {
-        background-color: black;
-        color: white;
-    }
-      
-    .buttonfile button {
         background-color: rgb(255 255 255 / 20%);
         color: white;
     }

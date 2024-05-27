@@ -4,7 +4,7 @@ import {CheckIcon} from '../components/icons'
 import { useFirebaseApp } from '../hooks'
 import { formatPhoneNumber, isPhoneNumberValid } from '../models/phone'
 import styles from './SignIn.module.css'
-import { IconButton, InputField, Loading } from '../components'
+import { IconButton, Loading, TextField } from '../components'
 
 interface PhoneNumberFormProps {
 	onSubmit: (phoneNumber: string) => Promise<void>;
@@ -35,7 +35,7 @@ function PhoneNumberForm({onSubmit}: PhoneNumberFormProps) {
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<InputField
+			<TextField
 				type='tel'
 				error={isValid ? undefined : 'Please use a valid mobile phone number'}
 				name='phone-number'
@@ -43,7 +43,7 @@ function PhoneNumberForm({onSubmit}: PhoneNumberFormProps) {
 				onChange={handleChange}
 				value={rawPhoneNumber}
 			/>
-			<IconButton type='submit' icon={CheckIcon} id='sign-in' />
+			<IconButton type='submit' icon={CheckIcon} id='sign-in' className={isValid ? undefined : styles.error} />
 		</form>
 	)
 }
@@ -76,14 +76,14 @@ function ConfirmationCodeForm({onSubmit}: ConfirmationCodeFormProps) {
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<InputField
-				error={isValid ? undefined : 'Incorrect confirmation code'}
+			<TextField
+				error={isValid ? undefined : 'Invalid confirmation code'}
 				name='confirmation-code'
 				placeholder='123456'
 				onChange={handleChange}
 				value={confirmationCode}
 			/>
-			<IconButton type='submit' icon={CheckIcon} />
+			<IconButton type='submit' icon={CheckIcon} className={isValid ? undefined : styles.error} />
 		</form>
 	)
 }

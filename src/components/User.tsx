@@ -10,8 +10,8 @@ interface UserProps {
 
 export default function User({id}: UserProps) {
 	const fetchUser = useFetchUser()
-	const avatarUrl = useImage(`avatar/${id}`)
 	const [user, setUser] = useState<User | null>(null)
+	const avatarUrl = useImage(user?.avatarPath)
 
 	useEffect(() => {
 		async function loadUser() {
@@ -27,7 +27,7 @@ export default function User({id}: UserProps) {
 
 	return (
 		<div className={styles.user}>
-			<img src={avatarUrl} alt={`Avatar for ${user.username}`} className={styles.avatar} />
+			{avatarUrl && <img src={avatarUrl} alt={`Avatar for ${user.username}`} className={styles.avatar} />}
 			<p className={styles.username}>{user.username}</p>
 		</div>
 	)

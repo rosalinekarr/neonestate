@@ -54,7 +54,7 @@ interface PostImageSectionProps {
 
 function PostImageSection({section}: PostImageSectionProps) {
 	const imageUrl = useImage(section.path)
-	return <img src={imageUrl} />
+	return imageUrl ? <img src={imageUrl} /> : null
 }
 
 interface PostSectionProps {

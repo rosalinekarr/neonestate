@@ -1,17 +1,17 @@
 import { DetailedHTMLProps, InputHTMLAttributes } from 'react'
 import {titleize} from '../utils'
-import styles from './InputField.module.css'
+import styles from './TextField.module.css'
 
-interface InputFieldProps extends Omit<Partial<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>>, 'onChange'> {
+interface TextFieldProps extends Omit<Partial<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>>, 'onChange'> {
 	error?: string;
 	name: string;
 	onChange: (newVal: string) => void;
 	value: string;
 }
 
-export default function InputField({error, name, onChange: handleChange, ...props}: InputFieldProps) {
+export default function TextField({error, name, onChange: handleChange, ...props}: TextFieldProps) {
 	return (
-		<div className={styles.inputField}>
+		<div className={styles.textField}>
 			<label htmlFor={name}>{titleize(name)}</label>
 			<input
 				type={props['type'] || 'text'}

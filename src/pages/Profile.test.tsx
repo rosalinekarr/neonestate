@@ -28,9 +28,10 @@ describe('ProfileForm', () => {
 			{target: {value: 'Johnny Mnemonic'}},
 		)
 
-		fireEvent.click(screen.getByRole('button', {name: 'Submit'}))
+		fireEvent.click(screen.getByRole('button', {name: 'Save'}))
 
 		expect(updateProfile).toBeCalledWith({
+			avatarPath: '',
 			username: 'Johnny Mnemonic',
 		})
 		expect(screen.getByRole('progressbar')).toBeInTheDocument()
@@ -64,9 +65,10 @@ describe('ProfileForm', () => {
 			{target: {value: 'Johnny Mnemonic'}},
 		)
 
-		fireEvent.click(screen.getByRole('button', {name: 'Submit'}))
+		fireEvent.click(screen.getByRole('button', {name: 'Save'}))
 
 		expect(updateProfile).toBeCalledWith({
+			avatarPath: '',
 			username: 'Johnny Mnemonic',
 		})
 		expect(screen.getByRole('progressbar')).toBeInTheDocument()
@@ -95,7 +97,7 @@ describe('ProfileForm', () => {
 			,
 		})
 
-		fireEvent.click(screen.getByRole('button', {name: 'Close'}))
+		fireEvent.click(screen.getByRole('button', {name: 'Cancel'}))
 
 		await waitFor(() => {
 			expect(handleClose).toBeCalled()

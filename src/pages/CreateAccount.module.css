@@ -7,9 +7,17 @@
 }
   
 .create-account form {
-    align-items: flex-end;
+    align-items: flex-start;
     display: flex;
-    flex-wrap: wrap;
+    flex-flow: column wrap;
+}
+
+.avatar {
+  width: 9rem;
+  height: 9rem;
+  border-radius: 3rem;
+  object-fit: cover;
+  overflow: hidden;
 }
 
 @media (prefers-color-scheme: dark) {

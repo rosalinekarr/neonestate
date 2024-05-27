@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useState } from 'react'
-import { useCurrentUser, useFirebaseApp } from '../hooks'
+import { useFirebaseApp } from '../hooks'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 
 const ACCEPTABLE_AVATAR_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
@@ -11,14 +11,13 @@ interface ImagesProviderProps {
 export interface ImagesContext {
 	fetchImage: (path: string) => Promise<void>
 	images: Record<string, string>
-	uploadAvatar: (file: File) => Promise<void>
+	uploadAvatar: (file: File) => Promise<string>
 }
 
 export const ImagesContext = createContext<ImagesContext | null>(null)
 
 export default function ImagesProvider({children}: ImagesProviderProps) {
 	const app = useFirebaseApp()
-	const user = useCurrentUser()
 	const [images, setImages] = useState<Record<string, string>>({})
 
 	async function fetchImage(path: string) {
@@ -38,13 +37,15 @@ export default function ImagesProvider({children}: ImagesProviderProps) {
 	}
 
 	async function uploadAvatar(file: File) {
-		if (!ACCEPTABLE_AVATAR_FILE_TYPES.includes(file.type)) return
+		if (!ACCEPTABLE_AVATAR_FILE_TYPES.includes(file.type)) throw new Error('Unsupported file type')
 		const storage = getStorage(app)
+		const path = `avatar_${crypto.randomUUID()}`
 		await uploadBytes(
-			ref(storage, `avatar/${user.id}`),
+			ref(storage, path),
 			file,
 			{contentType: file.type},
 		)
+		return path
 	}
 
 	return <ImagesContext.Provider value={{

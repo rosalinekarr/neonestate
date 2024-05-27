@@ -186,6 +186,7 @@ app.get('/api/users/:id', async (request, response) => {
 	const data = docSnapshot.data()
 	response.status(200).json({
 		id: docSnapshot.id,
+		avatarPath: data?.avatarPath,
 		username: data?.username,
 		createdAt: data?.createdAt?.seconds,
 	})
@@ -205,42 +206,19 @@ app.get('/api/users', async (request, response) => {
 
 	logger.info('Users queried', {name})
 	response.json(querySnapshot.docs.map((doc) => {
-		const {createdAt, username} = doc.data()
+		const {avatarPath, createdAt, username} = doc.data()
 		return {
 			id: doc.id,
+			avatarPath,
 			username,
 			createdAt: createdAt.seconds,
 		}
 	}))
 })
 
-app.get('/api/profile', async (request, response) => {
-	const db = getFirestore()
-	const uid = response.locals.uid
-
-	response.set({
-		'Cache-Control': 'no-cache',
-	})
-
-	const docSnapshot = await db.doc(`users/${uid}`).get()
-
-	if (!docSnapshot.exists) {
-		logger.info('User profile does not exist yet', {uid})
-		response.status(404).json({error: 'User not found'})
-		return
-	}
-
-	logger.info('User fetched', {uid})
-	const data = docSnapshot.data()
-	response.status(200).json({
-		id: docSnapshot.id,
-		username: data?.username,
-		createdAt: data?.createdAt?.seconds,
-	})
-})
-
 app.post('/api/users', async (request, response) => {
 	const uid = response.locals.uid
+	const avatarPath = request.body?.avatarPath
 	const username = request.body?.username
 
 	if (typeof username !== 'string' || !username.match(/^[\p{L}\p{N}\p{P}\p{S}]+$/u)) {
@@ -259,6 +237,7 @@ app.post('/api/users', async (request, response) => {
 	}
 
 	await db.doc(`users/${uid}`).set({
+		avatarPath,
 		createdAt: Timestamp.now(),
 		username,
 	})
@@ -268,6 +247,7 @@ app.post('/api/users', async (request, response) => {
 	const data = doc.data()
 	response.json({
 		id: doc.id,
+		avatarPath: data?.avatarPath,
 		username: data?.username,
 		createdAt: data?.createdAt?.seconds,
 	})

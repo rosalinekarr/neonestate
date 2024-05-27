@@ -1,6 +1,6 @@
 import {ReactNode, createContext, useContext, useEffect, useState} from 'react'
 import {useAuth, useFirebaseApp} from '../hooks'
-import { User, createUser, getUser, listenForUserChanges, updateUser } from '../models/users'
+import { User, createUser, getUser, isProfileComplete, listenForUserChanges, updateUser } from '../models/users'
 import {CreateAccount} from '../pages'
 import { AuthContext } from './AuthProvider'
 import { Loading } from '../components'
@@ -25,17 +25,17 @@ export default function UsersProvider({children}: UserProviderProps) {
 	const [currentUser, setCurrentUser] = useState<User | null>(null)
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 
-	async function createProfile({username}: Omit<User, 'id' | 'createdAt'>) {
-		const newProfile = await createUser(auth, {username})
+	async function createProfile({avatarPath, username}: Omit<User, 'id' | 'createdAt'>) {
+		const newProfile = await createUser(auth, {avatarPath, username})
 		setUsers((prevUsers) => ({
 			...prevUsers,
 			[newProfile.id]: newProfile,
 		}))
 	}
 
-	async function updateProfile({username}: Omit<User, 'id' | 'createdAt'>) {
+	async function updateProfile({avatarPath, username}: Omit<User, 'id' | 'createdAt'>) {
 		if (!firebaseUser) throw new Error('Missing AuthContext: UsersProvider must only be used within AuthProvider')
-		const updatedProfile = await updateUser(auth, firebaseUser.uid, {username})
+		const updatedProfile = await updateUser(auth, firebaseUser.uid, {avatarPath, username})
 		setUsers((prevUsers) => ({
 			...prevUsers,
 			[firebaseUser.uid]: updatedProfile,
@@ -79,7 +79,7 @@ export default function UsersProvider({children}: UserProviderProps) {
 
 	if (isLoading) return <Loading />
 
-	if (!currentUser) return <CreateAccount onSubmit={createProfile} />
+	if (!isProfileComplete(currentUser)) return <CreateAccount onSubmit={createProfile} />
 
 	return (
 		<UsersContext.Provider value={{

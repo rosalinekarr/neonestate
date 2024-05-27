@@ -12,6 +12,10 @@
     flex-wrap: wrap;
 }
 
+button.error {
+  margin-bottom: 3.1rem;
+}
+
 @media (prefers-color-scheme: dark) {
   .sign-in {
     background-color: black;

@@ -13,8 +13,8 @@ export default function Layout() {
 	return (
 		<div className={styles.wrapper}>
 			<AuthProvider>
-				<UsersProvider>
-					<ImagesProvider>
+				<ImagesProvider>
+					<UsersProvider>
 						<RoomsProvider>
 							<PostsProvider>
 								<header className={styles.header}>
@@ -41,8 +41,8 @@ export default function Layout() {
 								</footer>
 							</PostsProvider>
 						</RoomsProvider>
-					</ImagesProvider>
-				</UsersProvider>
+					</UsersProvider>
+				</ImagesProvider>
 			</AuthProvider>
 		</div>
 	)

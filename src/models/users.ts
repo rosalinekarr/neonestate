@@ -5,6 +5,7 @@ import { Auth } from '../hooks/useAuth'
 
 export interface User {
 	id: string;
+	avatarPath: string;
 	username: string;
 	createdAt: number;
 }
@@ -53,4 +54,8 @@ export async function updateUser(auth: Auth, id: string, user: Partial<Omit<User
 		throw new Error(msg)
 	}
 	return response.json() as Promise<User>
+}
+
+export function isProfileComplete(user: User | null): user is User {
+	return typeof user?.username === 'string' && typeof user?.avatarPath === 'string'
 }
