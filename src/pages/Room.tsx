@@ -7,6 +7,7 @@ import { Navigate, useParams } from 'react-router-dom'
 import { formatAgo } from '../utils'
 import { CreateIcon } from '../components/icons'
 import styles from './Room.module.css'
+import Ad from '../components/Ad'
 
 const SCROLL_TOP_THRESHOLD = 10
 
@@ -235,7 +236,10 @@ function Posts({room}: PostsProps) {
 				</div>
 			</div>
 			<div className={styles.posts}>
-				{posts.map((post) => <Post key={post.id} post={post} />)}
+				{posts.map((post, index) => [
+					<Post key={post.id} post={post} />,
+					...(index % 5 === 4 ? [<Ad />] : []),
+				]).flat()}
 			</div>
 			<NewPostForm room={room} />
 		</div>
