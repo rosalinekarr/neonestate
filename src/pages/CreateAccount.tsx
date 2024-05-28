@@ -8,22 +8,39 @@ interface CreateAccountProps {
 }
 
 export default function CreateAccount({onSubmit}: CreateAccountProps) {
-	const [avatarPath, setAvatarPath] = useState<string>('')
-	const [username, setUsername] = useState<string>('')
+	const [avatarPath, setAvatarPath] = useState<string | undefined>(undefined)
+	const [avatarError, setAvatarError] = useState<string | undefined>(undefined)
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [error, setError] = useState<string | undefined>(undefined)
+	const [username, setUsername] = useState<string | undefined>(undefined)
+	const [usernameError, setUsernameError] = useState<string | undefined>(undefined)
+
+	function handleAvatarChange(newAvatarPath: string) {
+		setAvatarPath(newAvatarPath)
+		setAvatarError(undefined)
+	}
+
+	function handleUsernameChange(newUsername: string) {
+		setUsername(newUsername)
+		setUsernameError(undefined)
+	}
 
 	async function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
-		setIsLoading(true)
-		setError(undefined)
+
+		if (!avatarPath || !username) {
+			if (!avatarPath) setAvatarError('Avatar is required')
+			if (!username) setUsernameError('Username is required')
+			return
+		}
+
 		try {
+			setIsLoading(true)
 			await onSubmit({
 				avatarPath,
 				username,
 			})
 		} catch (e: any) {
-			setError(e.message)
+			setUsernameError(e.message)
 		}
 		setIsLoading(false)
 	}
@@ -33,19 +50,20 @@ export default function CreateAccount({onSubmit}: CreateAccountProps) {
 	return (
 		<div className={styles.createAccount}>
 			<h2>Create Account</h2>
-			<form onSubmit={handleSubmit}>
+			<form onSubmit={handleSubmit} role='form'>
 				<AvatarField
-					onChange={(path) => setAvatarPath(path)}
-					value={avatarPath}
+					error={avatarError}
+					onChange={handleAvatarChange}
+					value={avatarPath || ''}
 				/>
 				<TextField
 					name='username'
-					error={error}
-					onChange={(newUsername: string) => setUsername(newUsername)}
+					error={usernameError}
+					onChange={handleUsernameChange}
 					placeholder='Johnny Mnemonic'
-					value={username}
+					value={username || ''}
 				/>
-				<Button>Save</Button>
+				<Button type='submit'>Save</Button>
 			</form>
 		</div>
 	)

@@ -1,4 +1,6 @@
 .room {
+  background-color: rgb(255 255 255 / 20%);
+  align-items: center;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -6,15 +8,33 @@
   overflow-y: scroll;
 }
 
+.room-container {
+  background-color: rgb(255 255 255 / 60%);
+  border: 0.1rem solid white;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  max-width: 40rem;
+  width: 100%;
+  margin: 1rem;
+  padding: 2rem;
+}
+
 .room-header {
+  align-items: center;
   background: linear-gradient(0deg, rgb(255 255 255 / 60%), transparent);
+  box-sizing: border-box;
   color: black;
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: flex-end;
-  min-height: 20rem;
-  padding: 0 1rem;
+  padding: 1rem 2rem;
+  width: 100%;
+}
+
+.room-header-container {
+  box-sizing: border-box;
+  max-width: 40rem;
+  width: 100%;
 }
 
 .room-header h2 {
@@ -28,27 +48,45 @@
 }
 
 .posts {
-  background-color: rgb(255 255 255 / 60%);
+  align-items: center;
+  background: rgb(255 255 255 / 60%);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  padding: 1rem 2rem;
+  width: 100%;
 }
 
 .new-post-form {
-  background-color: rgb(255 255 255 / 60%);
+  align-items: center;
+  background: rgb(255 255 255 / 60%);
+  box-sizing: border-box;
   display: flex;
-  padding: 0.5rem;
+  flex-direction: column;
+  padding: 1rem 2rem;
+  width: 100%;
+}
+
+.new-post-form-container {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  max-width: 40rem;
+  width: 100%;
 }
 
 .new-post-sections {
   background: rgb(255 255 255 / 60%);
+  border: 0.1rem solid white;
   border-radius: 0.5rem;
+  box-sizing: border-box;
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  max-width: 40rem;
   overflow: hidden;
+  width: 100%;
 }
 
 .new-post-text-section {
@@ -102,6 +140,16 @@
     color: white;
   }
 
+  .room {
+    background-color: rgb(0 0 0 / 20%);
+    color: white;
+  }
+
+  .room-container {
+    background-color: rgb(0 0 0 / 60%);
+    border: 0.1rem solid black;
+  }
+
   .room-header {
     background: linear-gradient(0deg, rgb(0 0 0 / 60%), transparent);
     color: white;
@@ -117,6 +165,7 @@
 
   .new-post-sections {
     background: rgb(0 0 0 / 60%);
+    border: 0.1rem solid black;
     color: white;
   }
 
@@ -130,8 +179,7 @@
   }
 
   .new-post-text-section:focus {
-    background: rgb(0 0 0 / 100%);
-    color: white;
+    background: rgb(0 0 0 / 60%);
   }
 
   .new-post-form button svg {

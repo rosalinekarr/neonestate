@@ -1,6 +1,7 @@
 .sign-in {
     align-self: center;
     background-color: white;
+    border-radius: 0.5rem;
     color: black;
     max-width: 40rem;
     padding: 1rem 2rem 5rem;

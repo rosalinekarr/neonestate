@@ -4,15 +4,17 @@ import styles from './AvatarField.module.css'
 import { EditIcon } from './icons'
 
 interface AvatarFieldProps extends Omit<Partial<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>>, 'onChange'> {
+	error?: string;
 	onChange: (newPath: string) => void;
-	value: string;
+	value: string | undefined;
 }
 
-export default function AvatarField({name, onChange, value, ...props}: AvatarFieldProps) {
+export default function AvatarField({error: parentError, name, onChange, value, ...props}: AvatarFieldProps) {
 	const inputRef = useRef<HTMLInputElement | null>(null)
-	const [error, setError] = useState<string | null>(null)
+	const [uploadError, setUploadError] = useState<string | null>(null)
 	const uploadAvatar = useUploadAvatar()
-	const avatarUrl = useImage(value)
+	const avatarUrl = useImage(value || '')
+	const error = uploadError || parentError
 
 	async function handleChange(e: ChangeEvent<HTMLInputElement>) {
 		if (e.target.files?.length !== 1) return
@@ -22,13 +24,13 @@ export default function AvatarField({name, onChange, value, ...props}: AvatarFie
 			const path = await uploadAvatar(file)
 			onChange(path)
 		} catch (e: any) {
-			setError(e.message)
+			setUploadError(e.message)
 		}
 	}
 
 	return (
 		<div className={styles.fileField}>
-			<label htmlFor={name}>Avatar</label>
+			<label htmlFor='avatar'>Avatar</label>
 			<div
 				className={[styles.avatarPreview, ...avatarUrl ? [] : [styles.blank], ...error ? [styles.error] : []].join(' ')}
 				onClick={() => inputRef.current?.click()}

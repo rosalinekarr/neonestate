@@ -6,7 +6,7 @@ interface TextFieldProps extends Omit<Partial<DetailedHTMLProps<InputHTMLAttribu
 	error?: string;
 	name: string;
 	onChange: (newVal: string) => void;
-	value: string;
+	value: string | undefined;
 }
 
 export default function TextField({error, name, onChange: handleChange, ...props}: TextFieldProps) {

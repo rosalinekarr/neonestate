@@ -28,15 +28,18 @@ function NewRoomForm({name}: NewRoomFormProps) {
 
 	return (
 		<div className={styles.room}>
-			<form onSubmit={handleSubmit}>
-				<TextField
-					name='description'
-					onChange={(newDescription) => setDescription(newDescription)}
-					placeholder={`A community all about ${name}. Blah blah blah. More information about our community for ${name}.`}
-					value={description}
-				/>
-				<Button type='submit'>Create Room</Button>
-			</form>
+			<div className={styles.roomContainer}>
+				<h2>Start a New Room</h2>
+				<form onSubmit={handleSubmit}>
+					<TextField
+						name='description'
+						onChange={(newDescription) => setDescription(newDescription)}
+						placeholder={`A community all about ${name}. Blah blah blah. More information about our community for ${name}.`}
+						value={description}
+					/>
+					<Button type='submit'>Create Room</Button>
+				</form>
+			</div>
 		</div>
 	)
 }
@@ -149,51 +152,53 @@ function NewPostForm({room}: NewPostFormProps) {
 
 	return (
 		<form onSubmit={handleSubmit} className={styles.newPostForm}>
-			<div className={styles.newPostSections}>
-				{sections.map((section: PostSection, index: number) =>
-					<NewPostSection
-						key={section.id}
-						onCreate={(newSections: PostSection[]) =>
-							setSections((prevSections: PostSection[]) =>
-								prevSections.toSpliced(index + 1, 0, ...newSections),
-							)
-						}
-						onDelete={() =>
-							setSections((prevSections: PostSection[]) => {
-								if (prevSections.length === 1)
-									return [generateBlankPostTextSection()]
-								if (index > 0) {
-									const precedingSection = prevSections[index - 1]
-									if (precedingSection.type === 'text')
-										return prevSections.toSpliced(index - 1, 2, generatePostTextSection(precedingSection.body))
-								}
-								return prevSections.toSpliced(index, 1)
-							})
-						}
-						onMergeBack={() => {
-							setSections((prevSections: PostSection[]) => {
-								if (index > 0) {
-									const precedingSection = prevSections[index - 1]
-									const currentSection = prevSections[index]
-									if (currentSection.type === 'text' && precedingSection.type === 'text')
-										return prevSections.toSpliced(index - 1, 2, generatePostTextSection(precedingSection.body + currentSection.body))
-								}
-								return prevSections
-							})
-						}}
-						onUpdate={(updatedSection: PostSection) =>
-							setSections((prevSections: PostSection[]) =>
-								prevSections.toSpliced(index, 1, updatedSection),
-							)
-						}
-						section={section}
-						showPlaceholder={index === 0 && sections.length === 1}
-					/>,
-				)}
+			<div className={styles.newPostFormContainer}>
+				<div className={styles.newPostSections}>
+					{sections.map((section: PostSection, index: number) =>
+						<NewPostSection
+							key={section.id}
+							onCreate={(newSections: PostSection[]) =>
+								setSections((prevSections: PostSection[]) =>
+									prevSections.toSpliced(index + 1, 0, ...newSections),
+								)
+							}
+							onDelete={() =>
+								setSections((prevSections: PostSection[]) => {
+									if (prevSections.length === 1)
+										return [generateBlankPostTextSection()]
+									if (index > 0) {
+										const precedingSection = prevSections[index - 1]
+										if (precedingSection.type === 'text')
+											return prevSections.toSpliced(index - 1, 2, generatePostTextSection(precedingSection.body))
+									}
+									return prevSections.toSpliced(index, 1)
+								})
+							}
+							onMergeBack={() => {
+								setSections((prevSections: PostSection[]) => {
+									if (index > 0) {
+										const precedingSection = prevSections[index - 1]
+										const currentSection = prevSections[index]
+										if (currentSection.type === 'text' && precedingSection.type === 'text')
+											return prevSections.toSpliced(index - 1, 2, generatePostTextSection(precedingSection.body + currentSection.body))
+									}
+									return prevSections
+								})
+							}}
+							onUpdate={(updatedSection: PostSection) =>
+								setSections((prevSections: PostSection[]) =>
+									prevSections.toSpliced(index, 1, updatedSection),
+								)
+							}
+							section={section}
+							showPlaceholder={index === 0 && sections.length === 1}
+						/>,
+					)}
+				</div>
+				<button type='submit' disabled={isLoading}>
+					<CreateIcon />
+				</button>
 			</div>
-			<button type='submit' disabled={isLoading}>
-				<CreateIcon />
-			</button>
 		</form>
 	)
 }
@@ -223,9 +228,11 @@ function Posts({room}: PostsProps) {
 	return (
 		<div className={styles.room} ref={roomRef} onScroll={handleScroll}>
 			<div className={styles.roomHeader} ref={roomHeaderRef}>
-				<h2>{room.name}</h2>
-				<p className={styles.roomCreatedAt}>{`Created ${formatAgo(new Date(room.createdAt * 1000))}`}</p>
-				{room.description && <p>{room.description}</p>}
+				<div className={styles.roomHeaderContainer}>
+					<h2>{room.name}</h2>
+					<p className={styles.roomCreatedAt}>{`Created ${formatAgo(new Date(room.createdAt * 1000))}`}</p>
+					{room.description && <p>{room.description}</p>}
+				</div>
 			</div>
 			<div className={styles.posts}>
 				{posts.map((post) => <Post key={post.id} post={post} />)}

@@ -1,8 +1,11 @@
 .create-account {
     align-self: center;
     background-color: white;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
     color: black;
     max-width: 40rem;
+    width: 100%;
     padding: 1rem 2rem 5rem;
 }
   
