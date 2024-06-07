@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { CollectionReference, DocumentData, Query, Timestamp, getFirestore } from 'firebase-admin/firestore'
 import * as logger from 'firebase-functions/logger'
-import UnacceptableError from '../errors/unacceptable'
+import { HttpsError } from 'firebase-functions/v2/https'
 
 export async function getPosts(request: Request, response: Response) {
 	const roomId = typeof request.query.roomId === 'string' ? request.query.roomId : null
@@ -49,7 +49,7 @@ export async function createPost(request: Request, response: Response) {
 					body: section.body,
 				}
 			}
-			throw new UnacceptableError('Invalid post section')
+			throw new HttpsError('unimplemented', 'Unsupported post section type')
 		}),
 		createdAt: Timestamp.now(),
 		roomId,

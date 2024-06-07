@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {RouterProvider, createBrowserRouter} from 'react-router-dom'
 import {Layout} from './components'
-import {About, Room, PrivacyPolicy, Profile} from './pages'
+import {About, EditRoom, Room, PrivacyPolicy, Profile} from './pages'
 import {FirebaseProvider} from './providers'
 import './index.css'
 import Welcome from './pages/Welcome'
@@ -29,6 +29,10 @@ if (rootElem)
 							{
 								element: <Room />,
 								path: '/rooms/:name',
+							},
+							{
+								element: <EditRoom />,
+								path: '/rooms/:name/edit',
 							},
 							{
 								element: <PrivacyPolicy />,

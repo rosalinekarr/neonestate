@@ -1,5 +1,5 @@
-import {ReactNode, createContext, useState} from 'react'
-import { Room, createRoom, getRooms } from '../models/rooms'
+import {ReactNode, createContext, useMemo, useState} from 'react'
+import { Room, createRoom, getRooms, updateRoom } from '../models/rooms'
 import { useAuth } from '../hooks'
 
 interface RoomsProviderProps {
@@ -7,11 +7,12 @@ interface RoomsProviderProps {
 }
 
 interface RoomsContext {
+	editRoom: (id: string, room: Omit<Room, 'id' | 'createdAt' | 'createdBy' | 'memberCount' | 'name'>) => Promise<void>
 	fetchPopularRooms: () => Promise<void>
 	fetchRoom: (name: string) => Promise<void>
 	roomsByName: Record<string, Room>
 	rooms: Room[]
-	startRoom: (room: Omit<Room, 'id' | 'createdAt' | 'memberCount'>) => Promise<void>
+	startRoom: (room: Omit<Room, 'id' | 'createdAt' | 'createdBy' | 'memberCount'>) => Promise<void>
 }
 
 export const RoomsContext = createContext<RoomsContext | null>(null)
@@ -26,6 +27,19 @@ export default function RoomsProvider({children}: RoomsProviderProps) {
 		setRooms((prevRooms): Record<string, Room> => ({
 			...prevRooms,
 			...Object.fromEntries(newRooms.map((room) => [room.id, room])),
+		}))
+	}
+
+	async function editRoom(roomId: string, roomData: Omit<Room, 'id' | 'createdAt' | 'createdBy' | 'memberCount' | 'name'>) {
+		const updatedRoom: Room = await updateRoom(auth, roomId, roomData)
+
+		setRooms((prevRooms) => ({
+			...prevRooms,
+			[roomId]: updatedRoom,
+		}))
+		setIdsByName((prevIdsByName) => ({
+			...prevIdsByName,
+			[updatedRoom.name]: roomId,
 		}))
 	}
 
@@ -44,7 +58,7 @@ export default function RoomsProvider({children}: RoomsProviderProps) {
 		}
 	}
 
-	async function startRoom(roomData: Omit<Room, 'id' | 'createdAt' | 'memberCount'>): Promise<void> {
+	async function startRoom(roomData: Omit<Room, 'id' | 'createdAt' | 'createdBy' | 'memberCount'>): Promise<void> {
 		const newRoom: Room = await createRoom(auth, roomData)
 
 		setRooms((prevRooms) => ({
@@ -57,15 +71,18 @@ export default function RoomsProvider({children}: RoomsProviderProps) {
 		}))
 	}
 
+	const roomsByName = useMemo(() => Object.fromEntries(
+		Object.entries(idsByName).map(
+			([name, id]: [string, string]) => [name, rooms[id]],
+		),
+	), [idsByName, rooms])
+
 	return (
 		<RoomsContext.Provider value={{
+			editRoom,
 			fetchPopularRooms,
 			fetchRoom,
-			roomsByName: Object.fromEntries(
-				Object.entries(idsByName).map(
-					([name, id]: [string, string]) => [name, rooms[id]],
-				),
-			),
+			roomsByName,
 			rooms: Object.values(rooms),
 			startRoom,
 		}}>{children}</RoomsContext.Provider>

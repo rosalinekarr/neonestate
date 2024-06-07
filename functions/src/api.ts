@@ -1,7 +1,6 @@
 import * as express from 'express'
-import { Request, Response } from 'express'
+import { Request, Response, NextFunction } from 'express'
 import { getAuth } from 'firebase-admin/auth'
-import * as logger from 'firebase-functions/logger'
 import {
 	createPost,
 	createRoom,
@@ -11,9 +10,8 @@ import {
 	getRoom,
 	getUsers,
 	getUser,
+	updateRoom,
 } from './handlers'
-import NotFoundError from './errors/notFound'
-import UnacceptableError from './errors/unacceptable'
 
 const api = express()
 
@@ -26,32 +24,33 @@ api.use(async (request: Request, response: Response, next) => {
 	next()
 })
 
-function handleErrors(handler: (req: Request, res: Response) => Promise<void>) {
-	return async (req: Request, res: Response) => {
-		try {
-			return handler(req, res)
-		} catch (e: any) {
-			if (e instanceof NotFoundError) {
-				res.status(404).send({error: e.message})
-			} else if (e instanceof UnacceptableError) {
-				res.status(422).send({error: e.message})
+function handleAsyncErrors(handler: (req: Request, res: Response) => Promise<void>) {
+	return (req: Request, res: Response, next: NextFunction) => {
+		handler(req, res).catch((err) => {
+			if (err.code === 'not-found') {
+				res.status(404).send({error: err.message})
+			} else if (err.code === 'already-exists') {
+				res.status(409).send({error: err.message})
+			} else if (err.code === 'invalid-argument') {
+				res.status(422).send({error: err.message})
 			} else {
-				logger.error('Uncaught error', {e})
-				res.status(500).send({error: e.message})
+				res.status(500).send({error: err.message})
 			}
-		}
+			next(err)
+		})
 	}
 }
 
-api.get('/api/posts', handleErrors(getPosts))
-api.post('/api/posts', handleErrors(createPost))
+api.get('/api/posts', handleAsyncErrors(getPosts))
+api.post('/api/posts', handleAsyncErrors(createPost))
 
-api.get('/api/rooms', handleErrors(getRooms))
-api.get('/api/rooms/:id', handleErrors(getRoom))
-api.post('/api/rooms', handleErrors(createRoom))
+api.get('/api/rooms', handleAsyncErrors(getRooms))
+api.get('/api/rooms/:id', handleAsyncErrors(getRoom))
+api.post('/api/rooms', handleAsyncErrors(createRoom))
+api.put('/api/rooms/:id', handleAsyncErrors(updateRoom))
 
-api.get('/api/users', handleErrors(getUsers))
-api.get('/api/users/:id', handleErrors(getUser))
-api.post('/api/users', handleErrors(createUser))
+api.get('/api/users', handleAsyncErrors(getUsers))
+api.get('/api/users/:id', handleAsyncErrors(getUser))
+api.post('/api/users', handleAsyncErrors(createUser))
 
 export default api

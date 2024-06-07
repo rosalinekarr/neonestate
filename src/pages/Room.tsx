@@ -1,13 +1,14 @@
 import {ChangeEvent, FormEvent, KeyboardEvent, useCallback, useEffect, useRef, useState} from 'react'
-import {Button, Loading, Post, TextField} from '../components'
+import {Button, IconButton, Loading, Post, TextField} from '../components'
 import {Room as RoomModel} from '../models/rooms'
 import {PostSection, PostTextSection, createPost} from '../models/posts'
-import { useAuth, useFetchRoom, usePostsForRoom, useRoom, useStartRoom } from '../hooks'
-import { Navigate, useParams } from 'react-router-dom'
+import { useAuth, useCurrentUser, useFetchRoom, useImage, usePermissions, usePostsForRoom, useRoom, useStartRoom } from '../hooks'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { formatAgo } from '../utils'
-import { CreateIcon } from '../components/icons'
+import { CreateIcon, EditIcon } from '../components/icons'
 import styles from './Room.module.css'
 import Ad from '../components/Ad'
+import BackgroundField from '../components/BackgroundField'
 
 const SCROLL_TOP_THRESHOLD = 10
 
@@ -18,12 +19,14 @@ interface NewRoomFormProps {
 function NewRoomForm({name}: NewRoomFormProps) {
 	const startRoom = useStartRoom()
 	const [description, setDescription] = useState<string>('')
+	const [backgroundPath, setBackgroundPath] = useState<string | undefined>(undefined)
 
 	async function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 		startRoom({
-			name,
+			backgroundPath,
 			description,
+			name,
 		})
 	}
 
@@ -32,6 +35,7 @@ function NewRoomForm({name}: NewRoomFormProps) {
 			<div className={styles.roomContainer}>
 				<h2>Start a New Room</h2>
 				<form onSubmit={handleSubmit}>
+					<BackgroundField onChange={(path) => setBackgroundPath(path)} value={backgroundPath} />
 					<TextField
 						name='description'
 						onChange={(newDescription) => setDescription(newDescription)}
@@ -210,14 +214,13 @@ interface PostsProps {
 
 function Posts({room}: PostsProps) {
 	const roomRef = useRef<HTMLDivElement | null>(null)
-	const roomHeaderRef = useRef<HTMLDivElement | null>(null)
 	const {fetchMore, posts} = usePostsForRoom(room.id)
 	const [scrollBottom, setScrollBottom] = useState<number>(0)
 
 	const handleScroll = useCallback(() => {
-		if (!(roomHeaderRef.current && roomRef.current)) return
+		if (!roomRef.current) return
 		setScrollBottom(roomRef.current.scrollHeight - roomRef.current.scrollTop - roomRef.current.clientHeight)
-		if (roomRef.current.scrollTop < SCROLL_TOP_THRESHOLD + roomHeaderRef.current.clientHeight)
+		if (roomRef.current.scrollTop < SCROLL_TOP_THRESHOLD)
 			fetchMore()
 	}, [posts])
 
@@ -227,30 +230,21 @@ function Posts({room}: PostsProps) {
 	}, [posts])
 
 	return (
-		<div className={styles.room} ref={roomRef} onScroll={handleScroll}>
-			<div className={styles.roomHeader} ref={roomHeaderRef}>
-				<div className={styles.roomHeaderContainer}>
-					<h2>{room.name}</h2>
-					<p className={styles.roomCreatedAt}>{`Created ${formatAgo(new Date(room.createdAt * 1000))}`}</p>
-					{room.description && <p>{room.description}</p>}
-				</div>
-			</div>
-			<div className={styles.posts}>
-				{posts.map((post, index) => [
-					<Post key={post.id} post={post} />,
-					...(index % 5 === 4 ? [<Ad />] : []),
-				]).flat()}
-			</div>
-			<NewPostForm room={room} />
+		<div className={styles.posts} ref={roomRef} onScroll={handleScroll}>
+			{posts.map((post, index) => [<Post key={post.id} post={post} />, ...index % 5 === 4 ? [<Ad />] : []]).flat()}
 		</div>
 	)
 }
 
 export default function Room() {
 	const fetchRoom = useFetchRoom()
+	const navigate = useNavigate()
+	const user = useCurrentUser()
 	const {name} = useParams()
 	const room = useRoom(name || '')
+	const backgroundUrl = useImage(room?.backgroundPath)
 	const [isLoading, setIsLoading] = useState<boolean>(true)
+	const {canEditRoom} = usePermissions(room, user)
 
 	useEffect(() => {
 		async function loadRoom(name: string) {
@@ -270,5 +264,19 @@ export default function Room() {
 
 	if (!room) return <NewRoomForm name={name} />
 
-	return <Posts room={room} />
+	return (
+		<div className={styles.room}>
+			<div className={styles.roomHeader}>
+				{backgroundUrl && <img className={styles.roomHeaderBackground} src={backgroundUrl} />}
+				<div className={styles.roomHeaderContainer}>
+					<h2>{room.name}</h2>
+					<p className={styles.roomCreatedAt}>{`Created ${formatAgo(new Date(room.createdAt * 1000))}`}</p>
+					{room.description && <p className={styles.roomDescription}>{room.description}</p>}
+					{canEditRoom && <IconButton icon={EditIcon} onClick={() => navigate(`/rooms/${room.name}/edit`)} />}
+				</div>
+			</div>
+			<Posts room={room} />
+			<NewPostForm room={room} />
+		</div>
+	)
 }

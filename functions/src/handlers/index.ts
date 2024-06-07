@@ -1,5 +1,5 @@
 import { createPost, getPosts } from './posts'
-import { createRoom, getRooms, getRoom } from './rooms'
+import { createRoom, getRooms, getRoom, updateRoom } from './rooms'
 import { createUser, getUsers, getUser } from './users'
 
 export {
@@ -11,4 +11,5 @@ export {
 	getRoom,
 	getUsers,
 	getUser,
+	updateRoom,
 }

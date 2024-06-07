@@ -1,14 +1,13 @@
 import { Request, Response } from 'express'
 import { Timestamp, getFirestore } from 'firebase-admin/firestore'
 import * as logger from 'firebase-functions/logger'
-import UnacceptableError from '../errors/unacceptable'
-import NotFoundError from '../errors/notFound'
+import { HttpsError } from 'firebase-functions/v2/https'
 
 export async function getUsers(request: Request, response: Response) {
 	const username = request.query.username
 
 	if (typeof username !== 'string' || !username.match(/^[\p{L}\p{N}\p{P}\p{S}]+$/u)) {
-		throw new UnacceptableError('Invalid username')
+		throw new HttpsError('invalid-argument', 'Invalid username')
 	}
 
 	const db = getFirestore()
@@ -32,7 +31,7 @@ export async function getUser(request: Request, response: Response) {
 	const docSnapshot = await db.doc(`users/${id}`).get()
 
 	if (!docSnapshot.exists) {
-		throw new NotFoundError('User not found')
+		throw new HttpsError('not-found', 'User not found')
 	}
 
 	logger.info('User fetched', {id})
@@ -51,14 +50,14 @@ export async function createUser(request: Request, response: Response) {
 	const username = request.body?.username
 
 	if (typeof username !== 'string' || !username.match(/^[\p{L}\p{N}\p{P}\p{S}]+$/u)) {
-		throw new UnacceptableError('Invalid username')
+		throw new HttpsError('invalid-argument', 'Invalid username')
 	}
 
 	const db = getFirestore()
 	const querySnapshot = await db.collection('users').where('username', '==', username).get()
 
 	if (!querySnapshot.empty) {
-		throw new UnacceptableError('Username already taken')
+		throw new HttpsError('already-exists', 'Username already taken')
 	}
 
 	await db.doc(`users/${uid}`).set({

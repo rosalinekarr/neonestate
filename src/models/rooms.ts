@@ -3,10 +3,12 @@ import { buildRequest } from '../utils'
 
 export interface Room {
 	id: string;
-	name: string;
-	description: string;
+	backgroundPath?: string;
 	createdAt: number;
+	createdBy: string;
+	description: string;
 	memberCount: number;
+	name: string;
 }
 
 export async function getRoom(auth: Auth, id: string): Promise<Room | null> {
@@ -30,9 +32,16 @@ export async function getRooms(auth: Auth, queryOpts: GetRoomsQueryOpts): Promis
 	return response.json() as Promise<Room[]>
 }
 
-export async function createRoom(auth: Auth, room: Omit<Room, 'id' | 'createdAt' | 'memberCount'>): Promise<Room> {
+export async function createRoom(auth: Auth, room: Omit<Room, 'id' | 'createdAt' | 'createdBy' | 'memberCount'>): Promise<Room> {
 	const response = await fetch(
 		await buildRequest(auth, 'POST', '/api/rooms', room),
+	)
+	return response.json() as Promise<Room>
+}
+
+export async function updateRoom(auth: Auth, id: string, roomData: Omit<Room, 'id' | 'createdAt' | 'createdBy' | 'memberCount' | 'name'>): Promise<Room> {
+	const response = await fetch(
+		await buildRequest(auth, 'PUT', `/api/rooms/${encodeURIComponent(id)}`, roomData),
 	)
 	return response.json() as Promise<Room>
 }

@@ -40,6 +40,7 @@
 .header {
   align-items: center;
   background-color: rgb(255 255 255 / 40%);
+  border-bottom: 0.1rem solid white;
   color-scheme: light dark;
   display: flex;
   justify-content: space-between;
@@ -85,6 +86,7 @@
 
 .footer {
   background-color: rgb(255 255 255 / 40%);
+  border-top: 0.1rem solid white;
   display: flex;
   font-size: 0.7rem;
   justify-content: center;
@@ -120,6 +122,7 @@
 @media (prefers-color-scheme: dark) {
     .header {
         background-color: rgb(0 0 0 / 40%);
+        border-bottom: 0.1rem solid black;
       }
     
       .header button svg {
@@ -144,6 +147,7 @@
     
       .footer {
         background-color: rgb(0 0 0 / 40%);
+        border-top: 0.1rem solid black;
       }
     
       .footer a {
