@@ -5,7 +5,7 @@
   flex: 1;
   flex-direction: column;
   min-height: 100%;
-  overflow-y: scroll;
+  min-width: 18rem;
 }
 
 .room-container {
@@ -14,25 +14,44 @@
   border-radius: 0.5rem;
   box-sizing: border-box;
   max-width: 40rem;
-  width: 100%;
   margin: 1rem;
   padding: 2rem;
+  width: 100%;
 }
 
 .room-header {
   display: flex;
   align-items: center;
-  background-size: cover;
+  backdrop-filter: blur(1rem);
+  background: rgba(255 255 255 / 60%);
+  border-bottom: 0.1rem solid white;
   box-sizing: border-box;
   color: black;
   flex-direction: column;
   justify-content: center;
-  position: relative;
+  max-height: 100%;
+  overflow: scroll;
+  position: fixed;
+  top: 3.3125rem;
+  transition: max-height 0.5s linear,
+    padding-top 0.5s linear,
+    padding-bottom 0.5s linear;
   width: 100%;
 }
 
+.room-header-hidden {
+  border-width: 0;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .room-header-container {
+  align-items: center;
   box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   max-width: 40rem;
   padding: 1rem 2rem;
   width: 100%;
@@ -53,28 +72,53 @@
 .room-created-at {
   color: rgb(0 0 0 / 60%);
   margin-top: 0;
+  width: 100%;
+}
+
+.room-description {
+  width: 100%;
+  margin: 0;
 }
 
 .posts {
   align-items: center;
   background: rgb(255 255 255 / 60%);
-  border-top: 0.1rem solid white;
+  background-attachment: fixed;
+  background-position: center center;
+  background-repeat: repeat;
   box-sizing: border-box;
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: 1rem 2rem 0;
+  overflow-y: scroll;
+  padding: 12rem 1rem 8rem;
   width: 100%;
 }
 
 .new-post-form {
   align-items: center;
+  backdrop-filter: blur(1rem);
+  background: rgb(255 255 255 / 60%);
   border-top: 0.1rem solid white;
+  bottom: 1.625rem;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding: 1rem 2rem;
+  max-height: 100%;
+  overflow: scroll;
+  padding: 1rem;
+  position: fixed;
+  transition: max-height 0.5s linear,
+    padding-top 0.5s linear,
+    padding-bottom 0.5s linear;
   width: 100%;
+}
+
+.new-post-form-hidden {
+  border-width: 0;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .new-post-form-container {
@@ -147,7 +191,6 @@
 @media (prefers-color-scheme: dark) {
   .posts {
     background-color: rgb(0 0 0 / 60%);
-    border-top: 0.1rem solid black;
     color: white;
   }
 
@@ -162,6 +205,8 @@
   }
 
   .room-header {
+    background: rgba(0 0 0 / 60%);
+    border-bottom: 0.1rem solid black;
     color: white;
   }
 
@@ -170,6 +215,7 @@
   }
 
   .new-post-form {
+    background: rgb(0 0 0 / 60%);
     border-top: 0.1rem solid black;
   }
 

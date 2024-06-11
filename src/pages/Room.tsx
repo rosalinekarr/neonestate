@@ -137,9 +137,10 @@ function generateBlankPostTextSection(): PostTextSection {
 
 interface NewPostFormProps {
 	room: RoomModel;
+	show: boolean;
 }
 
-function NewPostForm({room}: NewPostFormProps) {
+function NewPostForm({room, show}: NewPostFormProps) {
 	const auth = useAuth()
 	const [sections, setSections] = useState<PostSection[]>([generateBlankPostTextSection()])
 	const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -156,7 +157,7 @@ function NewPostForm({room}: NewPostFormProps) {
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className={styles.newPostForm}>
+		<form onSubmit={handleSubmit} className={[styles.newPostForm, ...show ? [] : [styles.newPostFormHidden]].join(' ')}>
 			<div className={styles.newPostFormContainer}>
 				<div className={styles.newPostSections}>
 					{sections.map((section: PostSection, index: number) =>
@@ -209,17 +210,25 @@ function NewPostForm({room}: NewPostFormProps) {
 }
 
 interface PostsProps {
+	onScrollDown: () => void;
+	onScrollUp: () => void;
 	room: RoomModel;
 }
 
-function Posts({room}: PostsProps) {
+function Posts({onScrollDown, onScrollUp, room}: PostsProps) {
 	const roomRef = useRef<HTMLDivElement | null>(null)
 	const {fetchMore, posts} = usePostsForRoom(room.id)
+	const backgroundUrl = useImage(room?.backgroundPath)
 	const [scrollBottom, setScrollBottom] = useState<number>(0)
 
 	const handleScroll = useCallback(() => {
 		if (!roomRef.current) return
-		setScrollBottom(roomRef.current.scrollHeight - roomRef.current.scrollTop - roomRef.current.clientHeight)
+		const newValue = roomRef.current.scrollHeight - roomRef.current.scrollTop - roomRef.current.clientHeight
+		setScrollBottom((prevValue: number) => {
+			if (newValue < prevValue) onScrollDown()
+			if (newValue > prevValue) onScrollUp()
+			return newValue
+		})
 		if (roomRef.current.scrollTop < SCROLL_TOP_THRESHOLD)
 			fetchMore()
 	}, [posts])
@@ -230,7 +239,12 @@ function Posts({room}: PostsProps) {
 	}, [posts])
 
 	return (
-		<div className={styles.posts} ref={roomRef} onScroll={handleScroll}>
+		<div
+			className={styles.posts}
+			onScroll={handleScroll}
+			ref={roomRef}
+			style={backgroundUrl ? {backgroundImage: `url('${backgroundUrl}')`} : {}}
+		>
 			{posts.map((post, index) => [<Post key={post.id} post={post} />, ...index % 5 === 4 ? [<Ad />] : []]).flat()}
 		</div>
 	)
@@ -242,8 +256,9 @@ export default function Room() {
 	const user = useCurrentUser()
 	const {name} = useParams()
 	const room = useRoom(name || '')
-	const backgroundUrl = useImage(room?.backgroundPath)
 	const [isLoading, setIsLoading] = useState<boolean>(true)
+	const [showFooter, setShowFooter] = useState<boolean>(true)
+	const [showHeader, setShowHeader] = useState<boolean>(true)
 	const {canEditRoom} = usePermissions(room, user)
 
 	useEffect(() => {
@@ -266,17 +281,26 @@ export default function Room() {
 
 	return (
 		<div className={styles.room}>
-			<div className={styles.roomHeader}>
-				{backgroundUrl && <img className={styles.roomHeaderBackground} src={backgroundUrl} />}
+			<div className={[styles.roomHeader, ...showHeader ? [] : [styles.roomHeaderHidden]].join(' ')}>
 				<div className={styles.roomHeaderContainer}>
 					<h2>{room.name}</h2>
+					{canEditRoom && <IconButton icon={EditIcon} onClick={() => navigate(`/rooms/${room.name}/edit`)} />}
 					<p className={styles.roomCreatedAt}>{`Created ${formatAgo(new Date(room.createdAt * 1000))}`}</p>
 					{room.description && <p className={styles.roomDescription}>{room.description}</p>}
-					{canEditRoom && <IconButton icon={EditIcon} onClick={() => navigate(`/rooms/${room.name}/edit`)} />}
 				</div>
 			</div>
-			<Posts room={room} />
-			<NewPostForm room={room} />
+			<Posts
+				room={room}
+				onScrollDown={() => {
+					setShowFooter(true)
+					setShowHeader(false)
+				}}
+				onScrollUp={() => {
+					setShowFooter(false)
+					setShowHeader(true)
+				}}
+			/>
+			<NewPostForm room={room} show={showFooter} />
 		</div>
 	)
 }

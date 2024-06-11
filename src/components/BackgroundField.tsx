@@ -30,7 +30,7 @@ export default function BackgroundField({error: parentError, name, onChange, val
 
 	return (
 		<div className={styles.fileField}>
-			<label htmlFor='background'>Header Background</label>
+			<label htmlFor='background'>Background</label>
 			<div
 				className={[styles.backgroundPreview, ...backgroundUrl ? [] : [styles.blank], ...error ? [styles.error] : []].join(' ')}
 				onClick={() => inputRef.current?.click()}

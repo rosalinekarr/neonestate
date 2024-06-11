@@ -1,18 +1,17 @@
 .background-preview {
     align-items: center;
     display: flex;
-    height: 4.5rem;
+    max-height: 20rem;
+    max-width: 100%;
+    min-height: 10rem;
     justify-content: center;
     overflow: hidden;
     position: relative;
-    width: 20rem;
+    width: 30rem;
 }
 
 .background-preview img {
-    height: 4.5rem;
-    object-fit: cover;
-    overflow: hidden;
-    width: 20rem;
+    width: 100%;
 }
 
 .background-preview svg {

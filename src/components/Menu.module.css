@@ -3,7 +3,7 @@
     border-right: 0.1rem solid white;
     display: none;
     flex-direction: column;
-    height: 100%;
+    min-height: 100%;
     min-width: 15rem;
     overflow-y: scroll;
     resize: horizontal;
