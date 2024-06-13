@@ -1,32 +1,38 @@
 @keyframes flicker {
-  0%, 10%, 25%, 35%, 45%, 100% {
+  0%,
+  10%,
+  25%,
+  35%,
+  45%,
+  100% {
     filter: drop-shadow(0 0 1px rgb(255 255 255 / 95%))
-            drop-shadow(0 0 2px rgb(255 255 255 / 25%))
-            drop-shadow(0 0 3px rgb(255 255 255 / 25%))
-            drop-shadow(0 0 5px rgb(255 255 255 / 50%))
-            drop-shadow(0 0 10px rgb(255 255 255 / 50%))
-            drop-shadow(0 0 15px rgb(255 255 255 / 50%))
-            drop-shadow(0 0 20px rgb(255 255 255 / 75%));
+      drop-shadow(0 0 2px rgb(255 255 255 / 25%))
+      drop-shadow(0 0 3px rgb(255 255 255 / 25%))
+      drop-shadow(0 0 5px rgb(255 255 255 / 50%))
+      drop-shadow(0 0 10px rgb(255 255 255 / 50%))
+      drop-shadow(0 0 15px rgb(255 255 255 / 50%))
+      drop-shadow(0 0 20px rgb(255 255 255 / 75%));
   }
 
-  5%, 40% {
+  5%,
+  40% {
     filter: drop-shadow(0 0 1px rgb(255 255 255 / 85%))
-            drop-shadow(0 0 2px rgb(255 255 255 / 50%))
-            drop-shadow(0 0 4px rgb(255 255 255 / 50%))
-            drop-shadow(0 0 5px rgb(255 255 255 / 50%))
-            drop-shadow(0 0 10px rgb(255 255 255 / 50%))
-            drop-shadow(0 0 15px rgb(255 255 255 / 50%))
-            drop-shadow(0 0 20px rgb(255 255 255 / 75%));
+      drop-shadow(0 0 2px rgb(255 255 255 / 50%))
+      drop-shadow(0 0 4px rgb(255 255 255 / 50%))
+      drop-shadow(0 0 5px rgb(255 255 255 / 50%))
+      drop-shadow(0 0 10px rgb(255 255 255 / 50%))
+      drop-shadow(0 0 15px rgb(255 255 255 / 50%))
+      drop-shadow(0 0 20px rgb(255 255 255 / 75%));
   }
 
   30% {
     filter: drop-shadow(0 0 1px rgb(255 255 255 / 95%))
-            drop-shadow(0 0 2px rgb(255 255 255 / 50%))
-            drop-shadow(0 0 4px rgb(255 255 255 / 75%))
-            drop-shadow(0 0 5px rgb(255 255 255 / 50%))
-            drop-shadow(0 0 10px rgb(255 255 255 / 50%))
-            drop-shadow(0 0 15px rgb(255 255 255 / 50%))
-            drop-shadow(0 0 20px rgb(255 255 255 / 100%));
+      drop-shadow(0 0 2px rgb(255 255 255 / 50%))
+      drop-shadow(0 0 4px rgb(255 255 255 / 75%))
+      drop-shadow(0 0 5px rgb(255 255 255 / 50%))
+      drop-shadow(0 0 10px rgb(255 255 255 / 50%))
+      drop-shadow(0 0 15px rgb(255 255 255 / 50%))
+      drop-shadow(0 0 20px rgb(255 255 255 / 100%));
   }
 }
 
@@ -45,11 +51,11 @@
   display: flex;
   justify-content: space-between;
 }
-  
+
 .header div {
   display: flex;
 }
-  
+
 .menu-button {
   background: none;
   border: none;
@@ -63,10 +69,11 @@
   background: rgb(0 0 0 / 20%);
 }
 
-.menu-button:active, .menu-button-active {
+.menu-button:active,
+.menu-button-active {
   background: rgb(0 0 0 / 10%);
 }
-  
+
 .menu-button svg {
   color-scheme: light dark;
   fill: black;
@@ -82,12 +89,18 @@
 .footer {
   background-color: rgb(255 255 255 / 40%);
   border-top: 0.1rem solid white;
-  display: flex;
+  display: none;
   font-size: 0.7rem;
   justify-content: center;
   padding: 0.25rem 0;
 }
-  
+
+@media (width >= 42rem) {
+  .footer {
+    display: flex;
+  }
+}
+
 .footer a {
   border-right: 1px solid rgb(0 0 0 / 60%);
   color: rgb(0 0 0 / 60%);
@@ -107,62 +120,63 @@
 .footer a:visited {
   color: rgb(0 0 0 / 60%);
 }
-  
+
 .footer a:last-child {
   border-right: none;
   margin-right: 0;
   padding-right: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-    .header {
-        background-color: rgb(0 0 0 / 40%);
-        border-bottom: 0.1rem solid black;
-      }
-    
-      .menu-button svg {
-        fill: white;
-      }
-      
-      .menu-button {
-        background: none;
-      }
-    
-      .menu-button:hover {
-        background: rgb(255 255 255 / 20%);
-      }
-      
-      .menu-button:active, .menu-button-active {
-        background: rgb(255 255 255 / 10%);
-      }
-    
-      .header svg {
-        animation-duration: 3s;
-        animation-iteration-count: infinite;
-        animation-name: flicker;
-        animation-timing-function: linear;
-        stroke: white;
-      }
-    
-      .footer {
-        background-color: rgb(0 0 0 / 40%);
-        border-top: 0.1rem solid black;
-      }
-    
-      .footer a {
-        border-color: rgb(255 255 255 / 60%);
-        color: rgb(255 255 255 / 60%);
-      }
-    
-      .footer a:active {
-        color: rgb(255 255 255 / 100%);
-      }
-    
-      .footer a:hover {
-        color: rgb(255 255 255 / 80%);
-      }
-    
-      .footer a:visited {
-        color: rgb(255 255 255 / 60%);
-      }
+div[data-theme="dark"] {
+  .header {
+    background-color: rgb(0 0 0 / 40%);
+    border-bottom: 0.1rem solid black;
+  }
+
+  .menu-button svg {
+    fill: white;
+  }
+
+  .menu-button {
+    background: none;
+  }
+
+  .menu-button:hover {
+    background: rgb(255 255 255 / 20%);
+  }
+
+  .menu-button:active,
+  .menu-button-active {
+    background: rgb(255 255 255 / 10%);
+  }
+
+  .header svg {
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-name: flicker;
+    animation-timing-function: linear;
+    stroke: white;
+  }
+
+  .footer {
+    background-color: rgb(0 0 0 / 40%);
+    border-top: 0.1rem solid black;
+  }
+
+  .footer a {
+    border-color: rgb(255 255 255 / 60%);
+    color: rgb(255 255 255 / 60%);
+  }
+
+  .footer a:active {
+    color: rgb(255 255 255 / 100%);
+  }
+
+  .footer a:hover {
+    color: rgb(255 255 255 / 80%);
+  }
+
+  .footer a:visited {
+    color: rgb(255 255 255 / 60%);
+  }
 }

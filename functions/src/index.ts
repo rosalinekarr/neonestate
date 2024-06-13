@@ -1,9 +1,9 @@
-import * as admin from 'firebase-admin'
-import {onRequest} from 'firebase-functions/v2/https'
-import api from './api'
+import * as admin from "firebase-admin";
+import { onRequest } from "firebase-functions/v2/https";
+import api from "./api";
 
 admin.initializeApp({
-	projectId: 'neon-estate',
-})
+  projectId: "neon-estate",
+});
 
-exports.app = onRequest(api)
+exports.app = onRequest(api);

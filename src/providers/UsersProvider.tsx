@@ -1,91 +1,128 @@
-import {ReactNode, createContext, useContext, useEffect, useState} from 'react'
-import {useAuth, useFirebaseApp} from '../hooks'
-import { User, createUser, getUser, isProfileComplete, listenForUserChanges, updateUser } from '../models/users'
-import {CreateAccount} from '../pages'
-import { AuthContext } from './AuthProvider'
-import { Loading } from '../components'
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useAuth, useFirebaseApp } from "../hooks";
+import {
+  User,
+  createUser,
+  getUser,
+  isProfileComplete,
+  listenForUserChanges,
+  updateUser,
+} from "../models/users";
+import { CreateAccount } from "../pages";
+import { AuthContext } from "./AuthProvider";
+import { Loading } from "../components";
 
 interface UserProviderProps {
-	children: ReactNode;
+  children: ReactNode;
 }
 
 export interface UsersContext {
-	currentUser: User;
-	fetchUser: (id: string) => Promise<User | null>;
-	updateProfile: (user: Omit<User, 'id' | 'createdAt'>) => Promise<void>;
+  currentUser: User;
+  fetchUser: (id: string) => Promise<User | null>;
+  updateProfile: (user: Omit<User, "id" | "createdAt">) => Promise<void>;
 }
 
-export const UsersContext = createContext<UsersContext | null>(null)
+export const UsersContext = createContext<UsersContext | null>(null);
 
-export default function UsersProvider({children}: UserProviderProps) {
-	const app = useFirebaseApp()
-	const auth = useAuth()
-	const firebaseUser = useContext(AuthContext)
-	const [users, setUsers] = useState<Record<string, User>>({})
-	const [currentUser, setCurrentUser] = useState<User | null>(null)
-	const [isLoading, setIsLoading] = useState<boolean>(true)
+export default function UsersProvider({ children }: UserProviderProps) {
+  const app = useFirebaseApp();
+  const auth = useAuth();
+  const firebaseUser = useContext(AuthContext);
+  const [users, setUsers] = useState<Record<string, User>>({});
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-	async function createProfile({avatarPath, username}: Omit<User, 'id' | 'createdAt'>) {
-		const newProfile = await createUser(auth, {avatarPath, username})
-		setUsers((prevUsers) => ({
-			...prevUsers,
-			[newProfile.id]: newProfile,
-		}))
-	}
+  async function createProfile({
+    avatarPath,
+    username,
+  }: Omit<User, "id" | "createdAt">) {
+    const newProfile = await createUser(auth, { avatarPath, username });
+    setUsers((prevUsers) => ({
+      ...prevUsers,
+      [newProfile.id]: newProfile,
+    }));
+  }
 
-	async function updateProfile({avatarPath, username}: Omit<User, 'id' | 'createdAt'>) {
-		if (!firebaseUser) throw new Error('Missing AuthContext: UsersProvider must only be used within AuthProvider')
-		const updatedProfile = await updateUser(auth, firebaseUser.uid, {avatarPath, username})
-		setUsers((prevUsers) => ({
-			...prevUsers,
-			[firebaseUser.uid]: updatedProfile,
-		}))
-	}
+  async function updateProfile({
+    avatarPath,
+    username,
+  }: Omit<User, "id" | "createdAt">) {
+    if (!firebaseUser)
+      throw new Error(
+        "Missing AuthContext: UsersProvider must only be used within AuthProvider",
+      );
+    const updatedProfile = await updateUser(auth, firebaseUser.uid, {
+      avatarPath,
+      username,
+    });
+    setUsers((prevUsers) => ({
+      ...prevUsers,
+      [firebaseUser.uid]: updatedProfile,
+    }));
+  }
 
-	async function fetchUser(id: string): Promise<User | null> {
-		if (users[id]) return users[id]
+  async function fetchUser(id: string): Promise<User | null> {
+    if (users[id]) return users[id];
 
-		const user = await getUser(auth, id)
-		if (user)
-			setUsers((prevUsers) => ({
-				...prevUsers,
-				[id]: user,
-			}))
+    const user = await getUser(auth, id);
+    if (user)
+      setUsers((prevUsers) => ({
+        ...prevUsers,
+        [id]: user,
+      }));
 
-		return user
-	}
+    return user;
+  }
 
-	useEffect(() => {
-		const unsubscribe = listenForUserChanges(app, Object.keys(users), (user: User) => {
-			setUsers((prevUsers) => ({
-				...prevUsers,
-				[user.id]: user,
-			}))
-		})
+  useEffect(() => {
+    const unsubscribe = listenForUserChanges(
+      app,
+      Object.keys(users),
+      (user: User) => {
+        setUsers((prevUsers) => ({
+          ...prevUsers,
+          [user.id]: user,
+        }));
+      },
+    );
 
-		return () => unsubscribe()
-	}, [users])
+    return () => unsubscribe();
+  }, [users]);
 
-	useEffect(() => {
-		async function loadCurrentUser() {
-			if (!firebaseUser) throw new Error('Missing AuthContext: UsersProvider must only be used within AuthProvider')
-			const user = await fetchUser(firebaseUser.uid)
-			setCurrentUser(user)
-			setIsLoading(false)
-		}
+  useEffect(() => {
+    async function loadCurrentUser() {
+      if (!firebaseUser)
+        throw new Error(
+          "Missing AuthContext: UsersProvider must only be used within AuthProvider",
+        );
+      const user = await fetchUser(firebaseUser.uid);
+      setCurrentUser(user);
+      setIsLoading(false);
+    }
 
-		loadCurrentUser()
-	}, [])
+    loadCurrentUser();
+  }, []);
 
-	if (isLoading) return <Loading />
+  if (isLoading) return <Loading />;
 
-	if (!isProfileComplete(currentUser)) return <CreateAccount onSubmit={createProfile} />
+  if (!isProfileComplete(currentUser))
+    return <CreateAccount onSubmit={createProfile} />;
 
-	return (
-		<UsersContext.Provider value={{
-			currentUser,
-			fetchUser,
-			updateProfile,
-		}}>{children}</UsersContext.Provider>
-	)
+  return (
+    <UsersContext.Provider
+      value={{
+        currentUser,
+        fetchUser,
+        updateProfile,
+      }}
+    >
+      {children}
+    </UsersContext.Provider>
+  );
 }

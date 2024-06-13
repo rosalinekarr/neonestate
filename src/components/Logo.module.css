@@ -4,8 +4,8 @@
   width: 12rem;
 }
 
-@media (prefers-color-scheme: dark) {
-    .logo {
-        stroke: white;
-      }
+div[data-theme="dark"] {
+  .logo {
+    stroke: white;
+  }
 }

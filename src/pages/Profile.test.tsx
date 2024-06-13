@@ -1,106 +1,114 @@
-import {fireEvent, render, waitFor} from '@testing-library/react'
-import {screen} from '@testing-library/dom'
-import {describe, expect, it, vi} from 'vitest'
-import {ProfileForm} from './Profile'
-import { UsersContext } from '../providers/UsersProvider'
-import { ImagesContext } from '../providers/ImagesProvider'
+import { fireEvent, render, waitFor } from "@testing-library/react";
+import { screen } from "@testing-library/dom";
+import { describe, expect, it, vi } from "vitest";
+import { ProfileForm } from "./Profile";
+import { UsersContext } from "../providers/UsersProvider";
+import { ImagesContext } from "../providers/ImagesProvider";
 
-describe('ProfileForm', () => {
-	it('allows updating username with a valid new one', async () => {
-		const {promise: updateProfilePromise, resolve} = Promise.withResolvers()
-		const handleClose = vi.fn()
-		const updateProfile = vi.fn(() => updateProfilePromise)
-		const uploadAvatar = vi.fn()
+describe("ProfileForm", () => {
+  it("allows updating username with a valid new one", async () => {
+    const { promise: updateProfilePromise, resolve } = Promise.withResolvers();
+    const handleClose = vi.fn();
+    const updateProfile = vi.fn(() => updateProfilePromise);
+    const uploadAvatar = vi.fn();
 
-		render(<ProfileForm onClose={handleClose}/>, {
-			wrapper: ({children}) =>
-				<ImagesContext.Provider value={{uploadAvatar} as unknown as ImagesContext}>
-					<UsersContext.Provider value={{updateProfile} as unknown as UsersContext}>
-						{children}
-					</UsersContext.Provider>
-				</ImagesContext.Provider>
-			,
+    render(<ProfileForm onClose={handleClose} />, {
+      wrapper: ({ children }) => (
+        <ImagesContext.Provider
+          value={{ uploadAvatar } as unknown as ImagesContext}
+        >
+          <UsersContext.Provider
+            value={{ updateProfile } as unknown as UsersContext}
+          >
+            {children}
+          </UsersContext.Provider>
+        </ImagesContext.Provider>
+      ),
+    });
 
-		})
+    fireEvent.change(screen.getByLabelText("Username"), {
+      target: { value: "Johnny Mnemonic" },
+    });
 
-		fireEvent.change(
-			screen.getByLabelText('Username'),
-			{target: {value: 'Johnny Mnemonic'}},
-		)
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
-		fireEvent.click(screen.getByRole('button', {name: 'Save'}))
+    expect(updateProfile).toBeCalledWith({
+      avatarPath: "",
+      username: "Johnny Mnemonic",
+    });
+    expect(screen.getByRole("progressbar")).toBeInTheDocument();
 
-		expect(updateProfile).toBeCalledWith({
-			avatarPath: '',
-			username: 'Johnny Mnemonic',
-		})
-		expect(screen.getByRole('progressbar')).toBeInTheDocument()
+    resolve({});
 
-		resolve({})
+    await waitFor(() => {
+      expect(handleClose).toBeCalled();
+    });
+  });
 
-		await waitFor(() => {
-			expect(handleClose).toBeCalled()
-		})
-	})
+  it("does not allows updating username with an existing one", async () => {
+    const { promise: updateProfilePromise, reject } = Promise.withResolvers();
+    const handleClose = vi.fn();
+    const updateProfile = vi.fn(() => updateProfilePromise);
+    const uploadAvatar = vi.fn();
 
-	it('does not allows updating username with an existing one', async () => {
-		const {promise: updateProfilePromise, reject} = Promise.withResolvers()
-		const handleClose = vi.fn()
-		const updateProfile = vi.fn(() => updateProfilePromise)
-		const uploadAvatar = vi.fn()
+    render(<ProfileForm onClose={handleClose} />, {
+      wrapper: ({ children }) => (
+        <ImagesContext.Provider
+          value={{ uploadAvatar } as unknown as ImagesContext}
+        >
+          <UsersContext.Provider
+            value={{ updateProfile } as unknown as UsersContext}
+          >
+            {children}
+          </UsersContext.Provider>
+        </ImagesContext.Provider>
+      ),
+    });
 
-		render(<ProfileForm onClose={handleClose}/>, {
-			wrapper: ({children}) =>
-				<ImagesContext.Provider value={{uploadAvatar} as unknown as ImagesContext}>
-					<UsersContext.Provider value={{updateProfile} as unknown as UsersContext}>
-						{children}
-					</UsersContext.Provider>
-				</ImagesContext.Provider>
-			,
+    fireEvent.change(screen.getByLabelText("Username"), {
+      target: { value: "Johnny Mnemonic" },
+    });
 
-		})
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
-		fireEvent.change(
-			screen.getByLabelText('Username'),
-			{target: {value: 'Johnny Mnemonic'}},
-		)
+    expect(updateProfile).toBeCalledWith({
+      avatarPath: "",
+      username: "Johnny Mnemonic",
+    });
+    expect(screen.getByRole("progressbar")).toBeInTheDocument();
 
-		fireEvent.click(screen.getByRole('button', {name: 'Save'}))
+    reject(new Error("Invalid username"));
 
-		expect(updateProfile).toBeCalledWith({
-			avatarPath: '',
-			username: 'Johnny Mnemonic',
-		})
-		expect(screen.getByRole('progressbar')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+    });
 
-		reject(new Error('Invalid username'))
+    expect(screen.getByText("Error: Invalid username")).toBeInTheDocument();
+  });
 
-		await waitFor(() => {
-			expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
-		})
+  it("calls onClose when cancelled", async () => {
+    const handleClose = vi.fn();
+    const updateProfile = vi.fn();
+    const uploadAvatar = vi.fn();
 
-		expect(screen.getByText('Error: Invalid username')).toBeInTheDocument()
-	})
+    render(<ProfileForm onClose={handleClose} />, {
+      wrapper: ({ children }) => (
+        <ImagesContext.Provider
+          value={{ uploadAvatar } as unknown as ImagesContext}
+        >
+          <UsersContext.Provider
+            value={{ updateProfile } as unknown as UsersContext}
+          >
+            {children}
+          </UsersContext.Provider>
+        </ImagesContext.Provider>
+      ),
+    });
 
-	it('calls onClose when cancelled', async () => {
-		const handleClose = vi.fn()
-		const updateProfile = vi.fn()
-		const uploadAvatar = vi.fn()
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
 
-		render(<ProfileForm onClose={handleClose}/>, {
-			wrapper: ({children}) =>
-				<ImagesContext.Provider value={{uploadAvatar} as unknown as ImagesContext}>
-					<UsersContext.Provider value={{updateProfile} as unknown as UsersContext}>
-						{children}
-					</UsersContext.Provider>
-				</ImagesContext.Provider>
-			,
-		})
-
-		fireEvent.click(screen.getByRole('button', {name: 'Cancel'}))
-
-		await waitFor(() => {
-			expect(handleClose).toBeCalled()
-		})
-	})
-})
+    await waitFor(() => {
+      expect(handleClose).toBeCalled();
+    });
+  });
+});

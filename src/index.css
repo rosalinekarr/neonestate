@@ -1,7 +1,8 @@
-@import 'https://fonts.googleapis.com/css2?family=Flow+Rounded&family=M+PLUS+Rounded+1c&display=swap';
+@import "https://fonts.googleapis.com/css2?family=Flow+Rounded&family=M+PLUS+Rounded+1c&display=swap";
 
 @keyframes background-color-rotate-hue {
-  0%, 100% {
+  0%,
+  100% {
     background-color: lab(50% 125 125 / 50%);
   }
 
@@ -18,7 +19,9 @@
   }
 }
 
-html, body, #root {
+html,
+body,
+#root {
   width: 100vw;
   height: 100vh;
   margin: 0;

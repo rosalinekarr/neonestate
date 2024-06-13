@@ -30,7 +30,8 @@
   justify-content: center;
   max-height: 100%;
   overflow: scroll;
-  transition: max-height 1s linear,
+  transition:
+    max-height 1s linear,
     padding-top 1s linear,
     padding-bottom 1s linear;
   width: 100%;
@@ -104,7 +105,8 @@
   max-height: 100%;
   overflow: scroll;
   padding: 0.5rem 1rem;
-  transition: max-height 1s linear,
+  transition:
+    max-height 1s linear,
     padding-top 1s linear,
     padding-bottom 1s linear;
   width: 100%;
@@ -192,7 +194,7 @@
   margin-left: 0.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
+div[data-theme="dark"] {
   .posts {
     background-color: rgb(0 0 0 / 80%);
     color: white;
@@ -215,7 +217,7 @@
   }
 
   .room-created-at {
-    color: rgb(255 255 255 / 60%)
+    color: rgb(255 255 255 / 60%);
   }
 
   .new-post-form {
@@ -245,15 +247,15 @@
   .new-post-button svg {
     fill: white;
   }
-  
+
   .new-post-button {
     background-color: rgb(255 255 255 / 20%);
   }
-  
+
   .new-post-button:hover {
     background-color: rgb(255 255 255 / 10%);
   }
-  
+
   .new-post-button:active {
     background-color: rgb(255 255 255 / 0%);
   }

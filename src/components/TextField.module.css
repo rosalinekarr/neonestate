@@ -1,60 +1,60 @@
 .text-field {
-    margin-bottom: 1rem;
-    margin-right: 0.5rem;
+  margin-bottom: 1rem;
+  margin-right: 0.5rem;
 }
 
 .text-field label {
-    display: block;
-    margin-bottom: 0.5rem;
-    padding: 0;
+  display: block;
+  margin-bottom: 0.5rem;
+  padding: 0;
 }
-  
+
 .text-field input {
-    background-color: rgb(0 0 0 / 20%);
-    border: none;
-    border-radius: 0.5rem;
-    box-sizing: border-box;
-    color: black;
-    font-family: "M PLUS Rounded 1c", sans-serif;
-    outline: none;
-    padding: 0.375rem 1rem;
-    width: 100%;
+  background-color: rgb(0 0 0 / 20%);
+  border: none;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  color: black;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  outline: none;
+  padding: 0.375rem 1rem;
+  width: 100%;
 }
-  
+
 .text-field input:focus {
-    background-color: rgb(0 0 0 / 10%);
+  background-color: rgb(0 0 0 / 10%);
 }
-  
+
 .text-field input::placeholder {
-    color: rgb(0 0 0 / 60%);
+  color: rgb(0 0 0 / 60%);
 }
 
 input.error {
-    border: 0.1rem solid rgb(255 0 0 / 50%);
+  border: 0.1rem solid rgb(255 0 0 / 50%);
 }
 
 .error-message {
-    color: black;
-    font-size: 0.8rem;
-    height: 1rem;
-    margin: 0.5rem 0;
+  color: black;
+  font-size: 0.8rem;
+  height: 1rem;
+  margin: 0.5rem 0;
 }
 
-@media (prefers-color-scheme: dark) {
-    .text-field input {
-        background-color: rgb(255 255 255 / 20%);
-        color: white;
-    }
-      
-    .text-field input:focus {
-        background-color: rgb(255 255 255 / 10%);
-    }
-      
-    .text-field input::placeholder {
-        color: rgb(255 255 255 / 60%);
-    }
+div[data-theme="dark"] {
+  .text-field input {
+    background-color: rgb(255 255 255 / 20%);
+    color: white;
+  }
 
-    .error-message {
-        color: white;
-    }
+  .text-field input:focus {
+    background-color: rgb(255 255 255 / 10%);
+  }
+
+  .text-field input::placeholder {
+    color: rgb(255 255 255 / 60%);
+  }
+
+  .error-message {
+    color: white;
+  }
 }

@@ -1,14 +1,14 @@
 .profile {
-    align-items: center;
-    background-color: rgb(255 255 255 / 60%);
-    box-sizing: border-box;
-    color: black;
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    min-height: 100%;
-    padding: 1rem 2rem;
-  }
+  align-items: center;
+  background-color: rgb(255 255 255 / 60%);
+  box-sizing: border-box;
+  color: black;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 1rem 2rem;
+}
 
 .profile-container {
   background-color: rgb(255 255 255 / 60%);
@@ -29,7 +29,7 @@
   overflow: hidden;
 }
 
-@media (prefers-color-scheme: dark) {
+div[data-theme="dark"] {
   .profile {
     background-color: rgb(0 0 0 / 60%);
     color: white;

@@ -1,16 +1,16 @@
 .sign-in {
-    align-self: center;
-    background-color: white;
-    border-radius: 0.5rem;
-    color: black;
-    max-width: 40rem;
-    padding: 1rem 2rem 5rem;
+  align-self: center;
+  background-color: white;
+  border-radius: 0.5rem;
+  color: black;
+  max-width: 40rem;
+  padding: 1rem 2rem 5rem;
 }
-  
+
 .sign-in form {
-    align-items: flex-end;
-    display: flex;
-    flex-wrap: wrap;
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .input {
@@ -25,7 +25,7 @@
   margin-bottom: 3.1rem;
 }
 
-@media (prefers-color-scheme: dark) {
+div[data-theme="dark"] {
   .sign-in {
     background-color: black;
     color: white;
