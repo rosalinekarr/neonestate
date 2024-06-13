@@ -22,7 +22,6 @@
 .room-header {
   display: flex;
   align-items: center;
-  backdrop-filter: blur(1rem);
   background: rgba(255 255 255 / 60%);
   border-bottom: 0.1rem solid white;
   box-sizing: border-box;
@@ -31,11 +30,9 @@
   justify-content: center;
   max-height: 100%;
   overflow: scroll;
-  position: fixed;
-  top: 3.3125rem;
-  transition: max-height 0.5s linear,
-    padding-top 0.5s linear,
-    padding-bottom 0.5s linear;
+  transition: max-height 1s linear,
+    padding-top 1s linear,
+    padding-bottom 1s linear;
   width: 100%;
 }
 
@@ -47,13 +44,13 @@
 }
 
 .room-header-container {
-  align-items: center;
+  align-items: flex-end;
   box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   max-width: 40rem;
-  padding: 1rem 2rem;
+  padding: 0.5rem 1rem;
   width: 100%;
 }
 
@@ -72,17 +69,19 @@
 .room-created-at {
   color: rgb(0 0 0 / 60%);
   margin-top: 0;
+  margin-bottom: 0.5rem;
   width: 100%;
 }
 
 .room-description {
+  margin: 0 0 0.5rem;
   width: 100%;
-  margin: 0;
+  word-wrap: break-word;
 }
 
 .posts {
   align-items: center;
-  background: rgb(255 255 255 / 60%);
+  background: rgb(255 255 255 / 80%);
   background-attachment: fixed;
   background-position: center center;
   background-repeat: repeat;
@@ -91,26 +90,23 @@
   flex: 1;
   flex-direction: column;
   overflow-y: scroll;
-  padding: 12rem 1rem 8rem;
+  padding: 1rem 1rem 0;
   width: 100%;
 }
 
 .new-post-form {
   align-items: center;
-  backdrop-filter: blur(1rem);
   background: rgb(255 255 255 / 60%);
   border-top: 0.1rem solid white;
-  bottom: 1.625rem;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   max-height: 100%;
   overflow: scroll;
-  padding: 1rem;
-  position: fixed;
-  transition: max-height 0.5s linear,
-    padding-top 0.5s linear,
-    padding-bottom 0.5s linear;
+  padding: 0.5rem 1rem;
+  transition: max-height 1s linear,
+    padding-top 1s linear,
+    padding-bottom 1s linear;
   width: 100%;
 }
 
@@ -137,7 +133,6 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin-bottom: 1rem;
   max-width: 40rem;
   overflow: hidden;
   width: 100%;
@@ -163,34 +158,43 @@
   background: rgb(255 255 255 / 60%);
 }
 
-.new-post-form button {
-  align-content: center;
-  background-color: rgb(255 255 255 / 80%);
+.new-post-button {
+  align-items: center;
+  background-color: rgb(0 0 0 / 20%);
   border: none;
-  border-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  cursor: pointer;
   display: flex;
   font-family: "M PLUS Rounded 1c", sans-serif;
   height: 2rem;
+  justify-content: center;
+  margin-right: 0.5rem;
   padding: 0.5rem;
   outline: none;
 }
 
-.new-post-form button:hover {
-  background-color: rgb(255 255 255 / 80%);
+.new-post-button:hover {
+  background-color: rgb(0 0 0 / 10%);
 }
 
-.new-post-form button:active {
-  background-color: rgb(255 255 255 / 100%);
+.new-post-button:active {
+  background-color: rgb(0 0 0 / 0%);
 }
 
-.new-post-form button svg {
+.new-post-button svg {
   fill: black;
   width: 1rem;
 }
 
+.new-post-button-text {
+  color: black;
+  margin-left: 0.5rem;
+}
+
 @media (prefers-color-scheme: dark) {
   .posts {
-    background-color: rgb(0 0 0 / 60%);
+    background-color: rgb(0 0 0 / 80%);
     color: white;
   }
 
@@ -238,19 +242,24 @@
     background: rgb(0 0 0 / 60%);
   }
 
-  .new-post-form button svg {
+  .new-post-button svg {
     fill: white;
   }
   
-  .new-post-form button {
-    background: rgb(0 0 0 / 60%);
+  .new-post-button {
+    background-color: rgb(255 255 255 / 20%);
   }
   
-  .new-post-form button:hover {
-    background: rgb(0 0 0 / 80%);
+  .new-post-button:hover {
+    background-color: rgb(255 255 255 / 10%);
   }
   
-  .new-post-form button:active {
-    background: rgb(0 0 0 / 100%);
+  .new-post-button:active {
+    background-color: rgb(255 255 255 / 0%);
+  }
+
+  .new-post-button-text {
+    color: white;
+    margin-left: 0.5rem;
   }
 }

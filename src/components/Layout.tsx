@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {Link, Outlet} from 'react-router-dom'
-import {Menu} from '../components'
+import {Logo, Menu} from '../components'
 import { AuthProvider, ImagesProvider, PostsProvider, RoomsProvider, UsersProvider } from '../providers'
 import { MenuIcon, ThemeIcon } from './icons'
 import styles from './Layout.module.css'
@@ -21,7 +21,7 @@ export default function Layout() {
 									<button className={[styles.menuButton, ...showChannels ? [styles.menuButtonActive] : []].join(' ')} onClick={() => setShowChannels((prevVal) => !prevVal)}>
 										<MenuIcon />
 									</button>
-									<h1>neon.estate</h1>
+									<Logo />
 									<button className={styles.menuButton}>
 										<ThemeIcon />
 									</button>

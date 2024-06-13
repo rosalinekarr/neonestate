@@ -13,7 +13,15 @@
     flex-wrap: wrap;
 }
 
-button.error {
+.input {
+  padding: 0.469rem 1rem;
+}
+
+.button {
+  margin-bottom: 1rem;
+}
+
+.button.error {
   margin-bottom: 3.1rem;
 }
 

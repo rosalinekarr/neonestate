@@ -1,4 +1,5 @@
 .post {
+  backdrop-filter: blur(1rem);
   background-color: rgb(255 255 255 / 60%);
   border: 0.1rem solid white;
   border-radius: 0.5rem;

@@ -201,8 +201,9 @@ function NewPostForm({room, show}: NewPostFormProps) {
 						/>,
 					)}
 				</div>
-				<button type='submit' disabled={isLoading}>
+				<button type='submit' className={styles.newPostButton} disabled={isLoading}>
 					<CreateIcon />
+					<span className={styles.newPostButtonText}>Post</span>
 				</button>
 			</div>
 		</form>
@@ -210,12 +211,10 @@ function NewPostForm({room, show}: NewPostFormProps) {
 }
 
 interface PostsProps {
-	onScrollDown: () => void;
-	onScrollUp: () => void;
 	room: RoomModel;
 }
 
-function Posts({onScrollDown, onScrollUp, room}: PostsProps) {
+function Posts({room}: PostsProps) {
 	const roomRef = useRef<HTMLDivElement | null>(null)
 	const {fetchMore, posts} = usePostsForRoom(room.id)
 	const backgroundUrl = useImage(room?.backgroundPath)
@@ -223,12 +222,7 @@ function Posts({onScrollDown, onScrollUp, room}: PostsProps) {
 
 	const handleScroll = useCallback(() => {
 		if (!roomRef.current) return
-		const newValue = roomRef.current.scrollHeight - roomRef.current.scrollTop - roomRef.current.clientHeight
-		setScrollBottom((prevValue: number) => {
-			if (newValue < prevValue) onScrollDown()
-			if (newValue > prevValue) onScrollUp()
-			return newValue
-		})
+		setScrollBottom(roomRef.current.scrollHeight - roomRef.current.scrollTop - roomRef.current.clientHeight)
 		if (roomRef.current.scrollTop < SCROLL_TOP_THRESHOLD)
 			fetchMore()
 	}, [posts])
@@ -257,8 +251,8 @@ export default function Room() {
 	const {name} = useParams()
 	const room = useRoom(name || '')
 	const [isLoading, setIsLoading] = useState<boolean>(true)
-	const [showFooter, setShowFooter] = useState<boolean>(true)
-	const [showHeader, setShowHeader] = useState<boolean>(true)
+	const [showFooter, _setShowFooter] = useState<boolean>(true)
+	const [showHeader, _setShowHeader] = useState<boolean>(true)
 	const {canEditRoom} = usePermissions(room, user)
 
 	useEffect(() => {
@@ -291,14 +285,6 @@ export default function Room() {
 			</div>
 			<Posts
 				room={room}
-				onScrollDown={() => {
-					setShowFooter(true)
-					setShowHeader(false)
-				}}
-				onScrollUp={() => {
-					setShowFooter(false)
-					setShowHeader(true)
-				}}
 			/>
 			<NewPostForm room={room} show={showFooter} />
 		</div>

@@ -9,13 +9,13 @@ interface TextFieldProps extends Omit<Partial<DetailedHTMLProps<InputHTMLAttribu
 	value: string | undefined;
 }
 
-export default function TextField({error, name, onChange: handleChange, ...props}: TextFieldProps) {
+export default function TextField({className, error, name, onChange: handleChange, ...props}: TextFieldProps) {
 	return (
 		<div className={styles.textField}>
 			<label htmlFor={name}>{titleize(name)}</label>
 			<input
 				type={props['type'] || 'text'}
-				className={error && styles.error}
+				className={[...className ? [className] : [], ...error ? [styles.error] : []].join(' ')}
 				id={name}
 				name={name}
 				onChange={(e) => handleChange(e.target.value)}

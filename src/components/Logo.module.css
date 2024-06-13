@@ -1,0 +1,11 @@
+.logo {
+  color-scheme: light dark;
+  stroke: black;
+  width: 12rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    .logo {
+        stroke: white;
+      }
+}

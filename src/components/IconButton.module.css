@@ -3,6 +3,7 @@
     border: none;
     border-radius: 0.5rem;
     color: black;
+    cursor: pointer;
     font-family: "M PLUS Rounded 1c", sans-serif;
     height: 2rem;
     padding: 0.5rem;
