@@ -27,7 +27,7 @@ export default function Layout() {
 									</button>
 								</header>
 								<main className={styles.main}>
-									<Menu open={showChannels} />
+									<Menu onClose={() => setShowChannels(false)} open={showChannels} />
 									<Outlet />
 								</main>
 								<footer className={styles.footer}>

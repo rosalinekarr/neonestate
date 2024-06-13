@@ -3,6 +3,7 @@
     border-right: 0.1rem solid white;
     display: none;
     flex-direction: column;
+    justify-content: space-between;
     min-height: 100%;
     min-width: 15rem;
     overflow-y: scroll;
@@ -12,46 +13,67 @@
   .menu.open {
     display: flex;
   }
+
+  .menu-account {
+    border-top: 0.1rem solid white;
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+  }
+
+  .menu-channels {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
   
-  .menu a {
+  .menu-item {
+    appearance: none;
+    background-color: transparent;
+    border-radius: 0;
+    box-sizing: border-box;
     color: black;
     display: none;
     font-size: 1rem;
+    height: 3rem;
     line-height: 1rem;
-    padding: 0.5rem 1rem;
+    margin: 0;
+    padding: 1rem;
+    text-align: left;
     text-decoration: none;
+    width: 100%;
   }
   
-  .menu.open a {
+  .menu.open .menu-item {
     display: block;
   }
   
-  .menu a:hover {
+  .menu-item:hover {
     background-color: rgb(255 255 255 / 40%);
   }
   
-  .menu a.active {
+  .menu-item.active {
     background-color: rgb(255 255 255 / 40%);
   }
   
-  .menu a:hover.active {
+  .menu-item:hover.active {
     background-color: rgb(255 255 255 / 60%);
   }
   
-  .menu a:active {
+  .menu-item:active {
     background-color: rgb(255 255 255 / 80%);
   }
   
-  .menu form {
+  .menu-new-channel-form {
     display: none;
     padding: 0.5rem 1rem;
   }
   
-  .menu.open form {
+  .menu.open .menu-new-channel-form {
     display: flex;
   }
   
-  .menu input {
+  .menu-new-channel-form input {
     background-color: transparent;
     border: none;
     color: black;
@@ -63,11 +85,11 @@
     resize: none;
   }
   
-  .menu input::placeholder {
+  .menu-new-channel-form input::placeholder {
     color: rgb(0 0 0 / 60%);
   }
   
-  .menu button {
+  .menu-new-channel-form button {
     align-items: center;
     background-color: transparent;
     border: none;
@@ -79,15 +101,15 @@
     padding: 0.5rem;
   }
   
-  .menu button:hover {
+  .menu-new-channel-form button:hover {
     background-color: rgb(255 255 255 / 40%);
   }
   
-  .menu button:active {
+  .menu-new-channel-form button:active {
     background-color: rgb(255 255 255 / 60%);
   }
   
-  .menu button svg {
+  .menu-new-channel-form button svg {
     width: 1rem;
   }
   
@@ -96,44 +118,48 @@
       background-color: rgb(0 0 0 / 40%);
       border-right: 0.1rem solid black;
     }
+
+    .menu-account {
+      border-top: 0.1rem solid black;
+    }
     
-    .menu a {
+    .menu-item {
       color: white;
     }
     
-    .menu a:hover {
+    .menu-item:hover {
       background-color: rgb(0 0 0 / 40%);
     }
     
-    .menu a.active {
+    .menu-item.active {
       background-color: rgb(0 0 0 / 40%);
     }
     
-    .menu a:hover.active {
+    .menu-item:hover.active {
       background-color: rgb(0 0 0 / 60%);
     }
     
-    .menu a:active {
+    .menu-item:active {
       background-color: rgb(0 0 0 / 60%);
     }
   
-    .menu form input {
+    .menu-new-channel-form input {
       color: white;
     }
   
-    .menu form input::placeholder {
+    .menu-new-channel-form input::placeholder {
       color: rgb(255 255 255 / 60%);
     }
   
-    .menu button:hover {
+    .menu-new-channel-form button:hover {
       background-color: rgb(0 0 0 / 40%);
     }
     
-    .menu button:active {
+    .menu-new-channel-form button:active {
       background-color: rgb(0 0 0 / 60%);
     }
   
-    .menu button svg {
+    .menu-new-channel-form button svg {
       fill: white;
     }
   }

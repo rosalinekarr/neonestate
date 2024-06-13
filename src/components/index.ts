@@ -1,5 +1,6 @@
 import AvatarField from './AvatarField'
 import Button from './Button'
+import Donate from './Donate'
 import IconButton from './IconButton'
 import Layout from './Layout'
 import Loading from './Loading'
@@ -12,6 +13,7 @@ import User from './User'
 export {
 	AvatarField,
 	Button,
+	Donate,
 	IconButton,
 	Layout,
 	Loading,
