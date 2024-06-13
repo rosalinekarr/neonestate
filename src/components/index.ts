@@ -6,6 +6,7 @@ import Layout from "./Layout";
 import Loading from "./Loading";
 import Logo from "./Logo";
 import Menu from "./Menu";
+import NewPostForm from "./NewPostForm";
 import Post from "./Post";
 import TextField from "./TextField";
 import User from "./User";
@@ -19,6 +20,7 @@ export {
   Loading,
   Logo,
   Menu,
+  NewPostForm,
   Post,
   TextField,
   User,
