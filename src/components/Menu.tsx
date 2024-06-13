@@ -5,8 +5,9 @@ import { Room } from '../models/rooms'
 import CreateIcon from './icons/create'
 import styles from './Menu.module.css'
 import { getAuth, signOut } from 'firebase/auth'
-import Button from './Button'
 import Donate from './Donate'
+import { DonateIcon, ProfileIcon, SignOutIcon } from './icons'
+import IconButton from './IconButton'
 
 interface OpenChannelFormProps {
 	onSubmit: () => void;
@@ -50,13 +51,15 @@ interface MenuProps {
 export default function Menu({onClose, open}: MenuProps) {
 	const [showDonateModal, setShowDonateModal] = useState<boolean>(false)
 	const app = useFirebaseApp()
-	const navigate = useNavigate()
 	const rooms = useRooms()
+	const navigate = useNavigate()
 
 	async function handleSignOut() {
 		const auth = getAuth(app)
 		await signOut(auth)
-		navigate('/')
+
+		// Intentionally not using react-router here to force a page refresh
+		window.location.assign('/')
 	}
 
 	return (
@@ -68,8 +71,9 @@ export default function Menu({onClose, open}: MenuProps) {
 				<OpenChannelForm onSubmit={onClose} />
 			</div>
 			<div className={styles.menuAccount}>
-				<Button className={styles.menuItem} onClick={() => setShowDonateModal(true)}>Donate</Button>
-				<Button className={styles.menuItem} onClick={handleSignOut}>Sign out</Button>
+				<IconButton icon={DonateIcon} className={styles.menuItem} onClick={() => setShowDonateModal(true)}>Donate</IconButton>
+				<IconButton icon={ProfileIcon} className={styles.menuItem} onClick={() => navigate('/profile')}>Profile</IconButton>
+				<IconButton icon={SignOutIcon} className={styles.menuItem} onClick={handleSignOut}>Sign out</IconButton>
 			</div>
 			{showDonateModal &&
 				<Donate onClose={() => setShowDonateModal(false)} />

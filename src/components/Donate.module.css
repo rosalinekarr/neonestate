@@ -13,13 +13,13 @@
 }
 
 .donate-modal {
+    border-radius: 1rem;
     height: 36rem;
     overflow: hidden;
     width: 25rem;
 }
 
 .kofi-frame {
-    background: white;
     border: none;
     padding: 0;
     width: 100%;
@@ -32,9 +32,5 @@
 @media (prefers-color-scheme: dark) {
     .donate-modal-backdrop {
         background-color: rgb(0 0 0 / 80%);
-    }
-
-    .kofi-frame {
-        background: black;
     }
 }

@@ -1,5 +1,6 @@
-import Button from './Button'
 import styles from './Donate.module.css'
+import IconButton from './IconButton'
+import { CloseIcon } from './icons'
 
 function KofiFrame() {
 	return (
@@ -23,7 +24,7 @@ export default function Donate({onClose}: DonateProps) {
 			<div className={styles.donateModal}>
 				<KofiFrame />
 			</div>
-			<Button className={styles.closeButton} onClick={() => onClose()}>Close</Button>
+			<IconButton icon={CloseIcon} className={styles.closeButton} onClick={() => onClose()}>Close</IconButton>
 		</div>
 	)
 }

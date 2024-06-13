@@ -32,3 +32,7 @@ html, body, #root {
   animation-timing-function: linear;
   font-family: "M PLUS Rounded 1c", sans-serif;
 }
+
+.firebase-emulator-warning {
+  display: none;
+}
