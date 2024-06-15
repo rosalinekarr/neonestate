@@ -5,13 +5,13 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useAuth, useFirebaseApp } from "../hooks";
+import { useAuth, useEventSource } from "../hooks";
+import { UserCreatedEvent, UserUpdatedEvent } from "../models/events";
 import {
   User,
   createUser,
   getUser,
   isProfileComplete,
-  listenForUserChanges,
   updateUser,
 } from "../models/users";
 import { CreateAccount } from "../pages";
@@ -31,12 +31,28 @@ export interface UsersContext {
 export const UsersContext = createContext<UsersContext | null>(null);
 
 export default function UsersProvider({ children }: UserProviderProps) {
-  const app = useFirebaseApp();
   const auth = useAuth();
+  const eventSource = useEventSource();
   const firebaseUser = useContext(AuthContext);
   const [users, setUsers] = useState<Record<string, User>>({});
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  function handleUserCreated(e: UserCreatedEvent) {
+    const newUser = e.data;
+    setUsers((prevUsers) => ({
+      ...prevUsers,
+      [newUser.id]: newUser,
+    }));
+  }
+
+  function handleUserUpdated(e: UserUpdatedEvent) {
+    const updatedUser = e.data;
+    setUsers((prevUsers) => ({
+      ...prevUsers,
+      [updatedUser.id]: updatedUser,
+    }));
+  }
 
   async function createProfile({
     avatarPath,
@@ -81,19 +97,14 @@ export default function UsersProvider({ children }: UserProviderProps) {
   }
 
   useEffect(() => {
-    const unsubscribe = listenForUserChanges(
-      app,
-      Object.keys(users),
-      (user: User) => {
-        setUsers((prevUsers) => ({
-          ...prevUsers,
-          [user.id]: user,
-        }));
-      },
-    );
+    eventSource.addEventListener("usercreated", handleUserCreated);
+    eventSource.addEventListener("userupdated", handleUserUpdated);
 
-    return () => unsubscribe();
-  }, [users]);
+    return () => {
+      eventSource.removeEventListener("usercreated", handleUserCreated);
+      eventSource.removeEventListener("userupdated", handleUserUpdated);
+    };
+  }, [eventSource]);
 
   useEffect(() => {
     async function loadCurrentUser() {

@@ -5,9 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc && vite build",
-    "deploy": "tsc && vite build --mode \"production\" && firebase deploy",
+    "deploy": "tsc && vite build --mode \"production\" && firebase deploy --only hosting",
     "dev": "vite",
-    "emulator": "tsc && vite build --mode \"development\" && firebase emulators:start",
     "fix": "npm run fix:css && npm run fix:ts && npm run fix:prettier",
     "fix:prettier": "npx prettier . --write",
     "fix:css": "stylelint --fix \"src/**/*.css\"",

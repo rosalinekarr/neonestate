@@ -7,16 +7,102 @@ import {
   useState,
 } from "react";
 import { Room as RoomModel } from "../models/rooms";
-import { PostSection, PostTextSection, createPost } from "../models/posts";
-import { useAuth } from "../hooks";
-import { CreateIcon } from "../components/icons";
+import {
+  PostAttachmentSection,
+  PostSection,
+  PostTextSection,
+  createPost,
+} from "../models/posts";
+import { useAuth, useImage, useUploadPostAttachment } from "../hooks";
+import {
+  AttachIcon,
+  CreateIcon,
+  DeleteIcon,
+  EditIcon,
+} from "../components/icons";
 import styles from "./NewPostForm.module.css";
+import IconButton from "./IconButton";
+
+interface NewPostAttachmentSectionProps {
+  onDelete: () => void;
+  onUpdate: (updatedSection: PostSection) => void;
+  section: PostAttachmentSection;
+}
+
+function generatePostAttachmentSection(path: string): PostAttachmentSection {
+  return {
+    id: crypto.randomUUID(),
+    type: "attachment",
+    path,
+  };
+}
+
+function NewPostAttachmentSection({
+  onDelete,
+  onUpdate,
+  section,
+}: NewPostAttachmentSectionProps) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const uploadPostAttachment = useUploadPostAttachment();
+  const attachmentUrl = useImage(section.path || "");
+
+  async function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    if (e.target.files?.length !== 1) return;
+    const file = e.target.files[0] || null;
+
+    try {
+      const path = await uploadPostAttachment(file);
+      onUpdate(generatePostAttachmentSection(path));
+    } catch (e: any) {
+      setError(e.message);
+    }
+  }
+
+  useEffect(() => inputRef.current?.click(), []);
+
+  return (
+    <div className={styles.newPostAttachmentSection}>
+      <div
+        className={[
+          styles.attachmentPreview,
+          ...(attachmentUrl ? [] : [styles.blank]),
+          ...(error ? [styles.error] : []),
+        ].join(" ")}
+        onClick={() => inputRef.current?.click()}
+      >
+        {attachmentUrl && <img src={attachmentUrl} />}
+        <div className={styles.attachmentActions}>
+          <IconButton className={styles.attachmentButton} icon={EditIcon}>
+            Replace
+          </IconButton>
+          <IconButton
+            className={styles.attachmentButton}
+            icon={DeleteIcon}
+            onClick={onDelete}
+          >
+            Delete
+          </IconButton>
+        </div>
+      </div>
+      <input
+        type="file"
+        className={styles.fileInput}
+        id="attachment"
+        name="attachment"
+        onChange={handleChange}
+        ref={inputRef}
+      />
+      {error && <p className={styles.errorMessage}>{error}</p>}
+    </div>
+  );
+}
 
 interface NewPostTextSectionProps {
-  onCreate: (newSections: PostTextSection[]) => void;
+  onCreate: (newSections: PostSection[]) => void;
   onDelete: () => void;
   onMergeBack: () => void;
-  onUpdate: (updatedSection: PostTextSection) => void;
+  onUpdate: (updatedSection: PostSection) => void;
   section: PostTextSection;
   showPlaceholder: boolean;
 }
@@ -47,7 +133,7 @@ function NewPostTextSection({
         textAreaRef.current?.selectionStart === 0 &&
         textAreaRef.current?.selectionEnd === 0
       )
-        onMergeBack();
+        if (onMergeBack) onMergeBack();
     }
   }
 
@@ -58,7 +144,8 @@ function NewPostTextSection({
       onDelete();
     } else if (newBodyParts.length > 0) {
       onUpdate({ ...section, body: firstBodyPart });
-      onCreate(newBodyParts.map((body) => generatePostTextSection(body)));
+      if (onCreate)
+        onCreate(newBodyParts.map((body) => generatePostTextSection(body)));
     } else {
       onUpdate({ ...section, body: firstBodyPart });
     }
@@ -88,27 +175,37 @@ function NewPostTextSection({
   );
 }
 
-interface NewPostSectionProps {
-  onCreate: (newSections: PostSection[]) => void;
-  onDelete: () => void;
-  onMergeBack: () => void;
-  onUpdate: (updatedSection: PostSection) => void;
-  section: PostSection;
-  showPlaceholder: boolean;
+function isNewPostAttachmentSectionProps(
+  props: NewPostSectionProps,
+): props is NewPostAttachmentSectionProps {
+  return props.section.type === "attachment";
 }
 
-function NewPostSection({ section, ...props }: NewPostSectionProps) {
-  if (section.type === "text")
-    return <NewPostTextSection section={section} {...props} />;
+function isNewPostTextSectionProps(
+  props: NewPostSectionProps,
+): props is NewPostTextSectionProps {
+  return props.section.type === "text";
+}
+
+interface NewPostSectionProps {
+  onCreate?: (newSections: PostSection[]) => void;
+  onDelete: () => void;
+  onMergeBack?: () => void;
+  onUpdate: (updatedSection: PostSection) => void;
+  section: PostSection;
+  showPlaceholder?: boolean;
+}
+
+function NewPostSection({ ...props }: NewPostSectionProps) {
+  if (isNewPostAttachmentSectionProps(props))
+    return <NewPostAttachmentSection {...props} />;
+  if (isNewPostTextSectionProps(props))
+    return <NewPostTextSection {...props} />;
   return <p>Unsupported section type</p>;
 }
 
 function generateBlankPostTextSection(): PostTextSection {
-  return {
-    id: crypto.randomUUID(),
-    type: "text",
-    body: "",
-  };
+  return generatePostTextSection("");
 }
 
 interface NewPostFormProps {
@@ -122,6 +219,13 @@ export default function NewPostForm({ room, show }: NewPostFormProps) {
     generateBlankPostTextSection(),
   ]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  function handleAddAttachment() {
+    setSections((prevSections) => [
+      ...prevSections,
+      generatePostAttachmentSection(""),
+    ]);
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -198,14 +302,24 @@ export default function NewPostForm({ room, show }: NewPostFormProps) {
             />
           ))}
         </div>
-        <button
-          type="submit"
-          className={styles.newPostButton}
-          disabled={isLoading}
-        >
-          <CreateIcon />
-          <span className={styles.newPostButtonText}>Post</span>
-        </button>
+        <div className={styles.actionButtons}>
+          <IconButton
+            className={styles.attachButton}
+            disabled={isLoading}
+            icon={AttachIcon}
+            onClick={handleAddAttachment}
+          >
+            Attach
+          </IconButton>
+          <IconButton
+            className={styles.newPostButton}
+            disabled={isLoading}
+            icon={CreateIcon}
+            type="submit"
+          >
+            Post
+          </IconButton>
+        </div>
       </div>
     </form>
   );

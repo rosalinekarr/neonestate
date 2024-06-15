@@ -1,6 +1,7 @@
 import useAuth from "./useAuth";
 import useCurrentUser from "./useCurrentUser";
 import useEditRoom from "./useEditRoom";
+import useEventSource from "./useEventSource";
 import useFetchRoom from "./useFetchRoom";
 import useFetchUser from "./useFetchUser";
 import useFirebaseApp from "./useFirebaseApp";
@@ -13,12 +14,14 @@ import useRooms from "./useRooms";
 import useStartRoom from "./useStartRoom";
 import useUpdateProfile from "./useUpdateProfile";
 import useUploadAvatar from "./useUploadAvatar";
+import useUploadPostAttachment from "./useUploadPostAttachment";
 import useUploadRoomBackground from "./useUploadRoomBackground";
 
 export {
   useAuth,
   useCurrentUser,
   useEditRoom,
+  useEventSource,
   useFetchRoom,
   useFetchUser,
   useFirebaseApp,
@@ -31,5 +34,6 @@ export {
   useStartRoom,
   useUpdateProfile,
   useUploadAvatar,
+  useUploadPostAttachment,
   useUploadRoomBackground,
 };

@@ -10,6 +10,7 @@ import {
 } from "../providers";
 import { MenuIcon, ThemeIcon } from "./icons";
 import styles from "./Layout.module.css";
+import SSEProvider from "../providers/SSEProvider";
 
 const FOOTER_LINKS: { label: string; path: string }[] = [
   { label: "About", path: "/about" },
@@ -35,46 +36,48 @@ export default function Layout() {
   return (
     <div className={styles.wrapper} data-theme={theme}>
       <AuthProvider>
-        <ImagesProvider>
-          <UsersProvider>
-            <RoomsProvider>
-              <PostsProvider>
-                <header className={styles.header}>
-                  <button
-                    className={[
-                      styles.menuButton,
-                      ...(showChannels ? [styles.menuButtonActive] : []),
-                    ].join(" ")}
-                    onClick={() => setShowChannels((prevVal) => !prevVal)}
-                  >
-                    <MenuIcon />
-                  </button>
-                  <Logo />
-                  <button
-                    className={styles.menuButton}
-                    onClick={handleToggleTheme}
-                  >
-                    <ThemeIcon />
-                  </button>
-                </header>
-                <main className={styles.main}>
-                  <Menu
-                    onClose={() => setShowChannels(false)}
-                    open={showChannels}
-                  />
-                  <Outlet />
-                </main>
-                <footer className={styles.footer}>
-                  {FOOTER_LINKS.map(({ label, path }) => (
-                    <Link key={label} to={path}>
-                      {label}
-                    </Link>
-                  ))}
-                </footer>
-              </PostsProvider>
-            </RoomsProvider>
-          </UsersProvider>
-        </ImagesProvider>
+        <SSEProvider>
+          <ImagesProvider>
+            <UsersProvider>
+              <RoomsProvider>
+                <PostsProvider>
+                  <header className={styles.header}>
+                    <button
+                      className={[
+                        styles.menuButton,
+                        ...(showChannels ? [styles.menuButtonActive] : []),
+                      ].join(" ")}
+                      onClick={() => setShowChannels((prevVal) => !prevVal)}
+                    >
+                      <MenuIcon />
+                    </button>
+                    <Logo />
+                    <button
+                      className={styles.menuButton}
+                      onClick={handleToggleTheme}
+                    >
+                      <ThemeIcon />
+                    </button>
+                  </header>
+                  <main className={styles.main}>
+                    <Menu
+                      onClose={() => setShowChannels(false)}
+                      open={showChannels}
+                    />
+                    <Outlet />
+                  </main>
+                  <footer className={styles.footer}>
+                    {FOOTER_LINKS.map(({ label, path }) => (
+                      <Link key={label} to={path}>
+                        {label}
+                      </Link>
+                    ))}
+                  </footer>
+                </PostsProvider>
+              </RoomsProvider>
+            </UsersProvider>
+          </ImagesProvider>
+        </SSEProvider>
       </AuthProvider>
     </div>
   );

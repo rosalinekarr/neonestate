@@ -15,7 +15,7 @@ export async function buildRequest(
   const body = method !== "GET" ? bodyOrParams : null;
   const params = method === "GET" ? bodyOrParams : null;
 
-  const url = new URL(path, import.meta.env.VITE_API_BASE_URL);
+  const url = new URL(`${import.meta.env.VITE_API_BASE_URL}${path}`);
   for (const param in params) {
     url.searchParams.set(param, encodeURIComponent(params[param]));
   }

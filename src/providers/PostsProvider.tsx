@@ -1,6 +1,11 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
-import { Post, getPosts, listenForNewPosts } from "../models/posts";
-import { useAuth, useFirebaseApp } from "../hooks";
+import {
+  PostCreatedEvent,
+  PostUpdatedEvent,
+  PostDeletedEvent,
+} from "../models/events";
+import { Post, getPosts } from "../models/posts";
+import { useAuth, useEventSource } from "../hooks";
 import uniqBy from "../utils/uniqBy";
 import sortBy from "../utils/sortBy";
 
@@ -17,11 +22,49 @@ interface PostsContext {
 export const PostsContext = createContext<PostsContext | null>(null);
 
 export default function PostsProvider({ children }: PostsProviderProps) {
-  const app = useFirebaseApp();
+  const eventSource = useEventSource();
   const auth = useAuth();
   const [roomIds, setRoomIds] = useState<string[]>([]);
   const [postsByRoom, setPostsByRoom] = useState<Record<string, Post[]>>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  function handlePostCreated(e: PostCreatedEvent) {
+    const post = e.data;
+    setPostsByRoom((prevVal) => {
+      return {
+        ...prevVal,
+        [post.roomId]: sortBy(
+          uniqBy([...(prevVal[post.roomId] || []), post], (p: Post) => p.id),
+          (p: Post) => p.createdAt,
+        ),
+      };
+    });
+  }
+
+  function handlePostUpdated(e: PostUpdatedEvent) {
+    const post = e.data;
+    setPostsByRoom((prevVal) => {
+      return {
+        ...prevVal,
+        [post.roomId]: sortBy(
+          uniqBy([...(prevVal[post.roomId] || []), post], (p: Post) => p.id),
+          (p: Post) => p.createdAt,
+        ),
+      };
+    });
+  }
+
+  function handlePostDeleted(e: PostDeletedEvent) {
+    const postId = e.data;
+    setPostsByRoom((prevVal) =>
+      Object.fromEntries(
+        Object.entries(prevVal).map(([key, posts]) => [
+          key,
+          posts.filter((post) => post.id !== postId),
+        ]),
+      ),
+    );
+  }
 
   async function fetchMorePostsForRoom(roomId: string): Promise<void> {
     setIsLoading(true);
@@ -50,22 +93,15 @@ export default function PostsProvider({ children }: PostsProviderProps) {
   useEffect(() => {
     if (roomIds.length === 0) return;
 
-    const unsubscribe = listenForNewPosts(app, roomIds, (newPost: Post) => {
-      setPostsByRoom((prevVal) => {
-        return {
-          ...prevVal,
-          [newPost.roomId]: sortBy(
-            uniqBy(
-              [...(prevVal[newPost.roomId] || []), newPost],
-              (p: Post) => p.id,
-            ),
-            (p: Post) => p.createdAt,
-          ),
-        };
-      });
-    });
+    eventSource.addEventListener("postcreated", handlePostCreated);
+    eventSource.addEventListener("postupdated", handlePostUpdated);
+    eventSource.addEventListener("postdeleted", handlePostDeleted);
 
-    return () => unsubscribe();
+    return () => {
+      eventSource.removeEventListener("postcreated", handlePostCreated);
+      eventSource.removeEventListener("postupdated", handlePostUpdated);
+      eventSource.removeEventListener("postdeleted", handlePostDeleted);
+    };
   }, [roomIds]);
 
   return (

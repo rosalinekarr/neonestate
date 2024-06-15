@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { User } from "../components";
 import {
   Post as PostModel,
+  PostAttachmentSection as PostAttachmentSectionModel,
   PostSection as PostSectionModel,
-  PostImageSection as PostImageSectionModel,
   PostTextSection as PostTextSectionModel,
 } from "../models/posts";
 import { formatAgo, msUntilNextAgoFormatChange } from "../utils";
@@ -52,11 +52,11 @@ function PostTextSection({ section }: PostTextSectionProps) {
   );
 }
 
-interface PostImageSectionProps {
-  section: PostImageSectionModel;
+interface PostAttachmentSectionProps {
+  section: PostAttachmentSectionModel;
 }
 
-function PostImageSection({ section }: PostImageSectionProps) {
+function PostAttachmentSection({ section }: PostAttachmentSectionProps) {
   const imageUrl = useImage(section.path);
   return imageUrl ? <img src={imageUrl} /> : null;
 }
@@ -66,8 +66,9 @@ interface PostSectionProps {
 }
 
 function PostSection({ section }: PostSectionProps) {
+  if (section.type === "attachment")
+    return <PostAttachmentSection section={section} />;
   if (section.type === "text") return <PostTextSection section={section} />;
-  if (section.type === "image") return <PostImageSection section={section} />;
   return <p>Unsupported post section type.</p>;
 }
 

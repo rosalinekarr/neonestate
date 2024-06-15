@@ -38,7 +38,7 @@ div[data-theme="dark"] .menu-account {
 
 .menu-item {
   appearance: none;
-  background-color: transparent;
+  background: transparent;
   border-radius: 0;
   box-sizing: border-box;
   color: black;
@@ -71,6 +71,7 @@ div[data-theme="dark"] .menu-account {
 }
 
 div[data-theme="dark"] .menu-item {
+  background: transparent;
   color: white;
 }
 

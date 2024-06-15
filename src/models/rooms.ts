@@ -29,7 +29,7 @@ export async function getRooms(
   queryOpts: GetRoomsQueryOpts,
 ): Promise<Room[]> {
   const response = await fetch(
-    await buildRequest(auth, "GET", "/api/rooms", queryOpts),
+    await buildRequest(auth, "GET", "/rooms", queryOpts),
   );
   if (response.status === 422) throw new Error("Invalid query");
   return response.json() as Promise<Room[]>;
@@ -40,7 +40,7 @@ export async function createRoom(
   room: Omit<Room, "id" | "createdAt" | "createdBy" | "memberCount">,
 ): Promise<Room> {
   const response = await fetch(
-    await buildRequest(auth, "POST", "/api/rooms", room),
+    await buildRequest(auth, "POST", "/rooms", room),
   );
   return response.json() as Promise<Room>;
 }
@@ -57,7 +57,7 @@ export async function updateRoom(
     await buildRequest(
       auth,
       "PUT",
-      `/api/rooms/${encodeURIComponent(id)}`,
+      `/rooms/${encodeURIComponent(id)}`,
       roomData,
     ),
   );
