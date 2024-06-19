@@ -29,7 +29,7 @@ export default function PostsProvider({ children }: PostsProviderProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function handlePostCreated(e: PostCreatedEvent) {
-    const post = e.data;
+    const post = JSON.parse(e.data);
     setPostsByRoom((prevVal) => {
       return {
         ...prevVal,
@@ -42,7 +42,7 @@ export default function PostsProvider({ children }: PostsProviderProps) {
   }
 
   function handlePostUpdated(e: PostUpdatedEvent) {
-    const post = e.data;
+    const post = JSON.parse(e.data);
     setPostsByRoom((prevVal) => {
       return {
         ...prevVal,
@@ -55,7 +55,7 @@ export default function PostsProvider({ children }: PostsProviderProps) {
   }
 
   function handlePostDeleted(e: PostDeletedEvent) {
-    const postId = e.data;
+    const postId = JSON.parse(e.data);
     setPostsByRoom((prevVal) =>
       Object.fromEntries(
         Object.entries(prevVal).map(([key, posts]) => [

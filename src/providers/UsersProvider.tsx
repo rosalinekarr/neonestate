@@ -35,11 +35,11 @@ export default function UsersProvider({ children }: UserProviderProps) {
   const eventSource = useEventSource();
   const firebaseUser = useContext(AuthContext);
   const [users, setUsers] = useState<Record<string, User>>({});
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const currentUser = users[firebaseUser?.uid || ""];
 
   function handleUserCreated(e: UserCreatedEvent) {
-    const newUser = e.data;
+    const newUser = JSON.parse(e.data);
     setUsers((prevUsers) => ({
       ...prevUsers,
       [newUser.id]: newUser,
@@ -47,7 +47,8 @@ export default function UsersProvider({ children }: UserProviderProps) {
   }
 
   function handleUserUpdated(e: UserUpdatedEvent) {
-    const updatedUser = e.data;
+    const updatedUser = JSON.parse(e.data);
+    console.log("updatedUser", updatedUser);
     setUsers((prevUsers) => ({
       ...prevUsers,
       [updatedUser.id]: updatedUser,
@@ -112,8 +113,7 @@ export default function UsersProvider({ children }: UserProviderProps) {
         throw new Error(
           "Missing AuthContext: UsersProvider must only be used within AuthProvider",
         );
-      const user = await fetchUser(firebaseUser.uid);
-      setCurrentUser(user);
+      await fetchUser(firebaseUser.uid);
       setIsLoading(false);
     }
 

@@ -1,20 +1,17 @@
-import { Post } from "./posts";
-import { User } from "./users";
-
 export interface UserCreatedEvent {
-  data: User;
+  data: string;
 }
 
 export interface UserUpdatedEvent {
-  data: User;
+  data: string;
 }
 
 export interface PostCreatedEvent {
-  data: Post;
+  data: string;
 }
 
 export interface PostUpdatedEvent {
-  data: Post;
+  data: string;
 }
 
 export interface PostDeletedEvent {
