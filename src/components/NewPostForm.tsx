@@ -2,6 +2,7 @@ import {
   ChangeEvent,
   FormEvent,
   KeyboardEvent,
+  MouseEvent,
   useEffect,
   useRef,
   useState,
@@ -47,19 +48,27 @@ function NewPostAttachmentSection({
   const uploadPostAttachment = useUploadPostAttachment();
   const attachmentUrl = useImage(section.path || "");
 
+  function handleDelete(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    onDelete();
+  }
+
   async function handleChange(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files?.length !== 1) return;
     const file = e.target.files[0] || null;
 
     try {
       const path = await uploadPostAttachment(file);
+      console.log("path", path);
       onUpdate(generatePostAttachmentSection(path));
     } catch (e: any) {
       setError(e.message);
     }
   }
 
-  useEffect(() => inputRef.current?.click(), []);
+  useEffect(() => {
+    if (inputRef.current && section.path === "") inputRef.current.click();
+  }, []);
 
   return (
     <div className={styles.newPostAttachmentSection}>
@@ -71,19 +80,23 @@ function NewPostAttachmentSection({
         ].join(" ")}
         onClick={() => inputRef.current?.click()}
       >
-        {attachmentUrl && <img src={attachmentUrl} />}
-        <div className={styles.attachmentActions}>
-          <IconButton className={styles.attachmentButton} icon={EditIcon}>
-            Replace
-          </IconButton>
+        {attachmentUrl && (
+          <img src={attachmentUrl} className={styles.attachmentPreviewImage} />
+        )}
+        <div className={styles.overlay}>
+          <EditIcon />
+        </div>
+      </div>
+      <div className={styles.attachmentActions}>
+        {section.path && (
           <IconButton
             className={styles.attachmentButton}
             icon={DeleteIcon}
-            onClick={onDelete}
+            onClick={handleDelete}
           >
             Delete
           </IconButton>
-        </div>
+        )}
       </div>
       <input
         type="file"
@@ -220,11 +233,20 @@ export default function NewPostForm({ room, show }: NewPostFormProps) {
   ]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  function handleAddAttachment() {
-    setSections((prevSections) => [
-      ...prevSections,
-      generatePostAttachmentSection(""),
-    ]);
+  function handleAddAttachment(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    setSections((prevSections) => {
+      const lastSection = prevSections[prevSections.length - 1];
+      const sections =
+        lastSection.type === "text" && lastSection.body === ""
+          ? prevSections.slice(0, -1)
+          : prevSections;
+      return [
+        ...sections,
+        generatePostAttachmentSection(""),
+        generatePostTextSection(""),
+      ];
+    });
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {

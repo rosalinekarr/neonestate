@@ -52,5 +52,6 @@ if (rootElem)
           ])}
         />
       </FirebaseProvider>
+      ,
     </React.StrictMode>,
   );

@@ -3,17 +3,12 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { useAuth, useEventSource } from "../hooks";
 import { UserCreatedEvent, UserUpdatedEvent } from "../models/events";
-import {
-  User,
-  createUser,
-  getUser,
-  isProfileComplete,
-  updateUser,
-} from "../models/users";
+import { User, getProfile, getUser, updateProfile } from "../models/users";
 import { CreateAccount } from "../pages";
 import { AuthContext } from "./AuthProvider";
 import { Loading } from "../components";
@@ -36,7 +31,12 @@ export default function UsersProvider({ children }: UserProviderProps) {
   const firebaseUser = useContext(AuthContext);
   const [users, setUsers] = useState<Record<string, User>>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const currentUser = users[firebaseUser?.uid || ""];
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  const currentUser = useMemo(
+    () => (currentUserId ? users[currentUserId] : null),
+    [currentUserId, users],
+  );
 
   function handleUserCreated(e: UserCreatedEvent) {
     const newUser = JSON.parse(e.data);
@@ -48,25 +48,13 @@ export default function UsersProvider({ children }: UserProviderProps) {
 
   function handleUserUpdated(e: UserUpdatedEvent) {
     const updatedUser = JSON.parse(e.data);
-    console.log("updatedUser", updatedUser);
     setUsers((prevUsers) => ({
       ...prevUsers,
       [updatedUser.id]: updatedUser,
     }));
   }
 
-  async function createProfile({
-    avatarPath,
-    username,
-  }: Omit<User, "id" | "createdAt">) {
-    const newProfile = await createUser(auth, { avatarPath, username });
-    setUsers((prevUsers) => ({
-      ...prevUsers,
-      [newProfile.id]: newProfile,
-    }));
-  }
-
-  async function updateProfile({
+  async function updateCurrentUserProfile({
     avatarPath,
     username,
   }: Omit<User, "id" | "createdAt">) {
@@ -74,25 +62,27 @@ export default function UsersProvider({ children }: UserProviderProps) {
       throw new Error(
         "Missing AuthContext: UsersProvider must only be used within AuthProvider",
       );
-    const updatedProfile = await updateUser(auth, firebaseUser.uid, {
+    const updatedProfile = await updateProfile(auth, {
       avatarPath,
       username,
     });
     setUsers((prevUsers) => ({
       ...prevUsers,
-      [firebaseUser.uid]: updatedProfile,
+      [updatedProfile.id]: updatedProfile,
     }));
+    setCurrentUserId(updatedProfile.id);
   }
 
   async function fetchUser(id: string): Promise<User | null> {
     if (users[id]) return users[id];
 
     const user = await getUser(auth, id);
-    if (user)
+    if (user) {
       setUsers((prevUsers) => ({
         ...prevUsers,
         [id]: user,
       }));
+    }
 
     return user;
   }
@@ -113,7 +103,14 @@ export default function UsersProvider({ children }: UserProviderProps) {
         throw new Error(
           "Missing AuthContext: UsersProvider must only be used within AuthProvider",
         );
-      await fetchUser(firebaseUser.uid);
+      const user = await getProfile(auth);
+      if (user) {
+        setUsers((prevUsers) => ({
+          ...prevUsers,
+          [user.id]: user,
+        }));
+        setCurrentUserId(user.id);
+      }
       setIsLoading(false);
     }
 
@@ -122,15 +119,15 @@ export default function UsersProvider({ children }: UserProviderProps) {
 
   if (isLoading) return <Loading />;
 
-  if (!isProfileComplete(currentUser))
-    return <CreateAccount onSubmit={createProfile} />;
+  if (currentUser === null)
+    return <CreateAccount onSubmit={updateCurrentUserProfile} />;
 
   return (
     <UsersContext.Provider
       value={{
         currentUser,
         fetchUser,
-        updateProfile,
+        updateProfile: updateCurrentUserProfile,
       }}
     >
       {children}

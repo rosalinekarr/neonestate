@@ -16,37 +16,22 @@ export async function getUser(auth: Auth, id: string): Promise<User | null> {
   return response.json() as Promise<User>;
 }
 
-export async function createUser(
-  auth: Auth,
-  user: Omit<User, "id" | "createdAt">,
-): Promise<User> {
-  const response = await fetch(
-    await buildRequest(auth, "POST", "/users", user),
-  );
-  if (response.status === 422) {
-    const { error: msg } = await response.json();
-    throw new Error(msg);
-  }
-  return response.json() as Promise<User>;
+export async function getProfile(auth: Auth): Promise<User | null> {
+  const response = await fetch(await buildRequest(auth, "GET", "/profile"));
+  if (response.status === 404) return null;
+  return response.json() as Promise<User | null>;
 }
 
-export async function updateUser(
+export async function updateProfile(
   auth: Auth,
-  id: string,
   user: Partial<Omit<User, "id" | "createdAt">>,
 ): Promise<User> {
   const response = await fetch(
-    await buildRequest(auth, "POST", `/users/${encodeURIComponent(id)}`, user),
+    await buildRequest(auth, "POST", "/profile", user),
   );
   if (response.status === 422) {
     const { error: msg } = await response.json();
     throw new Error(msg);
   }
   return response.json() as Promise<User>;
-}
-
-export function isProfileComplete(user: User | null): user is User {
-  return (
-    typeof user?.username === "string" && typeof user?.avatarPath === "string"
-  );
 }
