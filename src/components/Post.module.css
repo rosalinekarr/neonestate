@@ -21,6 +21,10 @@
   color: rgb(0 0 0 / 50%);
 }
 
+.attachment-image {
+  margin: 0 -1.1rem;
+}
+
 div[data-theme="dark"] {
   .post {
     background-color: rgb(0 0 0 / 60%);

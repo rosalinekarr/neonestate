@@ -1,6 +1,7 @@
 import { ReactNode, createContext, useState } from "react";
 import { useFirebaseApp } from "../hooks";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { cropImage, scaleImage } from "../utils";
 
 const ACCEPTABLE_ATTACHMENT_FILE_TYPES = [
   "image/jpeg",
@@ -51,7 +52,9 @@ export default function ImagesProvider({ children }: ImagesProviderProps) {
       throw new Error("Unsupported file type");
     const storage = getStorage(app);
     const path = `avatars/${crypto.randomUUID()}`;
-    await uploadBytes(ref(storage, path), file, { contentType: file.type });
+    const blob = await cropImage(file, 144, 144);
+    if (blob === null) throw new Error("Unable to process image");
+    await uploadBytes(ref(storage, path), blob, { contentType: 'image/png' });
     return path;
   }
 
@@ -60,7 +63,9 @@ export default function ImagesProvider({ children }: ImagesProviderProps) {
       throw new Error("Unsupported file type");
     const storage = getStorage(app);
     const path = `attachments/${crypto.randomUUID()}`;
-    await uploadBytes(ref(storage, path), file, { contentType: file.type });
+    const blob = await scaleImage(file, 640);
+    if (blob === null) throw new Error("Unable to process image");
+    await uploadBytes(ref(storage, path), blob, { contentType: 'image/png' });
     return path;
   }
 
@@ -69,7 +74,9 @@ export default function ImagesProvider({ children }: ImagesProviderProps) {
       throw new Error("Unsupported file type");
     const storage = getStorage(app);
     const path = `backgrounds/${crypto.randomUUID()}`;
-    await uploadBytes(ref(storage, path), file, { contentType: file.type });
+    const blob = await scaleImage(file, 1024);
+    if (blob === null) throw new Error("Unable to process image");
+    await uploadBytes(ref(storage, path), blob, { contentType: 'image/png' });
     return path;
   }
 

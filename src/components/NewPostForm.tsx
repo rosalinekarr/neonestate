@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { PremiumRequiredError } from "../models/errors";
 import { Room as RoomModel } from "../models/rooms";
 import {
   PostAttachmentSection,
@@ -26,7 +27,7 @@ import IconButton from "./IconButton";
 
 interface NewPostAttachmentSectionProps {
   onDelete: () => void;
-  onUpdate: (updatedSection: PostSection) => void;
+  onUpdate: (updatedSections: PostSection[]) => void;
   section: PostAttachmentSection;
 }
 
@@ -54,13 +55,19 @@ function NewPostAttachmentSection({
   }
 
   async function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    if (e.target.files?.length !== 1) return;
-    const file = e.target.files[0] || null;
+    if (e.target.files === null) return;
+    if (e.target.files.length > 1)
+      throw new PremiumRequiredError(
+        "A premium account is required to upload more than one file at a time.",
+      );
 
     try {
-      const path = await uploadPostAttachment(file);
-      console.log("path", path);
-      onUpdate(generatePostAttachmentSection(path));
+      let uploadPromises = [];
+      for (let i = 0; i < e.target.files.length; i++) {
+        uploadPromises.push(uploadPostAttachment(e.target.files.item(i)!));
+      }
+      const paths = await Promise.all(uploadPromises);
+      onUpdate(paths.map((path) => generatePostAttachmentSection(path)));
     } catch (e: any) {
       setError(e.message);
     }
@@ -115,7 +122,7 @@ interface NewPostTextSectionProps {
   onCreate: (newSections: PostSection[]) => void;
   onDelete: () => void;
   onMergeBack: () => void;
-  onUpdate: (updatedSection: PostSection) => void;
+  onUpdate: (updatedSections: PostSection[]) => void;
   section: PostTextSection;
   showPlaceholder: boolean;
 }
@@ -156,11 +163,11 @@ function NewPostTextSection({
     if (e.target.value === "") {
       onDelete();
     } else if (newBodyParts.length > 0) {
-      onUpdate({ ...section, body: firstBodyPart });
+      onUpdate([{ ...section, body: firstBodyPart }]);
       if (onCreate)
         onCreate(newBodyParts.map((body) => generatePostTextSection(body)));
     } else {
-      onUpdate({ ...section, body: firstBodyPart });
+      onUpdate([{ ...section, body: firstBodyPart }]);
     }
   }
 
@@ -204,7 +211,7 @@ interface NewPostSectionProps {
   onCreate?: (newSections: PostSection[]) => void;
   onDelete: () => void;
   onMergeBack?: () => void;
-  onUpdate: (updatedSection: PostSection) => void;
+  onUpdate: (updatedSection: PostSection[]) => void;
   section: PostSection;
   showPlaceholder?: boolean;
 }
@@ -254,7 +261,12 @@ export default function NewPostForm({ room, show }: NewPostFormProps) {
     setIsLoading(true);
     await createPost(auth, {
       roomId: room.id,
-      sections,
+      sections: sections.filter(
+        (section, index) =>
+          index < sections.length - 1 ||
+          section.type !== "text" ||
+          section.body !== "",
+      ),
     });
     setSections([generateBlankPostTextSection()]);
     setIsLoading(false);
@@ -314,9 +326,9 @@ export default function NewPostForm({ room, show }: NewPostFormProps) {
                   return prevSections;
                 });
               }}
-              onUpdate={(updatedSection: PostSection) =>
+              onUpdate={(updatedSections: PostSection[]) =>
                 setSections((prevSections: PostSection[]) =>
-                  prevSections.toSpliced(index, 1, updatedSection),
+                  prevSections.toSpliced(index, 1, ...updatedSections),
                 )
               }
               section={section}

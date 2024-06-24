@@ -58,7 +58,9 @@ interface PostAttachmentSectionProps {
 
 function PostAttachmentSection({ section }: PostAttachmentSectionProps) {
   const imageUrl = useImage(section.path);
-  return imageUrl ? <img src={imageUrl} /> : null;
+  return imageUrl ? (
+    <img src={imageUrl} className={styles.attachmentImage} />
+  ) : null;
 }
 
 interface PostSectionProps {
