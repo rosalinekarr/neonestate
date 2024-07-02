@@ -21,6 +21,10 @@
   color: rgb(0 0 0 / 50%);
 }
 
+.post-text {
+  overflow-wrap: break-word;
+}
+
 .attachment-image {
   margin: 0 -1.1rem;
 }

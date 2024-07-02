@@ -60,10 +60,6 @@
   outline: none;
 }
 
-.new-post-text-section:last-child {
-  padding-bottom: 3rem;
-}
-
 .new-post-text-section::placeholder {
   color: rgb(0 0 0 / 60%);
 }
@@ -75,12 +71,13 @@
 .action-buttons {
   display: flex;
   flex-direction: row;
-  margin-top: -3rem;
+  margin-bottom: 0.5rem;
 }
 
 .attach-button,
 .new-post-button {
-  margin: 0.5rem;
+  margin-top: 0.5rem;
+  margin-left: 0.5rem;
 }
 
 .attachment-preview {

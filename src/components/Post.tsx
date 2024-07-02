@@ -46,7 +46,7 @@ interface PostTextSectionProps {
 
 function PostTextSection({ section }: PostTextSectionProps) {
   return (
-    <p className={styles.postBody} dir="auto">
+    <p className={styles.postText} dir="auto">
       {section.body}
     </p>
   );
