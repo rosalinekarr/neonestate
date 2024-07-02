@@ -6,10 +6,10 @@ import useFetchRoom from "./useFetchRoom";
 import useFetchUser from "./useFetchUser";
 import useFirebaseApp from "./useFirebaseApp";
 import useImage from "./useImage";
-import usePermissions from "./usePermissions";
 import usePopularRooms from "./usePopularRooms";
 import usePostsForRoom from "./usePostsForRoom";
 import useRoom from "./useRoom";
+import useRoomPermissions from "./useRoomPermissions";
 import useRooms from "./useRooms";
 import useStartRoom from "./useStartRoom";
 import useUpdateProfile from "./useUpdateProfile";
@@ -26,7 +26,7 @@ export {
   useFetchUser,
   useFirebaseApp,
   useImage,
-  usePermissions,
+  useRoomPermissions,
   usePopularRooms,
   usePostsForRoom,
   useRoom,

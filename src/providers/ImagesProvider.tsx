@@ -54,7 +54,7 @@ export default function ImagesProvider({ children }: ImagesProviderProps) {
     const path = `avatars/${crypto.randomUUID()}`;
     const blob = await cropImage(file, 144, 144);
     if (blob === null) throw new Error("Unable to process image");
-    await uploadBytes(ref(storage, path), blob, { contentType: 'image/png' });
+    await uploadBytes(ref(storage, path), blob, { contentType: "image/png" });
     return path;
   }
 
@@ -65,7 +65,7 @@ export default function ImagesProvider({ children }: ImagesProviderProps) {
     const path = `attachments/${crypto.randomUUID()}`;
     const blob = await scaleImage(file, 640);
     if (blob === null) throw new Error("Unable to process image");
-    await uploadBytes(ref(storage, path), blob, { contentType: 'image/png' });
+    await uploadBytes(ref(storage, path), blob, { contentType: "image/png" });
     return path;
   }
 
@@ -76,7 +76,7 @@ export default function ImagesProvider({ children }: ImagesProviderProps) {
     const path = `backgrounds/${crypto.randomUUID()}`;
     const blob = await scaleImage(file, 1024);
     if (blob === null) throw new Error("Unable to process image");
-    await uploadBytes(ref(storage, path), blob, { contentType: 'image/png' });
+    await uploadBytes(ref(storage, path), blob, { contentType: "image/png" });
     return path;
   }
 

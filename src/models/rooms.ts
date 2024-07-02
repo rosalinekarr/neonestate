@@ -1,6 +1,19 @@
 import { Auth } from "../hooks/useAuth";
 import { buildRequest } from "../utils";
 
+export type RoomType = "classic" | "democracy";
+
+export enum PermissionType {
+  Ban = "ban",
+  Censor = "censor",
+  Edit = "edit",
+}
+
+export type Permission = {
+  id: string;
+  type: PermissionType;
+};
+
 export interface Room {
   id: string;
   backgroundPath?: string;
@@ -9,6 +22,8 @@ export interface Room {
   description: string;
   memberCount: number;
   name: string;
+  permissions: Permission[];
+  type: RoomType;
 }
 
 export async function getRoom(auth: Auth, id: string): Promise<Room | null> {
@@ -37,7 +52,10 @@ export async function getRooms(
 
 export async function createRoom(
   auth: Auth,
-  room: Omit<Room, "id" | "createdAt" | "createdBy" | "memberCount">,
+  room: Omit<
+    Room,
+    "id" | "createdAt" | "createdBy" | "memberCount" | "permissions"
+  >,
 ): Promise<Room> {
   const response = await fetch(
     await buildRequest(auth, "POST", "/rooms", room),
@@ -50,7 +68,13 @@ export async function updateRoom(
   id: string,
   roomData: Omit<
     Room,
-    "id" | "createdAt" | "createdBy" | "memberCount" | "name"
+    | "id"
+    | "createdAt"
+    | "createdBy"
+    | "memberCount"
+    | "name"
+    | "permissions"
+    | "type"
   >,
 ): Promise<Room> {
   const response = await fetch(

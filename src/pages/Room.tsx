@@ -4,17 +4,18 @@ import {
   IconButton,
   Loading,
   NewPostForm,
+  Option,
   Post,
+  Select,
   TextField,
 } from "../components";
-import { Room as RoomModel } from "../models/rooms";
+import { Room as RoomModel, RoomType } from "../models/rooms";
 import {
-  useCurrentUser,
   useFetchRoom,
   useImage,
-  usePermissions,
   usePostsForRoom,
   useRoom,
+  useRoomPermissions,
   useStartRoom,
 } from "../hooks";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
@@ -36,6 +37,7 @@ function NewRoomForm({ name }: NewRoomFormProps) {
   const [backgroundPath, setBackgroundPath] = useState<string | undefined>(
     undefined,
   );
+  const [roomType, setRoomType] = useState<RoomType>("classic");
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -43,6 +45,7 @@ function NewRoomForm({ name }: NewRoomFormProps) {
       backgroundPath,
       description,
       name,
+      type: roomType,
     });
   }
 
@@ -61,6 +64,14 @@ function NewRoomForm({ name }: NewRoomFormProps) {
             placeholder={`A community all about ${name}. Blah blah blah. More information about our community for ${name}.`}
             value={description}
           />
+          <Select
+            name="type"
+            onChange={(newRoomType: RoomType) => setRoomType(newRoomType)}
+            value={roomType}
+          >
+            <Option value="classic">Classic</Option>
+            <Option value="democracy">Democracy</Option>
+          </Select>
           <Button type="submit">Create Room</Button>
         </form>
       </div>
@@ -120,13 +131,12 @@ function Posts({ room }: PostsProps) {
 export default function Room() {
   const fetchRoom = useFetchRoom();
   const navigate = useNavigate();
-  const user = useCurrentUser();
   const { name } = useParams();
   const room = useRoom(name || "");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showFooter, _setShowFooter] = useState<boolean>(true);
   const [showHeader, _setShowHeader] = useState<boolean>(true);
-  const { canEditRoom } = usePermissions(room, user);
+  const { canEditRoom } = useRoomPermissions(room);
 
   useEffect(() => {
     async function loadRoom(name: string) {

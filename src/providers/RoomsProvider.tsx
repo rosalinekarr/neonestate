@@ -9,14 +9,26 @@ interface RoomsProviderProps {
 interface RoomsContext {
   editRoom: (
     id: string,
-    room: Omit<Room, "id" | "createdAt" | "createdBy" | "memberCount" | "name">,
+    room: Omit<
+      Room,
+      | "id"
+      | "createdAt"
+      | "createdBy"
+      | "memberCount"
+      | "name"
+      | "permissions"
+      | "type"
+    >,
   ) => Promise<void>;
   fetchPopularRooms: () => Promise<void>;
   fetchRoom: (name: string) => Promise<void>;
   roomsByName: Record<string, Room>;
   rooms: Room[];
   startRoom: (
-    room: Omit<Room, "id" | "createdAt" | "createdBy" | "memberCount">,
+    room: Omit<
+      Room,
+      "id" | "createdAt" | "createdBy" | "memberCount" | "permissions"
+    >,
   ) => Promise<void>;
 }
 
@@ -41,7 +53,13 @@ export default function RoomsProvider({ children }: RoomsProviderProps) {
     roomId: string,
     roomData: Omit<
       Room,
-      "id" | "createdAt" | "createdBy" | "memberCount" | "name"
+      | "id"
+      | "createdAt"
+      | "createdBy"
+      | "memberCount"
+      | "name"
+      | "permissions"
+      | "type"
     >,
   ) {
     const updatedRoom: Room = await updateRoom(auth, roomId, roomData);
@@ -72,7 +90,10 @@ export default function RoomsProvider({ children }: RoomsProviderProps) {
   }
 
   async function startRoom(
-    roomData: Omit<Room, "id" | "createdAt" | "createdBy" | "memberCount">,
+    roomData: Omit<
+      Room,
+      "id" | "createdAt" | "createdBy" | "memberCount" | "permissions"
+    >,
   ): Promise<void> {
     const newRoom: Room = await createRoom(auth, roomData);
 
