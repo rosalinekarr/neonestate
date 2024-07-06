@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
-import { Logo, Menu } from "../components";
+import { Link, NavLink, Outlet } from "react-router-dom";
+import { IconButton, Logo, Menu } from "../components";
 import {
   AuthProvider,
   ImagesProvider,
@@ -8,9 +8,10 @@ import {
   RoomsProvider,
   UsersProvider,
 } from "../providers";
-import { MenuIcon, ThemeIcon } from "./icons";
+import { CloseIcon, MenuIcon, ThemeIcon } from "./icons";
 import styles from "./Layout.module.css";
 import SSEProvider from "../providers/SSEProvider";
+import { useFeatureFlags } from "../hooks";
 
 const FOOTER_LINKS: { label: string; path: string }[] = [
   { label: "About", path: "/about" },
@@ -18,6 +19,8 @@ const FOOTER_LINKS: { label: string; path: string }[] = [
 ];
 
 export default function Layout() {
+  const { show_donate_call_to_action: callToDonateFlag } = useFeatureFlags();
+  const [showCallToDonate, setShowCallToDonate] = useState(callToDonateFlag);
   const [showChannels, setShowChannels] = useState<boolean>(false);
   const [theme, setTheme] = useState<"light" | "dark">(
     window.matchMedia &&
@@ -59,6 +62,25 @@ export default function Layout() {
                       <ThemeIcon />
                     </button>
                   </header>
+                  {showCallToDonate && (
+                    <div className={styles.callToDonate}>
+                      <span className={styles.callToDonateText}>
+                        Funds are running low! Please{" "}
+                        <NavLink
+                          className={styles.callToDonateLink}
+                          to="/donate"
+                        >
+                          donate now
+                        </NavLink>{" "}
+                        to keep Neon Estate alive.
+                      </span>
+                      <IconButton
+                        className={styles.callToDonateButton}
+                        icon={CloseIcon}
+                        onClick={() => setShowCallToDonate(false)}
+                      />
+                    </div>
+                  )}
                   <main className={styles.main}>
                     <Menu
                       onClose={() => setShowChannels(false)}

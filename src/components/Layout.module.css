@@ -80,6 +80,36 @@
   width: 1rem;
 }
 
+.call-to-donate {
+  align-items: center;
+  background-color: rgb(255 255 255 / 40%);
+  border-bottom: 0.1rem solid white;
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.call-to-donate-button {
+  align-self: flex-end;
+}
+
+.call-to-donate-text {
+  flex: 1;
+  text-align: center;
+}
+
+.call-to-donate-link {
+  color: rgb(0 0 0 / 60%);
+}
+
+.call-to-donate-link:hover {
+  color: rgb(0 0 0 / 80%);
+}
+
+.call-to-donate-link:active {
+  color: black;
+}
+
 .main {
   display: flex;
   flex: 1;
@@ -156,6 +186,24 @@ div[data-theme="dark"] {
     animation-name: flicker;
     animation-timing-function: linear;
     stroke: white;
+  }
+
+  .call-to-donate {
+    background-color: rgb(0 0 0 / 40%);
+    border-bottom: 0.1rem solid black;
+    color: white;
+  }
+
+  .call-to-donate-link {
+    color: rgb(255 255 255 / 60%);
+  }
+
+  .call-to-donate-link:hover {
+    color: rgb(255 255 255 / 80%);
+  }
+
+  .call-to-donate-link:active {
+    color: white;
   }
 
   .footer {

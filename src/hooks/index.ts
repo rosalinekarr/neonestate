@@ -2,6 +2,7 @@ import useAuth from "./useAuth";
 import useCurrentUser from "./useCurrentUser";
 import useEditRoom from "./useEditRoom";
 import useEventSource from "./useEventSource";
+import useFeatureFlags from "./useFeatureFlags";
 import useFetchRoom from "./useFetchRoom";
 import useFetchUser from "./useFetchUser";
 import useFirebaseApp from "./useFirebaseApp";
@@ -22,6 +23,7 @@ export {
   useCurrentUser,
   useEditRoom,
   useEventSource,
+  useFeatureFlags,
   useFetchRoom,
   useFetchUser,
   useFirebaseApp,

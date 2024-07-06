@@ -5,7 +5,6 @@ import { Room } from "../models/rooms";
 import CreateIcon from "./icons/create";
 import styles from "./Menu.module.css";
 import { getAuth, signOut } from "firebase/auth";
-import Donate from "./Donate";
 import { DonateIcon, ProfileIcon, SignOutIcon } from "./icons";
 import IconButton from "./IconButton";
 
@@ -49,7 +48,6 @@ interface MenuProps {
 }
 
 export default function Menu({ onClose, open }: MenuProps) {
-  const [showDonateModal, setShowDonateModal] = useState<boolean>(false);
   const app = useFirebaseApp();
   const rooms = useRooms();
   const navigate = useNavigate();
@@ -80,7 +78,7 @@ export default function Menu({ onClose, open }: MenuProps) {
         <IconButton
           icon={DonateIcon}
           className={styles.menuItem}
-          onClick={() => setShowDonateModal(true)}
+          onClick={() => navigate("/donate")}
         >
           Donate
         </IconButton>
@@ -99,7 +97,6 @@ export default function Menu({ onClose, open }: MenuProps) {
           Sign out
         </IconButton>
       </div>
-      {showDonateModal && <Donate onClose={() => setShowDonateModal(false)} />}
     </nav>
   );
 }

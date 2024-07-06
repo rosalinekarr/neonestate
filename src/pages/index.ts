@@ -1,5 +1,6 @@
 import About from "./About";
 import CreateAccount from "./CreateAccount";
+import Donate from "./Donate";
 import EditRoom from "./EditRoom";
 import Room from "./Room";
 import PrivacyPolicy from "./PrivacyPolicy";
@@ -9,6 +10,7 @@ import SignIn from "./SignIn";
 export {
   About,
   CreateAccount,
+  Donate,
   EditRoom,
   Room,
   PrivacyPolicy,
