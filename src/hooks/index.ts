@@ -1,7 +1,6 @@
 import useAuth from "./useAuth";
 import useCurrentUser from "./useCurrentUser";
 import useEditRoom from "./useEditRoom";
-import useEventSource from "./useEventSource";
 import useFeatureFlags from "./useFeatureFlags";
 import useFetchRoom from "./useFetchRoom";
 import useFetchUser from "./useFetchUser";
@@ -12,6 +11,7 @@ import usePostsForRoom from "./usePostsForRoom";
 import useRoom from "./useRoom";
 import useRoomPermissions from "./useRoomPermissions";
 import useRooms from "./useRooms";
+import useServerEvents from "./useServerEvents";
 import useStartRoom from "./useStartRoom";
 import useUpdateProfile from "./useUpdateProfile";
 import useUploadAvatar from "./useUploadAvatar";
@@ -22,7 +22,6 @@ export {
   useAuth,
   useCurrentUser,
   useEditRoom,
-  useEventSource,
   useFeatureFlags,
   useFetchRoom,
   useFetchUser,
@@ -33,6 +32,7 @@ export {
   usePostsForRoom,
   useRoom,
   useRooms,
+  useServerEvents,
   useStartRoom,
   useUpdateProfile,
   useUploadAvatar,

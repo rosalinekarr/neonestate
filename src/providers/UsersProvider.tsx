@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useAuth, useEventSource } from "../hooks";
+import { useAuth, useServerEvents } from "../hooks";
 import { UserCreatedEvent, UserUpdatedEvent } from "../models/events";
 import { User, getProfile, getUser, updateProfile } from "../models/users";
 import { CreateAccount } from "../pages";
@@ -27,7 +27,7 @@ export const UsersContext = createContext<UsersContext | null>(null);
 
 export default function UsersProvider({ children }: UserProviderProps) {
   const auth = useAuth();
-  const eventSource = useEventSource();
+  const serverEvents = useServerEvents();
   const firebaseUser = useContext(AuthContext);
   const [users, setUsers] = useState<Record<string, User>>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -39,18 +39,18 @@ export default function UsersProvider({ children }: UserProviderProps) {
   );
 
   function handleUserCreated(e: UserCreatedEvent) {
-    const newUser = JSON.parse(e.data);
+    console.log("usercreated", e);
     setUsers((prevUsers) => ({
       ...prevUsers,
-      [newUser.id]: newUser,
+      [e.detail.id]: e.detail,
     }));
   }
 
   function handleUserUpdated(e: UserUpdatedEvent) {
-    const updatedUser = JSON.parse(e.data);
+    console.log("userupdated", e);
     setUsers((prevUsers) => ({
       ...prevUsers,
-      [updatedUser.id]: updatedUser,
+      [e.detail.id]: e.detail,
     }));
   }
 
@@ -88,14 +88,15 @@ export default function UsersProvider({ children }: UserProviderProps) {
   }
 
   useEffect(() => {
-    eventSource.addEventListener("usercreated", handleUserCreated);
-    eventSource.addEventListener("userupdated", handleUserUpdated);
+    const unsubscribeFns = [
+      serverEvents.subscribe("usercreated", handleUserCreated),
+      serverEvents.subscribe("userupdated", handleUserUpdated),
+    ];
 
     return () => {
-      eventSource.removeEventListener("usercreated", handleUserCreated);
-      eventSource.removeEventListener("userupdated", handleUserUpdated);
+      unsubscribeFns.forEach((fn) => fn());
     };
-  }, [eventSource]);
+  }, [serverEvents]);
 
   useEffect(() => {
     async function loadCurrentUser() {
